@@ -11,7 +11,7 @@ function Navigation({ currentPage, navigateTo }) {
     navigateTo(page);
     setIsMenuOpen(false);
   };
-  
+
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -59,3 +59,8 @@ function Navigation({ currentPage, navigateTo }) {
 }
 
 export default Navigation;
+
+
+
+
+
