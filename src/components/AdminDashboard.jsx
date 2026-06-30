@@ -43,26 +43,50 @@ function AdminDashboard() {
   const fetchDashboardData = async () => {
     setIsLoading(true);
     try {
+      console.log('Fetching dashboard data...');
       const statsResponse = await apiService.getDashboardStats();
+      console.log('Stats Response:', statsResponse);
       setStats(statsResponse);
 
       if (activeTab === 'users') {
+        console.log('Fetching users...');
         const usersResponse = await apiService.getAllUsers();
-        setUsers(usersResponse);
+        console.log('Users Response:', usersResponse);
+        if (Array.isArray(usersResponse)) {
+          setUsers(usersResponse);
+        } else {
+          console.error('Users response is not an array:', usersResponse);
+          setUsers([]);
+        }
       }
 
       if (activeTab === 'contacts') {
+        console.log('Fetching contacts...');
         const contactsResponse = await apiService.getAllContacts();
-        setContacts(contactsResponse);
+        console.log('Contacts Response:', contactsResponse);
+        if (Array.isArray(contactsResponse)) {
+          setContacts(contactsResponse);
+        } else {
+          console.error('Contacts response is not an array:', contactsResponse);
+          setContacts([]);
+        }
       }
 
       if (activeTab === 'attendance') {
+        console.log('Fetching attendance...');
         const attendanceResponse = await apiService.getAllAttendance();
-        setAttendance(attendanceResponse);
+        console.log('Attendance Response:', attendanceResponse);
+        if (Array.isArray(attendanceResponse)) {
+          setAttendance(attendanceResponse);
+        } else {
+          console.error('Attendance response is not an array:', attendanceResponse);
+          setAttendance([]);
+        }
       }
     } catch (err) {
       console.error('Error fetching data:', err);
-      showMessage('Error loading data', 'error');
+      console.error('Error details:', err.message, err.stack);
+      showMessage(`Error loading data: ${err.message}`, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -74,15 +98,18 @@ function AdminDashboard() {
   };
 
   const handleUpdateUserStatus = async (userId, newStatus) => {
+    console.log('Updating user status:', userId, newStatus);
     try {
-      await apiService.updateUserStatus(userId, {
+      const response = await apiService.updateUserStatus(userId, {
         registrationStatus: newStatus
       });
+      console.log('Update response:', response);
       showMessage(`User ${newStatus} successfully`, 'success');
-      fetchDashboardData();
+      // Refresh the data
+      await fetchDashboardData();
     } catch (err) {
       console.error('Error updating user status:', err);
-      showMessage('Error updating user status', 'error');
+      showMessage(`Error updating user status: ${err.message}`, 'error');
     }
   };
 
@@ -647,6 +674,152 @@ function AdminDashboard() {
           )}
         </main>
       </div>
+
+      {/* User Details Modal */}
+      {showUserModal && selectedUser && (
+        <div className="modal-overlay" onClick={() => setShowUserModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>User Details</h2>
+              <button onClick={() => setShowUserModal(false)}><X size={24} /></button>
+            </div>
+            <div className="modal-body">
+              <div className="user-detail-grid">
+                <div className="detail-item">
+                  <label>Full Name:</label>
+                  <span>{selectedUser.fullName}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Email:</label>
+                  <span>{selectedUser.email}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Phone:</label>
+                  <span>{selectedUser.phone || '-'}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Age:</label>
+                  <span>{selectedUser.age || '-'}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Gender:</label>
+                  <span>{selectedUser.gender || '-'}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Course:</label>
+                  <span>{selectedUser.course || '-'}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Level:</label>
+                  <span>{selectedUser.level || '-'}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Schedule:</label>
+                  <span>{selectedUser.schedule || '-'}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Registration Status:</label>
+                  <span className={`status-badge ${selectedUser.registrationStatus}`}>
+                    {selectedUser.registrationStatus}
+                  </span>
+                </div>
+                {selectedUser.guardian && (
+                  <>
+                    <div className="detail-item">
+                      <label>Guardian:</label>
+                      <span>{selectedUser.guardian}</span>
+                    </div>
+                    <div className="detail-item">
+                      <label>Guardian Phone:</label>
+                      <span>{selectedUser.guardianPhone}</span>
+                    </div>
+                  </>
+                )}
+                {selectedUser.message && (
+                  <div className="detail-item full-width">
+                    <label>Additional Message:</label>
+                    <p>{selectedUser.message}</p>
+                  </div>
+                )}
+                <div className="detail-item">
+                  <label>Registered On:</label>
+                  <span>{new Date(selectedUser.createdAt).toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              {selectedUser.registrationStatus === 'pending' && (
+                <>
+                  <button 
+                    className="btn btn-success"
+                    onClick={() => {
+                      handleUpdateUserStatus(selectedUser._id, 'approved');
+                      setShowUserModal(false);
+                    }}
+                  >
+                    <CheckCircle size={18} />
+                    Approve User
+                  </button>
+                  <button 
+                    className="btn btn-danger"
+                    onClick={() => {
+                      handleUpdateUserStatus(selectedUser._id, 'rejected');
+                      setShowUserModal(false);
+                    }}
+                  >
+                    <XCircle size={18} />
+                    Reject User
+                  </button>
+                </>
+              )}
+              <button className="btn btn-secondary" onClick={() => setShowUserModal(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reply Modal */}
+      {showReplyModal && selectedContact && (
+        <div className="modal-overlay" onClick={() => setShowReplyModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Reply to Message</h2>
+              <button onClick={() => setShowReplyModal(false)}><X size={24} /></button>
+            </div>
+            <div className="modal-body">
+              <div className="reply-info">
+                <p><strong>To:</strong> {selectedContact.fullName} ({selectedContact.email})</p>
+                <p><strong>Subject:</strong> {selectedContact.subject}</p>
+                <div className="original-message">
+                  <strong>Original Message:</strong>
+                  <p>{selectedContact.message}</p>
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Your Reply:</label>
+                <textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  rows="6"
+                  placeholder="Type your reply here..."
+                  className="reply-textarea"
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-primary" onClick={handleReplyContact}>
+                <Send size={18} />
+                Send Reply
+              </button>
+              <button className="btn btn-secondary" onClick={() => setShowReplyModal(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
