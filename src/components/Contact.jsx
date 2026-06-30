@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { apiService } from '../services/apiService';
 import '../styles/Contact.css';
 
 function Contact() {
@@ -8,9 +9,12 @@ function Contact() {
     email: '',
     phone: '',
     subject: '',
-    message: ''
+    message: '',
+    type: 'inquiry'
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,21 +24,37 @@ function Contact() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Contact Form Data:', formData);
-    setIsSubmitted(true);
-    
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        fullName: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-      });
-    }, 4000);
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await apiService.submitContact(formData);
+      
+      if (response.contactId || response.msg === 'Message sent successfully') {
+        setIsSubmitted(true);
+        setFormData({
+          fullName: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: '',
+          type: 'inquiry'
+        });
+
+        setTimeout(() => {
+          setIsSubmitted(false);
+        }, 4000);
+      } else {
+        setError(response.msg || 'Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      console.error('Contact error:', err);
+      setError('An error occurred. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -120,7 +140,22 @@ function Contact() {
             </div>
 
             {/* Contact Form */}
-            <div className="contact-form-side slide-in-right">
+            <div className="contact-form-side slide-in-right">              {error && (
+                <div style={{
+                  backgroundColor: '#fee',
+                  border: '1px solid #f88',
+                  color: '#c33',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}>
+                  <AlertCircle size={20} />
+                  <span>{error}</span>
+                </div>
+              )}
               {isSubmitted ? (
                 <div className="success-message-box">
                   <CheckCircle size={64} className="success-icon" />
@@ -185,6 +220,23 @@ function Contact() {
                     />
                   </div>
 
+                  <div className="form-row">
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label htmlFor="type">ታይፕ</label>
+                      <select
+                        id="type"
+                        name="type"
+                        value={formData.type}
+                        onChange={handleInputChange}
+                      >
+                        <option value="inquiry">ጥያቄ</option>
+                        <option value="complaint">ቅሬታ</option>
+                        <option value="suggestion">ሐሳብ</option>
+                        <option value="registration">ምዝገባ</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div className="form-group">
                     <label htmlFor="message">መልእክት *</label>
                     <textarea
@@ -198,9 +250,9 @@ function Contact() {
                     ></textarea>
                   </div>
 
-                  <button type="submit" className="btn-submit">
+                  <button type="submit" className="btn-submit" disabled={isLoading}>
                     <Send size={20} />
-                    <span>መልእክት ላክ</span>
+                    <span>{isLoading ? 'በመላክ ላይ...' : 'መልእክት ላክ'}</span>
                   </button>
                 </form>
               )}
