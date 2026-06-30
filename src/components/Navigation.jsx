@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Menu, X, BookOpen } from 'lucide-react';
+import { Menu, X, BookOpen, Shield } from 'lucide-react';
 import '../styles/Navigation.css';
 
-function Navigation({ currentPage, navigateTo }) {
+function Navigation({ currentPage, navigateTo, onAdminClick }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -43,10 +43,14 @@ function Navigation({ currentPage, navigateTo }) {
             onClick={() => handleNavClick('contact')} 
             className={currentPage === 'contact' ? 'nav-link active' : 'nav-link'}
           >
-            አድራሻ
+            ራኩሙ
           </a>
           <button className="btn-nav-register" onClick={() => handleNavClick('register')}>
             ይመዝገቡ
+          </button>
+          <button className="btn-nav-admin" onClick={onAdminClick}>
+            <Shield size={18} />
+            Admin
           </button>
         </div>
 
