@@ -1,6 +1,10 @@
 const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const Contact = require('../models/Contact');
+const Attendance = require('../models/Attendance');
+
 
 // Admin Login
 exports.adminLogin = async (req, res) => {
@@ -50,7 +54,10 @@ exports.getAllUsers = async (req, res) => {
     res.json(users);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ 
+  msg: 'Server error',
+  error: err.message
+});
   }
 };
 
