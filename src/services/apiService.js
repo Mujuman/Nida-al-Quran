@@ -170,6 +170,18 @@ export const apiService = {
     return response.json();
   },
 
+  markContactAsSpam: async (contactId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/contacts/${contactId}/spam`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.json();
+  },
+
   // ========== ATTENDANCE ENDPOINTS ==========
   markAttendance: async (attendanceData) => {
     const token = localStorage.getItem('adminToken');

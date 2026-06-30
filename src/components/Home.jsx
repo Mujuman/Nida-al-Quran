@@ -1,8 +1,22 @@
 import React from 'react';
 import { BookOpen, Users, Award, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 
-function Home({ navigateTo }) {
+function Home() {
+  const navigate = useNavigate();
+
+  const navigateTo = (page) => {
+    const pageRoutes = {
+      'home': '/',
+      'about': '/about',
+      'services': '/services',
+      'contact': '/contact',
+      'register': '/register',
+    };
+    navigate(pageRoutes[page] || '/');
+  };
+
   const features = [
     {
       icon: <BookOpen size={48} />,

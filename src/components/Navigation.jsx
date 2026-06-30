@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
 import { Menu, X, BookOpen, Shield } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import '../styles/Navigation.css';
 
-function Navigation({ currentPage, navigateTo, onAdminClick }) {
+function Navigation({ navigateTo, onAdminClick }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleNavClick = (page) => {
     navigateTo(page);
     setIsMenuOpen(false);
+  };
+
+  const isActive = (page) => {
+    const pathMap = {
+      'home': '/',
+      'about': '/about',
+      'services': '/services',
+      'contact': '/contact',
+      'register': '/register',
+    };
+    return location.pathname === pathMap[page];
   };
 
   return (
@@ -23,25 +36,25 @@ function Navigation({ currentPage, navigateTo, onAdminClick }) {
         <div className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
           <a 
             onClick={() => handleNavClick('home')} 
-            className={currentPage === 'home' ? 'nav-link active' : 'nav-link'}
+            className={isActive('home') ? 'nav-link active' : 'nav-link'}
           >
             መነሻ ገጽ
           </a>
           <a 
             onClick={() => handleNavClick('about')} 
-            className={currentPage === 'about' ? 'nav-link active' : 'nav-link'}
+            className={isActive('about') ? 'nav-link active' : 'nav-link'}
           >
             ስለ እኛ
           </a>
           <a 
             onClick={() => handleNavClick('services')} 
-            className={currentPage === 'services' ? 'nav-link active' : 'nav-link'}
+            className={isActive('services') ? 'nav-link active' : 'nav-link'}
           >
             አገልግሎቶች
           </a>
           <a 
             onClick={() => handleNavClick('contact')} 
-            className={currentPage === 'contact' ? 'nav-link active' : 'nav-link'}
+            className={isActive('contact') ? 'nav-link active' : 'nav-link'}
           >
             ራኩሙ
           </a>

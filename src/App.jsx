@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import Home from './components/Home';
@@ -13,53 +14,64 @@ import './App.css';
 import './styles/Global.css';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [isAdminPage, setIsAdminPage] = useState(false);
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // Check admin authentication
-    setIsAdminAuthenticated(apiService.isAuthenticated(true));
-  }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const navigateTo = (page) => {
-    setCurrentPage(page);
-    setIsAdminPage(false);
+    const pageRoutes = {
+      'home': '/',
+      'about': '/about',
+      'services': '/services',
+      'contact': '/contact',
+      'register': '/register',
+      'admin-login': '/admin/login',
+      'admin-dashboard': '/admin/dashboard',
+    };
+    navigate(pageRoutes[page] || '/');
     window.scrollTo(0, 0);
   };
 
-  const handleAdminPage = (page) => {
-    setIsAdminPage(true);
-    setCurrentPage(page);
-    window.scrollTo(0, 0);
+  const handleAdminClick = () => {
+    navigate('/admin/login');
   };
 
-  // Admin routes
-  if (isAdminPage) {
-    if (currentPage === 'admin-login') {
-      return <AdminLogin />;
+  // Check if on admin page
+  const isAdminPage = location.pathname.startsWith('/admin');
+  const isAdminAuthenticated = apiService.isAuthenticated(true);
+
+  // Redirect to dashboard if already logged in and trying to access login
+  useEffect(() => {
+    if (location.pathname === '/admin/login' && isAdminAuthenticated) {
+      navigate('/admin/dashboard');
     }
-    if (currentPage === 'admin-dashboard') {
-      if (!isAdminAuthenticated) {
-        return <AdminLogin />;
-      }
-      return <AdminDashboard />;
-    }
-  }
+  }, [location.pathname, isAdminAuthenticated, navigate]);
 
   return (
     <div className="App">
-      <Navigation currentPage={currentPage} navigateTo={navigateTo} onAdminClick={() => handleAdminPage('admin-login')} />
+      {!isAdminPage && <Navigation navigateTo={navigateTo} onAdminClick={handleAdminClick} />}
       
       <main className="main-content">
-        {currentPage === 'home' && <Home navigateTo={navigateTo} />}
-        {currentPage === 'about' && <About />}
-        {currentPage === 'services' && <Services />}
-        {currentPage === 'contact' && <Contact />}
-        {currentPage === 'register' && <Register />}
+        <Routes>
+          <Route path="/" element={<Home navigateTo={navigateTo} />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              isAdminAuthenticated ? (
+                <AdminDashboard />
+              ) : (
+                <AdminLogin />
+              )
+            } 
+          />
+        </Routes>
       </main>
       
-      <Footer navigateTo={navigateTo} />
+      {!isAdminPage && <Footer navigateTo={navigateTo} />}
     </div>
   );
 }

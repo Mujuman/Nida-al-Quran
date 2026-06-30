@@ -2,7 +2,7 @@
 
 /**
  * Database Seeding Script
- * Run: node seed.js
+ * Run: node seed.cjs
  * 
  * This script creates initial admin user and other seed data
  */

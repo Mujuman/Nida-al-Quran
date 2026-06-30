@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
 import '../styles/AdminLogin.css';
 
 function AdminLogin() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -29,8 +31,8 @@ function AdminLogin() {
       
       if (response.token) {
         apiService.saveToken(response.token, true);
-        // Redirect to admin dashboard
-        window.location.href = '/admin/dashboard';
+        // Redirect to admin dashboard using React Router
+        navigate('/admin/dashboard');
       } else {
         setError(response.msg || 'Login failed. Please try again.');
       }
