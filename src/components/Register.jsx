@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle } from 'lucide-react';
+import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle, AlertCircle } from 'lucide-react';
+import { apiService } from '../services/apiService';
 import '../styles/Register.css';
 
 function Register() {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    password: 'default123', // For now, we'll use a default password
     phone: '',
     age: '',
     gender: '',
@@ -18,6 +20,8 @@ function Register() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,28 +31,63 @@ function Register() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Registration Data:', formData);
-    setIsSubmitted(true);
+    setIsLoading(true);
+    setError('');
     
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setCurrentStep(1);
-      setFormData({
-        fullName: '',
-        email: '',
-        phone: '',
-        age: '',
-        gender: '',
-        course: '',
-        level: '',
-        schedule: '',
-        guardian: '',
-        guardianPhone: '',
-        message: ''
-      });
-    }, 5000);
+    try {
+      // Prepare data for registration
+      const registrationData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        age: formData.age ? parseInt(formData.age) : null,
+        gender: formData.gender,
+        course: formData.course,
+        level: formData.level,
+        schedule: formData.schedule,
+        guardian: formData.guardian,
+        guardianPhone: formData.guardianPhone,
+        message: formData.message,
+      };
+
+      // Call the API to register user
+      const response = await apiService.registerUser(registrationData);
+      
+      if (response.token) {
+        // Save token to localStorage
+        apiService.saveToken(response.token);
+        setIsSubmitted(true);
+        
+        setTimeout(() => {
+          setIsSubmitted(false);
+          setCurrentStep(1);
+          setFormData({
+            fullName: '',
+            email: '',
+            password: 'default123',
+            phone: '',
+            age: '',
+            gender: '',
+            course: '',
+            level: '',
+            schedule: '',
+            guardian: '',
+            guardianPhone: '',
+            message: ''
+          });
+        }, 5000);
+      } else {
+        setError(response.msg || 'Registration failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
+      setError('An error occurred. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const nextStep = () => {
@@ -75,6 +114,23 @@ function Register() {
       {/* Registration Content */}
       <section className="register-content-section">
         <div className="container">
+          {error && (
+            <div className="error-alert" style={{
+              backgroundColor: '#fee',
+              border: '1px solid #f88',
+              color: '#c33',
+              padding: '15px',
+              borderRadius: '8px',
+              marginBottom: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
+            }}>
+              <AlertCircle size={20} />
+              <span>{error}</span>
+            </div>
+          )}
+          
           {isSubmitted ? (
             <div className="success-registration">
               <div className="success-animation">
@@ -219,7 +275,7 @@ function Register() {
                     </div>
 
                     <div className="form-navigation">
-                      <button type="button" className="btn btn-next" onClick={nextStep}>
+                      <button type="button" className="btn btn-next" onClick={nextStep} disabled={isLoading}>
                         ቀጣይ ደረጃ →
                       </button>
                     </div>
@@ -311,10 +367,10 @@ function Register() {
                     </div>
 
                     <div className="form-navigation">
-                      <button type="button" className="btn btn-prev" onClick={prevStep}>
+                      <button type="button" className="btn btn-prev" onClick={prevStep} disabled={isLoading}>
                         ← ወደ ኋላ
                       </button>
-                      <button type="button" className="btn btn-next" onClick={nextStep}>
+                      <button type="button" className="btn btn-next" onClick={nextStep} disabled={isLoading}>
                         ቀጣይ ደረጃ →
                       </button>
                     </div>
@@ -426,11 +482,11 @@ function Register() {
                     </div>
 
                     <div className="form-navigation">
-                      <button type="button" className="btn btn-prev" onClick={prevStep}>
+                      <button type="button" className="btn btn-prev" onClick={prevStep} disabled={isLoading}>
                         ← ወደ ኋላ
                       </button>
-                      <button type="submit" className="btn btn-submit-final">
-                        ምዝገባ አጠናቅቅ ✓
+                      <button type="submit" className="btn btn-submit-final" disabled={isLoading}>
+                        {isLoading ? 'በመጠበቅ ላይ...' : 'ምዝገባ አጠናቅቅ ✓'}
                       </button>
                     </div>
                   </div>
