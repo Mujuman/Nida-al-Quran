@@ -51,9 +51,16 @@ const UserSchema = new mongoose.Schema(
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
     },
+    // Teacher (sub-admin) assigned to this student
+    assignedTeacher: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Admin',
+      default: null,
+    },
   },
-  { 
-    timestamps: true 
+  {
+    timestamps: true,
   }
 );
+
 module.exports = mongoose.model('User', UserSchema);
