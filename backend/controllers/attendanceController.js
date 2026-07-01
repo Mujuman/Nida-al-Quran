@@ -1,18 +1,31 @@
 const Attendance = require('../models/Attendance');
 const User = require('../models/User');
+const Admin = require('../models/Admin');
 
+// ──────────────────────────────────────────────────────────────
 // Mark Attendance for a Student
+// Sub-admins can only mark for their assigned students
+// ──────────────────────────────────────────────────────────────
 exports.markAttendance = async (req, res) => {
   const { studentId, course, date, status, notes } = req.body;
 
   try {
-    // Check if student exists
     const student = await User.findById(studentId);
     if (!student) {
       return res.status(404).json({ msg: 'Student not found' });
     }
 
-    // Check if attendance record exists for this date
+    // Sub-admin restriction: only mark attendance for their own students
+    if (req.admin.role === 'sub_admin') {
+      const adminDoc = await Admin.findById(req.admin.id);
+      const isAssigned = adminDoc.assignedStudents
+        .map((id) => id.toString())
+        .includes(studentId);
+      if (!isAssigned) {
+        return res.status(403).json({ msg: 'Access denied. Not your assigned student.' });
+      }
+    }
+
     let attendance = await Attendance.findOne({
       student: studentId,
       course,
@@ -20,13 +33,11 @@ exports.markAttendance = async (req, res) => {
     });
 
     if (attendance) {
-      // Update existing record
       attendance.status = status;
       attendance.notes = notes;
       attendance.recordedBy = req.admin.id;
       attendance.markedAt = new Date();
     } else {
-      // Create new record
       attendance = new Attendance({
         student: studentId,
         course,
@@ -45,10 +56,23 @@ exports.markAttendance = async (req, res) => {
   }
 };
 
+// ──────────────────────────────────────────────────────────────
 // Get Student Attendance Record
+// ──────────────────────────────────────────────────────────────
 exports.getStudentAttendance = async (req, res) => {
   try {
     const { studentId, course, startDate, endDate } = req.query;
+
+    // Sub-admin: ensure this student is assigned to them
+    if (req.admin.role === 'sub_admin') {
+      const adminDoc = await Admin.findById(req.admin.id);
+      const isAssigned = adminDoc.assignedStudents
+        .map((id) => id.toString())
+        .includes(studentId);
+      if (!isAssigned) {
+        return res.status(403).json({ msg: 'Access denied. Not your assigned student.' });
+      }
+    }
 
     const filter = { student: studentId };
     if (course) filter.course = course;
@@ -64,25 +88,17 @@ exports.getStudentAttendance = async (req, res) => {
       .populate('recordedBy', 'fullName')
       .sort({ date: -1 });
 
-    // Calculate attendance stats
     const total = attendance.length;
-    const present = attendance.filter(a => a.status === 'present').length;
-    const absent = attendance.filter(a => a.status === 'absent').length;
-    const late = attendance.filter(a => a.status === 'late').length;
-    const excused = attendance.filter(a => a.status === 'excused').length;
-
-    const percentage = total > 0 ? ((present + late + excused) / total * 100).toFixed(2) : 0;
+    const present = attendance.filter((a) => a.status === 'present').length;
+    const absent = attendance.filter((a) => a.status === 'absent').length;
+    const late = attendance.filter((a) => a.status === 'late').length;
+    const excused = attendance.filter((a) => a.status === 'excused').length;
+    const percentage =
+      total > 0 ? (((present + late + excused) / total) * 100).toFixed(2) : 0;
 
     res.json({
       attendance,
-      stats: {
-        total,
-        present,
-        absent,
-        late,
-        excused,
-        percentage,
-      }
+      stats: { total, present, absent, late, excused, percentage },
     });
   } catch (err) {
     console.error(err.message);
@@ -90,7 +106,10 @@ exports.getStudentAttendance = async (req, res) => {
   }
 };
 
-// Get All Attendance Records (Admin)
+// ──────────────────────────────────────────────────────────────
+// Get All Attendance Records
+// Main admin: all records; Sub-admin: only their students
+// ──────────────────────────────────────────────────────────────
 exports.getAllAttendance = async (req, res) => {
   try {
     const { course, startDate, endDate, status } = req.query;
@@ -105,6 +124,12 @@ exports.getAllAttendance = async (req, res) => {
       };
     }
 
+    // Sub-admin filter by assigned students
+    if (req.admin.role === 'sub_admin') {
+      const adminDoc = await Admin.findById(req.admin.id);
+      filter.student = { $in: adminDoc ? adminDoc.assignedStudents : [] };
+    }
+
     const attendance = await Attendance.find(filter)
       .populate('student', 'fullName email course')
       .populate('recordedBy', 'fullName')
@@ -117,7 +142,9 @@ exports.getAllAttendance = async (req, res) => {
   }
 };
 
+// ──────────────────────────────────────────────────────────────
 // Get Attendance by Course
+// ──────────────────────────────────────────────────────────────
 exports.getAttendanceByCourse = async (req, res) => {
   try {
     const { course, date } = req.query;
@@ -127,11 +154,13 @@ exports.getAttendanceByCourse = async (req, res) => {
       const startOfDay = new Date(date);
       const endOfDay = new Date(date);
       endOfDay.setDate(endOfDay.getDate() + 1);
+      filter.date = { $gte: startOfDay, $lt: endOfDay };
+    }
 
-      filter.date = {
-        $gte: startOfDay,
-        $lt: endOfDay,
-      };
+    // Sub-admin: only their students
+    if (req.admin.role === 'sub_admin') {
+      const adminDoc = await Admin.findById(req.admin.id);
+      filter.student = { $in: adminDoc ? adminDoc.assignedStudents : [] };
     }
 
     const attendance = await Attendance.find(filter)
@@ -146,13 +175,26 @@ exports.getAttendanceByCourse = async (req, res) => {
   }
 };
 
+// ──────────────────────────────────────────────────────────────
 // Bulk Mark Attendance
+// ──────────────────────────────────────────────────────────────
 exports.bulkMarkAttendance = async (req, res) => {
   const { course, date, records } = req.body;
 
   try {
-    const results = [];
+    // Sub-admin: validate all students are assigned
+    if (req.admin.role === 'sub_admin') {
+      const adminDoc = await Admin.findById(req.admin.id);
+      const assignedIds = adminDoc.assignedStudents.map((id) => id.toString());
+      const unauthorized = records.filter(
+        (r) => !assignedIds.includes(r.studentId)
+      );
+      if (unauthorized.length > 0) {
+        return res.status(403).json({ msg: 'Some students are not assigned to you.' });
+      }
+    }
 
+    const results = [];
     for (const record of records) {
       let attendance = await Attendance.findOne({
         student: record.studentId,
@@ -185,7 +227,9 @@ exports.bulkMarkAttendance = async (req, res) => {
   }
 };
 
+// ──────────────────────────────────────────────────────────────
 // Get Attendance Report
+// ──────────────────────────────────────────────────────────────
 exports.getAttendanceReport = async (req, res) => {
   try {
     const { course, startDate, endDate } = req.query;
@@ -199,15 +243,20 @@ exports.getAttendanceReport = async (req, res) => {
       };
     }
 
+    if (req.admin.role === 'sub_admin') {
+      const adminDoc = await Admin.findById(req.admin.id);
+      filter.student = { $in: adminDoc ? adminDoc.assignedStudents : [] };
+    }
+
     const attendance = await Attendance.find(filter)
       .populate('student', 'fullName email course')
       .sort({ date: -1 });
 
-    // Group by student
     const report = {};
-    attendance.forEach(record => {
-      if (!report[record.student._id]) {
-        report[record.student._id] = {
+    attendance.forEach((record) => {
+      const sid = record.student._id;
+      if (!report[sid]) {
+        report[sid] = {
           student: record.student,
           total: 0,
           present: 0,
@@ -216,14 +265,16 @@ exports.getAttendanceReport = async (req, res) => {
           excused: 0,
         };
       }
-      report[record.student._id].total++;
-      report[record.student._id][record.status]++;
+      report[sid].total++;
+      report[sid][record.status]++;
     });
 
-    // Calculate percentages
-    const reportArray = Object.values(report).map(r => ({
+    const reportArray = Object.values(report).map((r) => ({
       ...r,
-      percentage: r.total > 0 ? ((r.present + r.late + r.excused) / r.total * 100).toFixed(2) : 0,
+      percentage:
+        r.total > 0
+          ? (((r.present + r.late + r.excused) / r.total) * 100).toFixed(2)
+          : 0,
     }));
 
     res.json(reportArray);
@@ -233,14 +284,15 @@ exports.getAttendanceReport = async (req, res) => {
   }
 };
 
+// ──────────────────────────────────────────────────────────────
 // Delete Attendance Record
+// ──────────────────────────────────────────────────────────────
 exports.deleteAttendance = async (req, res) => {
   try {
     const attendance = await Attendance.findByIdAndDelete(req.params.id);
     if (!attendance) {
       return res.status(404).json({ msg: 'Attendance record not found' });
     }
-
     res.json({ msg: 'Attendance record deleted' });
   } catch (err) {
     console.error(err.message);
