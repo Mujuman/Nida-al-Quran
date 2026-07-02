@@ -8,6 +8,7 @@ const {
   getAllUsers,
   getUserDetails,
   updateUserStatus,
+  deleteStudent,
   getDashboardStats,
   getAllSubAdmins,
   createSubAdmin,
@@ -30,6 +31,7 @@ router.get('/attendance/all', adminAuth, getAllAttendanceRecords);
 
 // ── Main Admin only ───────────────────────────────────────────
 router.put('/users/:userId/status', adminAuth, requireMainAdmin, updateUserStatus);
+router.delete('/users/:userId', adminAuth, requireMainAdmin, deleteStudent);
 router.post('/users/:userId/assign', adminAuth, requireMainAdmin, assignStudentToTeacher);
 
 router.get('/sub-admins', adminAuth, requireMainAdmin, getAllSubAdmins);

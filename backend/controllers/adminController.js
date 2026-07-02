@@ -325,6 +325,13 @@ exports.assignStudentToTeacher = async (req, res) => {
       return res.status(404).json({ msg: 'Student not found' });
     }
 
+    // Block assigning rejected students
+    if (user.registrationStatus === 'rejected') {
+      return res.status(400).json({
+        msg: 'Cannot assign a rejected student to a teacher. Approve the student first.',
+      });
+    }
+
     // Remove from previous teacher's list if any
     if (user.assignedTeacher) {
       await Admin.findByIdAndUpdate(user.assignedTeacher, {
@@ -353,6 +360,36 @@ exports.assignStudentToTeacher = async (req, res) => {
       .select('-password')
       .populate('assignedTeacher', 'fullName email username');
     res.json(updated);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
+// Delete Student (Main Admin only)
+// ============================================================
+exports.deleteStudent = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ msg: 'Student not found' });
+    }
+
+    // Remove student from any teacher's assignedStudents list
+    if (user.assignedTeacher) {
+      await Admin.findByIdAndUpdate(user.assignedTeacher, {
+        $pull: { assignedStudents: req.params.userId },
+      });
+    }
+
+    // Delete all attendance records for this student
+    const Attendance = require('../models/Attendance');
+    await Attendance.deleteMany({ student: req.params.userId });
+
+    // Delete the student
+    await user.deleteOne();
+    res.json({ msg: 'Student deleted successfully' });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error', error: err.message });
