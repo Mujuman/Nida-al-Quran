@@ -5,9 +5,7 @@ export const apiService = {
   registerUser: async (userData) => {
     const response = await fetch(`${API_URL}/api/users/register`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
     });
     return response.json();
@@ -16,9 +14,7 @@ export const apiService = {
   loginUser: async (credentials) => {
     const response = await fetch(`${API_URL}/api/users/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
     });
     return response.json();
@@ -30,19 +26,17 @@ export const apiService = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.json();
   },
 
-  // ========== ADMIN ENDPOINTS ==========
+  // ========== ADMIN AUTH ENDPOINTS ==========
   adminLogin: async (credentials) => {
     const response = await fetch(`${API_URL}/api/admin/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
     });
     return response.json();
@@ -51,23 +45,16 @@ export const apiService = {
   getDashboardStats: async () => {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/admin/dashboard/stats`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },
 
+  // ========== USER MANAGEMENT ==========
   getAllUsers: async () => {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/admin/users`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },
@@ -75,11 +62,7 @@ export const apiService = {
   getUserDetails: async (userId) => {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/admin/users/${userId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },
@@ -90,9 +73,83 @@ export const apiService = {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(status),
+    });
+    return response.json();
+  },
+
+  deleteUser: async (userId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  assignStudentToTeacher: async (userId, teacherId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/users/${userId}/assign`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ teacherId }),
+    });
+    return response.json();
+  },
+
+  getMyStudents: async () => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/my-students`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  // ========== SUB-ADMIN MANAGEMENT ==========
+  getSubAdmins: async () => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/sub-admins`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  createSubAdmin: async (data) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/sub-admins/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  updateSubAdmin: async (adminId, data) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/sub-admins/${adminId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  deleteSubAdmin: async (adminId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/sub-admins/${adminId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },
@@ -101,9 +158,7 @@ export const apiService = {
   submitContact: async (contactData) => {
     const response = await fetch(`${API_URL}/api/contacts`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(contactData),
     });
     return response.json();
@@ -112,24 +167,17 @@ export const apiService = {
   getAllContacts: async (filters = {}) => {
     const token = localStorage.getItem('adminToken');
     const query = new URLSearchParams(filters).toString();
-    const response = await fetch(`${API_URL}/api/contacts${query ? '?' + query : ''}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/api/contacts${query ? '?' + query : ''}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     return response.json();
   },
 
   getContactById: async (contactId) => {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/contacts/${contactId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },
@@ -140,7 +188,7 @@ export const apiService = {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ reply }),
     });
@@ -151,10 +199,7 @@ export const apiService = {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/contacts/${contactId}/read`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },
@@ -163,9 +208,7 @@ export const apiService = {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/contacts/${contactId}`, {
       method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },
@@ -174,10 +217,7 @@ export const apiService = {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/contacts/${contactId}/spam`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },
@@ -189,7 +229,7 @@ export const apiService = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(attendanceData),
     });
@@ -202,7 +242,7 @@ export const apiService = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(attendanceData),
     });
@@ -212,52 +252,30 @@ export const apiService = {
   getStudentAttendance: async (filters = {}) => {
     const token = localStorage.getItem('adminToken');
     const query = new URLSearchParams(filters).toString();
-    const response = await fetch(`${API_URL}/api/attendance/student${query ? '?' + query : ''}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    return response.json();
-  },
-
-  getAttendanceByCourse: async (filters = {}) => {
-    const token = localStorage.getItem('adminToken');
-    const query = new URLSearchParams(filters).toString();
-    const response = await fetch(`${API_URL}/api/attendance/course${query ? '?' + query : ''}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    return response.json();
-  },
-
-  getAttendanceReport: async (filters = {}) => {
-    const token = localStorage.getItem('adminToken');
-    const query = new URLSearchParams(filters).toString();
-    const response = await fetch(`${API_URL}/api/attendance/report${query ? '?' + query : ''}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/api/attendance/student${query ? '?' + query : ''}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     return response.json();
   },
 
   getAllAttendance: async (filters = {}) => {
     const token = localStorage.getItem('adminToken');
     const query = new URLSearchParams(filters).toString();
-    const response = await fetch(`${API_URL}/api/attendance${query ? '?' + query : ''}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/api/attendance${query ? '?' + query : ''}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.json();
+  },
+
+  getAttendanceReport: async (filters = {}) => {
+    const token = localStorage.getItem('adminToken');
+    const query = new URLSearchParams(filters).toString();
+    const response = await fetch(
+      `${API_URL}/api/attendance/report${query ? '?' + query : ''}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     return response.json();
   },
 
@@ -265,17 +283,27 @@ export const apiService = {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/attendance/${attendanceId}`, {
       method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },
 
-  // ========== TOKEN MANAGEMENT ==========
+  // ========== TOKEN & ADMIN INFO MANAGEMENT ==========
   saveToken: (token, isAdmin = false) => {
     const key = isAdmin ? 'adminToken' : 'token';
     localStorage.setItem(key, token);
+  },
+
+  saveAdminInfo: (adminInfo) => {
+    localStorage.setItem('adminInfo', JSON.stringify(adminInfo));
+  },
+
+  getAdminInfo: () => {
+    try {
+      return JSON.parse(localStorage.getItem('adminInfo')) || null;
+    } catch {
+      return null;
+    }
   },
 
   getToken: (isAdmin = false) => {
@@ -286,10 +314,16 @@ export const apiService = {
   clearToken: (isAdmin = false) => {
     const key = isAdmin ? 'adminToken' : 'token';
     localStorage.removeItem(key);
+    if (isAdmin) localStorage.removeItem('adminInfo');
   },
 
   isAuthenticated: (isAdmin = false) => {
     const key = isAdmin ? 'adminToken' : 'token';
     return !!localStorage.getItem(key);
+  },
+
+  isMainAdmin: () => {
+    const info = apiService.getAdminInfo();
+    return info && info.role === 'main_admin';
   },
 };

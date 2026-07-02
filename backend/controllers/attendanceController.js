@@ -112,11 +112,12 @@ exports.getStudentAttendance = async (req, res) => {
 // ──────────────────────────────────────────────────────────────
 exports.getAllAttendance = async (req, res) => {
   try {
-    const { course, startDate, endDate, status } = req.query;
+    const { course, startDate, endDate, status, recordedBy } = req.query;
 
     const filter = {};
     if (course) filter.course = course;
     if (status) filter.status = status;
+    if (recordedBy) filter.recordedBy = recordedBy;
     if (startDate && endDate) {
       filter.date = {
         $gte: new Date(startDate),
