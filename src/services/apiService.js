@@ -326,4 +326,31 @@ export const apiService = {
     const info = apiService.getAdminInfo();
     return info && info.role === 'main_admin';
   },
+
+  getProfile: async () => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  updateProfile: async (data) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await response.json();
+    // On success, refresh stored token + admin info
+    if (result.token) {
+      localStorage.setItem('adminToken', result.token);
+      localStorage.setItem('adminInfo', JSON.stringify(result.admin));
+    }
+    return result;
+  },
 };

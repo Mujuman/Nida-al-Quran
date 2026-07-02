@@ -10,9 +10,17 @@ exports.markAttendance = async (req, res) => {
   const { studentId, course, date, status, notes } = req.body;
 
   try {
+    if (req.admin.role === 'main_admin') {
+      return res.status(403).json({ msg: 'Access denied. Main admin cannot mark attendance.' });
+    }
+
     const student = await User.findById(studentId);
     if (!student) {
       return res.status(404).json({ msg: 'Student not found' });
+    }
+
+    if (student.isTeachingActive === false) {
+      return res.status(400).json({ msg: 'Cannot mark attendance. Teaching status is disabled for this student.' });
     }
 
     // Sub-admin restriction: only mark attendance for their own students
@@ -183,6 +191,10 @@ exports.bulkMarkAttendance = async (req, res) => {
   const { course, date, records } = req.body;
 
   try {
+    if (req.admin.role === 'main_admin') {
+      return res.status(403).json({ msg: 'Access denied. Main admin cannot mark attendance.' });
+    }
+
     // Sub-admin: validate all students are assigned
     if (req.admin.role === 'sub_admin') {
       const adminDoc = await Admin.findById(req.admin.id);
@@ -193,6 +205,14 @@ exports.bulkMarkAttendance = async (req, res) => {
       if (unauthorized.length > 0) {
         return res.status(403).json({ msg: 'Some students are not assigned to you.' });
       }
+    }
+
+    // Verify all selected students have active teaching status
+    const studentIds = records.map(r => r.studentId);
+    const studentsList = await User.find({ _id: { $in: studentIds } });
+    const inactiveStudents = studentsList.filter(s => s.isTeachingActive === false);
+    if (inactiveStudents.length > 0) {
+      return res.status(400).json({ msg: 'Some students do not have active teaching status.' });
     }
 
     const results = [];

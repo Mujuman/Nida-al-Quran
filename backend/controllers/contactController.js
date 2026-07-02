@@ -73,7 +73,27 @@ exports.replyContact = async (req, res) => {
     contact.repliedAt = new Date();
 
     await contact.save();
-    res.json({ msg: 'Reply sent successfully', contact });
+
+    // Send the reply email asynchronously
+    const sendEmail = require('../utils/sendEmail');
+    const emailResult = await sendEmail({
+      to: contact.email,
+      subject: `Reply to your inquiry: ${contact.subject || 'Nida Al-Quran'}`,
+      text: `Hello ${contact.fullName || 'there'},\n\nWe received your inquiry regarding "${contact.subject}". Here is our reply:\n\n---\n\n${reply}\n\n---\n\nBest regards,\nNida Al-Quran Team`,
+      html: `<p>Hello <strong>${contact.fullName || 'there'}</strong>,</p>
+             <p>We received your inquiry regarding "<em>${contact.subject || 'Nida Al-Quran'}</em>". Here is our reply:</p>
+             <div style="padding: 1rem; border-left: 4px solid #D4AF37; background-color: #f9f9f9; font-style: italic; margin: 1.5rem 0;">
+               ${reply.replace(/\n/g, '<br>')}
+             </div>
+             <p>Best regards,<br><strong>Nida Al-Quran Team</strong></p>`
+    });
+
+    res.json({
+      msg: 'Reply sent successfully',
+      contact,
+      emailSent: emailResult.success,
+      previewUrl: emailResult.previewUrl
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error' });

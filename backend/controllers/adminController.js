@@ -61,13 +61,15 @@ exports.getAllUsers = async (req, res) => {
         .select('-password')
         .populate('assignedTeacher', 'fullName email username');
     } else {
-      // Sub-admin: only assigned students
+      // Sub-admin: only assigned students who have active teaching status
       const adminDoc = await Admin.findById(req.admin.id).populate({
         path: 'assignedStudents',
         select: '-password',
         populate: { path: 'assignedTeacher', select: 'fullName email username' },
       });
-      users = adminDoc ? adminDoc.assignedStudents : [];
+      users = adminDoc 
+        ? adminDoc.assignedStudents.filter(s => s.isTeachingActive !== false)
+        : [];
     }
     res.json(users);
   } catch (err) {
@@ -111,7 +113,7 @@ exports.getUserDetails = async (req, res) => {
 // ============================================================
 exports.updateUserStatus = async (req, res) => {
   try {
-    const { registrationStatus, isVerified } = req.body;
+    const { registrationStatus, isVerified, isTeachingActive } = req.body;
 
     let user = await User.findById(req.params.userId);
     if (!user) {
@@ -120,6 +122,7 @@ exports.updateUserStatus = async (req, res) => {
 
     if (registrationStatus) user.registrationStatus = registrationStatus;
     if (isVerified !== undefined) user.isVerified = isVerified;
+    if (isTeachingActive !== undefined) user.isTeachingActive = isTeachingActive;
 
     await user.save();
     res.json(user);
@@ -405,7 +408,10 @@ exports.getMyStudents = async (req, res) => {
       path: 'assignedStudents',
       select: '-password',
     });
-    res.json(adminDoc ? adminDoc.assignedStudents : []);
+    const students = adminDoc 
+      ? adminDoc.assignedStudents.filter(s => s.isTeachingActive !== false)
+      : [];
+    res.json(students);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error' });
@@ -433,5 +439,74 @@ exports.getAllAttendanceRecords = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// ============================================================
+// Get My Profile (any authenticated admin)
+// ============================================================
+exports.getProfile = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin.id).select('-password');
+    if (!admin) return res.status(404).json({ msg: 'Admin not found' });
+    res.json(admin);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// ============================================================
+// Update My Profile (any authenticated admin)
+// ============================================================
+exports.updateProfile = async (req, res) => {
+  const { fullName, email, currentPassword, newPassword } = req.body;
+  try {
+    const admin = await Admin.findById(req.admin.id);
+    if (!admin) return res.status(404).json({ msg: 'Admin not found' });
+
+    // If changing email, make sure no other admin uses it
+    if (email && email !== admin.email) {
+      const existing = await Admin.findOne({ email });
+      if (existing) return res.status(400).json({ msg: 'Email already in use by another account' });
+      admin.email = email;
+    }
+
+    if (fullName) admin.fullName = fullName;
+
+    // Password change requires current password verification
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ msg: 'Current password is required to set a new password' });
+      }
+      const isMatch = await bcrypt.compare(currentPassword, admin.password);
+      if (!isMatch) {
+        return res.status(400).json({ msg: 'Current password is incorrect' });
+      }
+      const salt = await bcrypt.genSalt(10);
+      admin.password = await bcrypt.hash(newPassword, salt);
+    }
+
+    await admin.save();
+
+    // Return a fresh token so stored info stays in sync
+    const payload = { admin: { id: admin.id, role: admin.role } };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({
+      msg: 'Profile updated successfully',
+      token,
+      admin: {
+        id: admin.id,
+        email: admin.email,
+        fullName: admin.fullName,
+        username: admin.username,
+        role: admin.role,
+        permissions: admin.permissions,
+      },
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
   }
 };

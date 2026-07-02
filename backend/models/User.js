@@ -57,6 +57,11 @@ const UserSchema = new mongoose.Schema(
       ref: 'Admin',
       default: null,
     },
+    // Main admin toggle to control if the teacher teaches this student
+    isTeachingActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

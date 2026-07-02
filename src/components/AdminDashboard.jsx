@@ -29,6 +29,7 @@ function AdminDashboard() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [showReplyModal, setShowReplyModal] = useState(false);
+  const [emailPreviewUrl, setEmailPreviewUrl] = useState('');
   const [showUserModal, setShowUserModal] = useState(false);
   const [showCreateSubAdminModal, setShowCreateSubAdminModal] = useState(false);
   const [showEditSubAdminModal, setShowEditSubAdminModal] = useState(false);
@@ -41,6 +42,14 @@ function AdminDashboard() {
   const [attendanceFilter, setAttendanceFilter] = useState({
     startDate: '', endDate: '', course: '', status: '', teacherId: '',
   });
+  const [profileForm, setProfileForm] = useState({
+    fullName: adminInfo?.fullName || '',
+    email: adminInfo?.email || '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [profileLoading, setProfileLoading] = useState(false);
 
   // Sub-admin creation form
   const [subAdminForm, setSubAdminForm] = useState({
@@ -142,6 +151,50 @@ function AdminDashboard() {
     }
   };
 
+  const handleToggleTeaching = async (userId, currentStatus) => {
+    try {
+      await apiService.updateUserStatus(userId, { isTeachingActive: !currentStatus });
+      showMessage(`Teaching status updated successfully`);
+      fetchDashboardData();
+    } catch (err) {
+      showMessage(`Error: ${err.message}`, 'error');
+    }
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    if (profileForm.newPassword && profileForm.newPassword !== profileForm.confirmPassword) {
+      showMessage('New passwords do not match', 'error');
+      return;
+    }
+    if (profileForm.newPassword && profileForm.newPassword.length < 6) {
+      showMessage('New password must be at least 6 characters', 'error');
+      return;
+    }
+    setProfileLoading(true);
+    try {
+      const payload = { fullName: profileForm.fullName, email: profileForm.email };
+      if (profileForm.newPassword) {
+        payload.currentPassword = profileForm.currentPassword;
+        payload.newPassword = profileForm.newPassword;
+      }
+      const res = await apiService.updateProfile(payload);
+      if (res.msg === 'Profile updated successfully') {
+        showMessage('Profile updated successfully! ✓');
+        setProfileForm(p => ({ ...p, currentPassword: '', newPassword: '', confirmPassword: '' }));
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
+      } else {
+        showMessage(res.msg || 'Update failed', 'error');
+      }
+    } catch (err) {
+      showMessage(`Error: ${err.message}`, 'error');
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
   const handleViewUser = async (userId) => {
     try {
       const user = await apiService.getUserDetails(userId);
@@ -190,12 +243,15 @@ function AdminDashboard() {
   const handleReplyContact = async () => {
     if (!replyText.trim()) { showMessage('Enter a reply', 'error'); return; }
     try {
-      await apiService.replyContact(selectedContact._id, replyText);
-      showMessage('Reply sent');
+      const res = await apiService.replyContact(selectedContact._id, replyText);
+      showMessage(res && res.previewUrl ? 'Reply sent (Test Email generated)' : 'Reply sent');
       setShowReplyModal(false);
       setReplyText('');
       setSelectedContact(null);
       fetchDashboardData();
+      if (res && res.previewUrl) {
+        setEmailPreviewUrl(res.previewUrl);
+      }
     } catch (err) {
       showMessage('Error sending reply', 'error');
     }
@@ -385,6 +441,7 @@ function AdminDashboard() {
     { id: 'attendance', icon: <Clock size={20} />, label: 'Attendance', all: true },
     { id: 'subadmins', icon: <Shield size={20} />, label: 'Sub-Admins', mainOnly: true },
     { id: 'contacts', icon: <Mail size={20} />, label: 'Messages', mainOnly: true },
+    { id: 'profile', icon: <UserCheck size={20} />, label: 'My Profile', mainOnly: true },
   ].filter(item => item.all || (item.mainOnly && isMainAdmin));
 
   return (
@@ -750,90 +807,203 @@ function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Mark Attendance Section */}
-              <div className="attendance-mark-panel">
-                <h3><BookOpen size={18} /> Mark Attendance</h3>
-                <div className="attendance-controls">
-                  <div className="control-group">
-                    <label>Date</label>
-                    <div className="input-with-icon">
-                      <Calendar size={16} />
-                      <input
-                        type="date"
-                        value={attendanceDate}
-                        onChange={e => setAttendanceDate(e.target.value)}
-                      />
+              {/* Mark Attendance Section (Sub-admin only) or Control Teaching Assignments (Main Admin only) */}
+              {!isMainAdmin ? (
+                <div className="attendance-mark-panel">
+                  <h3><BookOpen size={18} /> Mark Attendance</h3>
+                  <div className="attendance-controls">
+                    <div className="control-group">
+                      <label>Date</label>
+                      <div className="input-with-icon">
+                        <Calendar size={16} />
+                        <input
+                          type="date"
+                          value={attendanceDate}
+                          onChange={e => setAttendanceDate(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="control-group">
+                      <label>Course</label>
+                      <select
+                        value={attendanceCourse}
+                        onChange={e => setAttendanceCourse(e.target.value)}
+                      >
+                        <option value="">All Courses</option>
+                        <option value="quran-recitation">Quran Recitation</option>
+                        <option value="quran-memorization">Quran Memorization</option>
+                        <option value="islamic-studies">Islamic Studies</option>
+                        <option value="arabic-language">Arabic Language</option>
+                      </select>
                     </div>
                   </div>
-                  <div className="control-group">
-                    <label>Course</label>
-                    <select
-                      value={attendanceCourse}
-                      onChange={e => setAttendanceCourse(e.target.value)}
-                    >
-                      <option value="">All Courses</option>
-                      <option value="quran-recitation">Quran Recitation</option>
-                      <option value="quran-memorization">Quran Memorization</option>
-                      <option value="islamic-studies">Islamic Studies</option>
-                      <option value="arabic-language">Arabic Language</option>
-                    </select>
-                  </div>
-                </div>
 
-                {isLoading ? (
-                  <div className="loading-state"><div className="loading-ring" /><p>Loading...</p></div>
-                ) : users.filter(u => u.registrationStatus === 'approved').length === 0 ? (
-                  <div className="empty-state">
-                    <Clock size={48} />
-                    <p>No approved students to mark attendance</p>
+                  {isLoading ? (
+                    <div className="loading-state"><div className="loading-ring" /><p>Loading...</p></div>
+                  ) : users.filter(u => u.registrationStatus === 'approved').length === 0 ? (
+                    <div className="empty-state">
+                      <Clock size={48} />
+                      <p>No approved students to mark attendance</p>
+                    </div>
+                  ) : (
+                    <div className="table-container" style={{ marginTop: '1rem' }}>
+                      <table className="data-table">
+                        <thead>
+                          <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Mark Attendance</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {users
+                            .filter(u => u.registrationStatus === 'approved')
+                            .filter(u => !attendanceCourse || u.course === attendanceCourse)
+                            .map(user => (
+                              <tr key={user._id}>
+                                <td>
+                                  <div className="user-cell">
+                                    <div className="user-avatar">{user.fullName?.charAt(0)}</div>
+                                    <span>{user.fullName}</span>
+                                  </div>
+                                </td>
+                                <td>{user.course || '—'}</td>
+                                <td>
+                                  <div className="attendance-btns">
+                                    {['present', 'absent', 'late', 'excused'].map(s => (
+                                      <button
+                                        key={s}
+                                        className={`btn-attendance ${s}`}
+                                        onClick={() => handleMarkAttendance(user._id, s)}
+                                      >
+                                        {s === 'present' && <CheckCircle size={14} />}
+                                        {s === 'absent' && <XCircle size={14} />}
+                                        {s === 'late' && <Clock size={14} />}
+                                        {s === 'excused' && <AlertCircle size={14} />}
+                                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="attendance-mark-panel">
+                  <h3><Shield size={18} /> Control Teaching Assignments</h3>
+                  <p className="panel-desc" style={{ fontSize: '0.85rem', color: 'var(--admin-text-muted)', marginBottom: '1.25rem' }}>
+                    Control which teachers (sub-admins) actively teach students. If a student is set to "Teaching Blocked", the teacher will not see that student on their dashboard and cannot take their attendance.
+                  </p>
+                  
+                  <div className="attendance-controls">
+                    <div className="control-group">
+                      <label>Course Filter</label>
+                      <select
+                        value={attendanceCourse}
+                        onChange={e => setAttendanceCourse(e.target.value)}
+                      >
+                        <option value="">All Courses</option>
+                        <option value="quran-recitation">Quran Recitation</option>
+                        <option value="quran-memorization">Quran Memorization</option>
+                        <option value="islamic-studies">Islamic Studies</option>
+                        <option value="arabic-language">Arabic Language</option>
+                      </select>
+                    </div>
                   </div>
-                ) : (
-                  <div className="table-container" style={{ marginTop: '1rem' }}>
-                    <table className="data-table">
-                      <thead>
-                        <tr>
-                          <th>Student</th>
-                          <th>Course</th>
-                          <th>Mark Attendance</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {users
-                          .filter(u => u.registrationStatus === 'approved')
-                          .filter(u => !attendanceCourse || u.course === attendanceCourse)
-                          .map(user => (
-                            <tr key={user._id}>
-                              <td>
-                                <div className="user-cell">
-                                  <div className="user-avatar">{user.fullName?.charAt(0)}</div>
-                                  <span>{user.fullName}</span>
-                                </div>
-                              </td>
-                              <td>{user.course || '—'}</td>
-                              <td>
-                                <div className="attendance-btns">
-                                  {['present', 'absent', 'late', 'excused'].map(s => (
-                                    <button
-                                      key={s}
-                                      className={`btn-attendance ${s}`}
-                                      onClick={() => handleMarkAttendance(user._id, s)}
+
+                  {isLoading ? (
+                    <div className="loading-state"><div className="loading-ring" /><p>Loading...</p></div>
+                  ) : users.filter(u => u.registrationStatus === 'approved').length === 0 ? (
+                    <div className="empty-state">
+                      <Users size={48} />
+                      <p>No approved students registered yet</p>
+                    </div>
+                  ) : (
+                    <div className="table-container" style={{ marginTop: '1rem' }}>
+                      <table className="data-table">
+                        <thead>
+                          <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Assigned Teacher</th>
+                            <th>Teaching Active Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {users
+                            .filter(u => u.registrationStatus === 'approved')
+                            .filter(u => !attendanceCourse || u.course === attendanceCourse)
+                            .map(user => (
+                              <tr key={user._id}>
+                                <td>
+                                  <div className="user-cell">
+                                    <div className="user-avatar">{user.fullName?.charAt(0)}</div>
+                                    <div>
+                                      <div className="user-name">{user.fullName}</div>
+                                      <div className="user-meta">{user.email}</div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>{user.course || '—'}</td>
+                                <td>
+                                  <div className="teacher-assign">
+                                    <select
+                                      value={user.assignedTeacher?._id || ''}
+                                      onChange={e => handleAssignTeacher(user._id, e.target.value)}
+                                      className="teacher-select"
                                     >
-                                      {s === 'present' && <CheckCircle size={14} />}
-                                      {s === 'absent' && <XCircle size={14} />}
-                                      {s === 'late' && <Clock size={14} />}
-                                      {s === 'excused' && <AlertCircle size={14} />}
-                                      {s.charAt(0).toUpperCase() + s.slice(1)}
-                                    </button>
-                                  ))}
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
+                                      <option value="">Unassigned</option>
+                                      {subAdmins.filter(sa => sa.isActive).map(sa => (
+                                        <option key={sa._id} value={sa._id}>{sa.fullName}</option>
+                                      ))}
+                                    </select>
+                                    <ChevronDown size={14} className="select-chevron" />
+                                  </div>
+                                </td>
+                                <td>
+                                  <button
+                                    className={`btn-teaching-toggle ${user.isTeachingActive !== false ? 'active' : 'inactive'}`}
+                                    onClick={() => handleToggleTeaching(user._id, user.isTeachingActive !== false)}
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '0.4rem',
+                                      padding: '0.4rem 0.8rem',
+                                      border: 'none',
+                                      borderRadius: '6px',
+                                      fontSize: '0.8rem',
+                                      fontWeight: '600',
+                                      cursor: 'pointer',
+                                      transition: 'var(--admin-transition)',
+                                      color: user.isTeachingActive !== false ? '#065f46' : '#991b1b',
+                                      background: user.isTeachingActive !== false ? '#d1fae5' : '#fee2e2',
+                                    }}
+                                  >
+                                    {user.isTeachingActive !== false ? (
+                                      <>
+                                        <CheckCircle size={14} />
+                                        <span>Active Teaching</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <XCircle size={14} />
+                                        <span>Teaching Blocked</span>
+                                      </>
+                                    )}
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Attendance Records */}
               <div className="attendance-records-panel">
@@ -1118,6 +1288,114 @@ function AdminDashboard() {
             </section>
           )}
 
+          {/* ── PROFILE TAB (Main Admin only) ─────────────── */}
+          {activeTab === 'profile' && isMainAdmin && (
+            <section className="section-content">
+              <div className="section-header">
+                <div>
+                  <h2>My Profile</h2>
+                  <p>Update your account name, email and password</p>
+                </div>
+              </div>
+
+              <div className="profile-settings-grid">
+                {/* Account Info Card */}
+                <div className="profile-card">
+                  <div className="profile-avatar-block">
+                    <div className="profile-avatar-lg">
+                      {(profileForm.fullName || adminInfo?.fullName || 'A').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="profile-name">{profileForm.fullName || adminInfo?.fullName}</div>
+                      <div className="profile-role-badge">Main Administrator</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Edit Form Card */}
+                <div className="profile-card profile-form-card">
+                  <form onSubmit={handleUpdateProfile} className="profile-form">
+                    <h3 className="form-section-title">Account Information</h3>
+
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label>Full Name</label>
+                        <input
+                          type="text"
+                          value={profileForm.fullName}
+                          onChange={e => setProfileForm(p => ({ ...p, fullName: e.target.value }))}
+                          placeholder="Your full name"
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Email Address</label>
+                        <input
+                          type="email"
+                          value={profileForm.email}
+                          onChange={e => setProfileForm(p => ({ ...p, email: e.target.value }))}
+                          placeholder="your@email.com"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <h3 className="form-section-title" style={{ marginTop: '1.5rem' }}>Change Password</h3>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)', marginBottom: '1rem' }}>
+                      Leave blank to keep your current password.
+                    </p>
+
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label>Current Password</label>
+                        <input
+                          type="password"
+                          value={profileForm.currentPassword}
+                          onChange={e => setProfileForm(p => ({ ...p, currentPassword: e.target.value }))}
+                          placeholder="Enter current password"
+                        />
+                      </div>
+                      <div className="form-group" />
+                      <div className="form-group">
+                        <label>New Password</label>
+                        <input
+                          type="password"
+                          value={profileForm.newPassword}
+                          onChange={e => setProfileForm(p => ({ ...p, newPassword: e.target.value }))}
+                          placeholder="Min. 6 characters"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Confirm New Password</label>
+                        <input
+                          type="password"
+                          value={profileForm.confirmPassword}
+                          onChange={e => setProfileForm(p => ({ ...p, confirmPassword: e.target.value }))}
+                          placeholder="Repeat new password"
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ marginTop: '1.75rem' }}>
+                      <button
+                        type="submit"
+                        className="btn-primary-action"
+                        disabled={profileLoading}
+                        style={{ minWidth: '160px' }}
+                      >
+                        {profileLoading ? (
+                          <><div className="loading-ring" style={{ width: 16, height: 16, borderWidth: 2 }} /> Saving...</>
+                        ) : (
+                          <><CheckCircle size={16} /> Save Changes</>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </section>
+          )}
+
         </main>
       </div>
 
@@ -1208,6 +1486,52 @@ function AdminDashboard() {
                 <Send size={16} /> Send Reply
               </button>
               <button className="btn-modal secondary" onClick={() => setShowReplyModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Email Preview Modal */}
+      {emailPreviewUrl && (
+        <div className="modal-overlay" onClick={() => setEmailPreviewUrl('')}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Test Email Generated</h3>
+              <button className="modal-close" onClick={() => setEmailPreviewUrl('')}><X size={20} /></button>
+            </div>
+            <div className="modal-body text-center" style={{ textAlign: 'center', padding: '2rem 1.5rem' }}>
+              <div className="email-success-icon" style={{ color: '#D4AF37', marginBottom: '1.5rem' }}>
+                <Mail size={48} style={{ margin: '0 auto' }} />
+              </div>
+              <h4 style={{ color: 'var(--admin-dark-navy)', fontWeight: '700', marginBottom: '0.75rem', fontSize: '1.15rem' }}>Ethereal Test Email Inbox Used</h4>
+              <p style={{ color: 'var(--admin-text-muted)', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1.75rem' }}>
+                Since SMTP credentials are not configured in the application environment, the email was sent using a simulated Ethereal test inbox. You can inspect the email exactly as the user would see it in their inbox by clicking the button below:
+              </p>
+              <a
+                href={emailPreviewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-modal success"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  textDecoration: 'none',
+                  justifyContent: 'center',
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: '#D4AF37',
+                  color: '#fff',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  margin: '0 auto',
+                  transition: 'background-color 0.2s'
+                }}
+              >
+                <Eye size={16} /> View Sent Email Preview
+              </a>
+            </div>
+            <div className="modal-footer" style={{ justifyContent: 'center' }}>
+              <button className="btn-modal secondary" onClick={() => setEmailPreviewUrl('')}>Close</button>
             </div>
           </div>
         </div>

@@ -17,12 +17,16 @@ const {
   assignStudentToTeacher,
   getMyStudents,
   getAllAttendanceRecords,
+  getProfile,
+  updateProfile,
 } = require('../controllers/adminController');
 
 // ── Public ───────────────────────────────────────────────────
 router.post('/login', adminLogin);
 
 // ── All authenticated admins ─────────────────────────────────
+router.get('/profile', adminAuth, getProfile);
+router.put('/profile', adminAuth, updateProfile);
 router.get('/dashboard/stats', adminAuth, getDashboardStats);
 router.get('/users', adminAuth, getAllUsers);
 router.get('/users/:userId', adminAuth, getUserDetails);
