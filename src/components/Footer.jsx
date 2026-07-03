@@ -49,11 +49,9 @@ function Footer({ navigateTo }) {
             <div className="footer-section">
               <h4>ኮርሶቻችን</h4>
               <ul className="footer-links">
-                <li><a href="#">የቁርኣን ትምህርት</a></li>
-                <li><a href="#">የእስላማዊ ጥናቶች</a></li>
-                <li><a href="#">የአረብኛ ቋንቋ</a></li>
-                <li><a href="#">የህጻናት ፕሮግራም</a></li>
-                <li><a href="#">የመስመር ላይ ትምህርት</a></li>
+                <li><a href="#">የኦላይን ቂርአት</a></li>
+               <li><a href="#">የህጻናት ፕሮግራም</a></li>
+               
               </ul>
             </div>
 

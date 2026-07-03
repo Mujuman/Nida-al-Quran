@@ -49,8 +49,7 @@ function Home() {
             <h1 className="hero-title">እንኳን ወደ ኒዳእ አል ቁርኣን በደህና መጡ</h1>
             <p className="hero-subtitle">የቁርኣን ትምህርትን በባለሙያ መምህራን ተማሩ</p>
             <p className="hero-description">
-              የእስላማዊ ትምህርት ማዕከላችንን ይቀላቀሉ እና የቁርኣን ትምህርት፣ የአረብኛ ቋንቋ እና የእስላማዊ ጥናቶችን 
-              መንፈሳዊ ጉዞ ይጀምሩ።
+              የእስላማዊ ትምህርት ማዕከላችንን ይቀላቀሉ እና የቁርኣን ትምህርት፣ ባማረ አና በተዋበ መንገድ ይማሩ።
             </p>
             <div className="hero-buttons">
               <button className="btn btn-primary" onClick={() => navigateTo('register')}>
@@ -78,7 +77,7 @@ function Home() {
           <div className="features-header text-center fade-in" style={{ animationDelay: '0.1s' }}>
             <p className="section-subtitle">የእኛ ባለሞያ እና የማዕከላዊ አገልግሎቶች</p>
             <h2 className="section-title">ምን እንደምንሰጥ</h2>
-            <p className="section-description">የተስፋ የሆነ የትምህርት ልምዶችን ጠቃሚ ስራዎች ጋር እንያዛለን።</p>
+            
           </div>
 
           <div className="features-grid">
