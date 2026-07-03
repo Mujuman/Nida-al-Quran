@@ -3,11 +3,11 @@ const bcrypt = require('bcryptjs');
 const Admin = require('../models/Admin');
 
 const createDefaultMainAdmin = async () => {
-  const email = process.env.MAIN_ADMIN_EMAIL || 'admin@nida.com';
+  const email = process.env.MAIN_ADMIN_EMAIL || 'teyba@nida.com';
   const username = process.env.MAIN_ADMIN_USERNAME || 'admin';
-  const password = process.env.MAIN_ADMIN_PASSWORD || 'admin123';
+  const password = process.env.MAIN_ADMIN_PASSWORD || 'muju123@';
   const fullName = process.env.MAIN_ADMIN_FULLNAME || 'System Administrator';
-  const phone = process.env.MAIN_ADMIN_PHONE || '+251911000000';
+  const phone = process.env.MAIN_ADMIN_PHONE || '+251974155756';
 
   const existingAdmin = await Admin.findOne({ email });
   if (existingAdmin) {
