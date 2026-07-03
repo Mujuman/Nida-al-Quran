@@ -145,7 +145,7 @@ function Register() {
                     <li>የማረጋገጫ ኢሜይል በቅርቡ ይደርስዎታል</li>
                     <li>የእኛ ቡድን በ24 ሰዓታት ውስጥ ያግኝዎታል</li>
                     <li>የመክፈያ መረጃ ይላክልዎታል</li>
-                    <li>የክፍል መርሐ ግብርዎ ይደረደርልዎታል</li>
+                   
                   </ul>
                 </div>
                 <div className="contact-support">
@@ -240,7 +240,7 @@ function Register() {
                       <div className="form-group">
                         <label htmlFor="age">
                           <Calendar size={18} />
-                          እድመ *
+                          እድሜ *
                         </label>
                         <input
                           type="number"
@@ -304,13 +304,13 @@ function Register() {
                         required
                       >
                         <option value="">ኮርስ ይምረጡ</option>
-                        <option value="quran-recitation">የቁርኣን ትምህርት (ታጅዊድ)</option>
-                        <option value="quran-memorization">የቁርኣን ማስታወሻ (ሂፍዝ)</option>
-                        <option value="islamic-studies">የእስላማዊ ጥናቶች</option>
+                        <option value="quran-recitation">የቁርኣን ታጅዊድ</option>
+                        <option value="quran-memorization">የቁርኣን ሂፍዝ</option>
+                       
                         <option value="arabic-language">የአረብኛ ቋንቋ</option>
                         <option value="children-program">የህጻናት ፕሮግራም</option>
                         <option value="adult-classes">የአዋቂዎች ክፍሎች</option>
-                        <option value="online-learning">የመስመር ላይ ትምህርት</option>
+                       
                       </select>
                     </div>
 

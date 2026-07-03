@@ -90,7 +90,7 @@ function Contact() {
                   <div className="contact-item-content">
                     <h4>አድራሻ</h4>
                     <p>አዲስ አበባ፣ ኢትዮጵያ</p>
-                    <p>መርካቶ አካባቢ</p>
+                   
                   </div>
                 </div>
 
@@ -100,8 +100,8 @@ function Contact() {
                   </div>
                   <div className="contact-item-content">
                     <h4>ስልክ</h4>
-                    <p>+251 911 234 567</p>
-                    <p>+251 922 345 678</p>
+                    <p>+251 952 552 820</p>
+                    <p>+251 942 431 160</p>
                   </div>
                 </div>
 
@@ -122,7 +122,7 @@ function Contact() {
                   </div>
                   <div className="contact-item-content">
                     <h4>የቢሮ ሰዓታት</h4>
-                    <p><strong>ቅዳሜ - ሐሙስ:</strong> 8:00 ጠዋት - 6:00 ምሽት</p>
+                    <p><strong>ሰኞ- :</strong> 8:00 ጠዋት - 6:00 ምሽት</p>
                     <p><strong>አርብ:</strong> 2:00 ከሰዓት በኋላ - 6:00 ምሽት</p>
                   </div>
                 </div>

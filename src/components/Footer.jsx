@@ -67,7 +67,7 @@ function Footer({ navigateTo }) {
                   <Phone size={18} />
                   <span>
                     +251 952 552 820<br />
-                    +251 922 345 678
+                    +251 942 431 160
                   </span>
                 </li>
                 <li>
