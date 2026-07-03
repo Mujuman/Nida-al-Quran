@@ -1,8 +1,10 @@
 import React from 'react';
 import { BookOpen, Mail, Phone, MapPin, Share2, Video, Send } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import '../styles/Footer.css';
 
 function Footer({ navigateTo }) {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -14,11 +16,10 @@ function Footer({ navigateTo }) {
             <div className="footer-section">
               <div className="footer-brand">
                 <BookOpen className="footer-brand-icon" />
-                <h3>ኒዳእ አል ቁርኣን</h3>
+                <h3>{t('nav.brand')}</h3>
               </div>
               <p className="footer-description">
-                የቁርኣን ትምህርት እና የእስላማዊ እውቀት በኩል አእምሮዎችን ማብቃት። ለሁሉም የዕድሜ ክልል 
-                ጥራት ያለው የእስላማዊ ትምህርት እናቀርባለን።
+                {t('footer.description')}
               </p>
               <div className="footer-social">
                 <a href="#" className="social-icon" aria-label="Share">
@@ -35,13 +36,13 @@ function Footer({ navigateTo }) {
 
             {/* Quick Links */}
             <div className="footer-section">
-              <h4>ፈጣን አገናኞች</h4>
+              <h4>{t('footer.quickLinks')}</h4>
               <ul className="footer-links">
-                <li><a onClick={() => navigateTo('home')}>መነሻ ገጽ</a></li>
-                <li><a onClick={() => navigateTo('about')}>ስለ እኛ</a></li>
-                <li><a onClick={() => navigateTo('services')}>አገልግሎቶች</a></li>
-                <li><a onClick={() => navigateTo('contact')}>አድራሻ</a></li>
-                <li><a onClick={() => navigateTo('register')}>ይመዝገቡ</a></li>
+                <li><a onClick={() => navigateTo('home')}>{t('nav.home')}</a></li>
+                <li><a onClick={() => navigateTo('about')}>{t('nav.about')}</a></li>
+                <li><a onClick={() => navigateTo('services')}>{t('nav.services')}</a></li>
+                <li><a onClick={() => navigateTo('contact')}>{t('nav.contact')}</a></li>
+                <li><a onClick={() => navigateTo('register')}>{t('nav.register')}</a></li>
               </ul>
             </div>
 
@@ -59,7 +60,7 @@ function Footer({ navigateTo }) {
 
             {/* Contact Info */}
             <div className="footer-section">
-              <h4>አድራሻ</h4>
+              <h4>{t('footer.about')}</h4>
               <ul className="footer-contact">
                 <li>
                   <MapPin size={18} />
@@ -89,7 +90,7 @@ function Footer({ navigateTo }) {
       <div className="footer-bottom">
         <div className="container">
           <div className="footer-bottom-content">
-            <p>&copy; {currentYear} ኒዳእ አል ቁርኣን። ሁሉም መብቶች የተጠበቁ ናቸው።</p>
+            <p>&copy; {currentYear} {t('nav.brand')}. {t('footer.copyright')}</p>
             <div className="footer-bottom-links">
               <a href="#">የግላዊነት ፖሊሲ</a>
               <span className="divider">|</span>

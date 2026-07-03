@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Menu, X, BookOpen, Shield } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 import '../styles/Navigation.css';
 
 function Navigation({ navigateTo, onAdminClick }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -30,7 +33,7 @@ function Navigation({ navigateTo, onAdminClick }) {
       <div className="nav-container">
         <div className="nav-brand" onClick={() => handleNavClick('home')}>
           <BookOpen className="brand-icon" />
-          <span className="brand-text">ኒዳእ አል ቁርኣን</span>
+          <span className="brand-text">{t('nav.brand')}</span>
         </div>
         
         <div className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
@@ -38,33 +41,34 @@ function Navigation({ navigateTo, onAdminClick }) {
             onClick={() => handleNavClick('home')} 
             className={isActive('home') ? 'nav-link active' : 'nav-link'}
           >
-            መነሻ ገጽ
+            {t('nav.home')}
           </a>
           <a 
             onClick={() => handleNavClick('about')} 
             className={isActive('about') ? 'nav-link active' : 'nav-link'}
           >
-            ስለ እኛ
+            {t('nav.about')}
           </a>
           <a 
             onClick={() => handleNavClick('services')} 
             className={isActive('services') ? 'nav-link active' : 'nav-link'}
           >
-            አገልግሎቶች
+            {t('nav.services')}
           </a>
           <a 
             onClick={() => handleNavClick('contact')} 
             className={isActive('contact') ? 'nav-link active' : 'nav-link'}
           >
-            አግኙን
+            {t('nav.contact')}
           </a>
           <button className="btn-nav-register" onClick={() => handleNavClick('register')}>
-            ይመዝገቡ
+            {t('nav.register')}
           </button>
           <button className="btn-nav-admin" onClick={onAdminClick}>
             <Shield size={18} />
-            Admin
+            {t('nav.adminLogin')}
           </button>
+          <LanguageSwitcher />
         </div>
 
         <div className="hamburger" onClick={toggleMenu}>

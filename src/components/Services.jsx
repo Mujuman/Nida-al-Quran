@@ -1,90 +1,31 @@
 import React from 'react';
 import { BookOpen, GraduationCap, Languages, Users, Globe, Award } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import '../styles/Services.css';
 
 function Services() {
-  const services = [
-    {
-      icon: <BookOpen size={48} />,
-      title: 'የቁርኣን ትምህርት (ታጅዊድ)',
-      description: 'በተረጋገጡ መምህራን ትክክለኛ የቁርኣን አንባቢ ሕጎችን ይማሩ። ታጅዊድን ከመሠረት እስከ ከፍተኛ ደረጃ ድረስ በሙያ ተማሩ።',
-      features: [
-        'የመሠረታዊ ታጅዊድ ሕጎች',
-        'የላቀ ታጅዊድ ትምህርት',
-        'የቁርኣን ማስታወሻ (ሂፍዝ)',
-        'ተግባራዊ መለማመጃ ክፍለ ጊዜዎች'
-      ],
-      color: '#1E3A8A'
-    },
-    {
-      icon: <GraduationCap size={48} />,
-      title: 'የእስላማዊ ጥናቶች',
-      description: 'ለመንፈሳዊ እድገት እና ግንዛቤ አስፈላጊ ርዕሶችን የሚሸፍን አጠቃላይ የእስላማዊ ትምህርት።',
-      features: [
-        'አቂዳህ (የእስላማዊ እምነት)',
-        'ፊቅህ (የእስላማዊ ሕግ)',
-        'ሲራህ (የነቢዩ ታሪክ)',
-        'አኻላቅ (የእስላማዊ ሥነ ምግባር)'
-      ],
-      color: '#D4AF37'
-    },
-    {
-      icon: <Languages size={48} />,
-      title: 'የአረብኛ ቋንቋ',
-      description: 'ቁርኣንን በዋና ቋንቋው ለመረዳት የአረብኛ ቋንቋን ይቆጣጠሩ።',
-      features: [
-        'የአረብኛ ሰዋሰው (ናሕው)',
-        'የአረብኛ ሞርፎሎጂ (ሰርፍ)',
-        'የውይይት አረብኛ',
-        'የቁርኣን አረብኛ'
-      ],
-      color: '#3B82F6'
-    },
-    {
-      icon: <Users size={48} />,
-      title: 'የህጻናት ፕሮግራሞች',
-      description: 'ልጆች እስላምን በአስደሳች እና አሳታፊ መንገድ እንዲማሩ የተዘጋጁ ልዩ ፕሮግራሞች።',
-      features: [
-        'ለህጻናት ቁርኣን',
-        'የእስላማዊ ታሪኮች',
-        'መሠረታዊ ሰላቶችና ዱዓዎች',
-        'የእስላማዊ ባህሪዎች ትምህርት'
-      ],
-      color: '#10B981'
-    },
-    {
-      icon: <Award size={48} />,
-      title: 'የአዋቂዎች ክፍሎች',
-      description: 'የእስላማዊ እውቀታቸውን ለማጠናከር ለሚፈልጉ አዋቂዎች የተዘጋጁ ተለዋዋጭ ፕሮግራሞች።',
-      features: [
-        'የቅዳሜና እሁድ ክፍሎች',
-        'የማታ ክፍለ ጊዜዎች',
-        'አንድ-ለ-አንድ መማሪያ',
-        'የቡድን ውይይቶች'
-      ],
-      color: '#8B5CF6'
-    },
-    {
-      icon: <Globe size={48} />,
-      title: 'የመስመር ላይ ትምህርት',
-      description: 'በመስመር ላይ የመማሪያ መድረካችን ኮርሶቻችንን ከየትኛውም ቦታ ይድረሱ።',
-      features: [
-        'የቀጥታ ምናባዊ ክፍሎች',
-        'የተቀረጹ ትምህርቶች',
-        'በይነተገናኝ ክፍለ ጊዜዎች',
-        '24/7 የመማሪያ ቁሳቁስ መዳረሻ'
-      ],
-      color: '#F59E0B'
-    }
+  const { t } = useTranslation();
+  
+  const services = t('services.services', { returnObjects: true });
+
+  const icons = [
+    <BookOpen size={48} />,
+    <GraduationCap size={48} />,
+    <Languages size={48} />,
+    <Users size={48} />,
+    <Award size={48} />,
+    <Globe size={48} />
   ];
+
+  const colors = ['#1E3A8A', '#D4AF37', '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B'];
 
   return (
     <div className="services-page">
       {/* Header Section */}
       <section className="services-header">
         <div className="container">
-          <h1 className="page-title fade-in">የእኛ አገልግሎቶች</h1>
-          <p className="page-subtitle fade-in">አጠቃላይ የእስላማዊ ትምህርት ፕሮግራሞች</p>
+          <h1 className="page-title fade-in">{t('services.pageTitle')}</h1>
+          <p className="page-subtitle fade-in">{t('services.pageSubtitle')}</p>
           <div className="title-divider"></div>
         </div>
       </section>
@@ -93,24 +34,24 @@ function Services() {
       <section className="services-section">
         <div className="container">
           <div className="services-grid">
-            {services.map((service, index) => (
+            {services && services.map((service, index) => (
               <div 
                 key={index} 
                 className="service-card fade-in"
                 style={{ 
                   animationDelay: `${index * 0.1}s`,
-                  '--accent-color': service.color
+                  '--accent-color': colors[index]
                 }}
               >
-                <div className="service-icon">{service.icon}</div>
+                <div className="service-icon">{icons[index]}</div>
                 <h3 className="service-title">{service.title}</h3>
                 <p className="service-description">{service.description}</p>
                 <ul className="service-features">
-                  {service.features.map((feature, idx) => (
+                  {service.features && service.features.map((feature, idx) => (
                     <li key={idx}>{feature}</li>
                   ))}
                 </ul>
-                <button className="btn-service">ተጨማሪ ይወቁ</button>
+                <button className="btn-service">{t('home.learnMoreBtn')}</button>
               </div>
             ))}
           </div>
@@ -120,12 +61,12 @@ function Services() {
       {/* Why Choose Us */}
       <section className="why-choose-section">
         <div className="container">
-          <h2 className="section-title">ለምን እኛን መምረጥ አለብዎት?</h2>
+          <h2 className="section-title">{t('services.pageTitle')}</h2>
           <div className="why-choose-grid">
             <div className="why-card">
               <div className="why-number">01</div>
-              <h3>የተረጋገጡ መምህራን</h3>
-              <p>ሁሉም መምህራኖቻችን በየመስኮቻቸው የተረጋገጡ እና ልምድ ያላቸው ናቸው።</p>
+              <h3>{t('services.pageTitle')}</h3>
+              <p>{t('about.description2')}</p>
             </div>
             <div className="why-card">
               <div className="why-number">02</div>
