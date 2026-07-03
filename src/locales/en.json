@@ -1,0 +1,236 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "contact": "Contact",
+    "register": "Register",
+    "adminLogin": "Admin",
+    "brand": "Nida Al-Quran"
+  },
+  "home": {
+    "welcome": "Welcome to Nida Al-Quran",
+    "subtitle": "Learn Quran from Expert Teachers",
+    "description": "Join our Islamic learning center and begin your spiritual journey with Quran studies, Arabic language, and Islamic studies.",
+    "registerBtn": "Register Now",
+    "learnMoreBtn": "Learn More",
+    "qualityEducation": "Quality Education",
+    "expertsTeach": "Taught by expert instructors",
+    "sectionSubtitle": "Our Professional and Central Services",
+    "sectionTitle": "What We Offer",
+    "sectionDescription": "We combine meaningful learning experiences with practical activities.",
+    "features": [
+      {
+        "title": "Quran Studies",
+        "description": "Learn proper Tajweed rules"
+      },
+      {
+        "title": "Expert Teachers",
+        "description": "Experienced instructors"
+      },
+      {
+        "title": "Certificates",
+        "description": "Verified credentials"
+      },
+      {
+        "title": "Flexible Hours",
+        "description": "Choose your preferred time"
+      }
+    ],
+    "stats": {
+      "students": "Students Graduated",
+      "teachers": "Professional Teachers",
+      "courses": "Different Courses",
+      "experience": "Years of Experience"
+    }
+  },
+  "about": {
+    "pageTitle": "About Nida Al-Quran",
+    "pageSubtitle": "Advanced Center for Islamic Education",
+    "mission": "Our Mission",
+    "missionText": "Nida Al-Quran (The Call of the Quran) is dedicated to providing high-quality Islamic education for students of all ages. We are committed to creating an accessible, engaging, and spiritually enriching environment for learning the Quran and Islamic studies.",
+    "vision": "Our Vision",
+    "visionText": "To be a leading center for Quran studies, nurturing a generation of students who understand, practice, and promote the beautiful teachings of Islam with wisdom and compassion. To cultivate Islamic leaders who bring positive change to society.",
+    "aboutMore": "About Us More",
+    "description1": "Nida Al-Quran has been providing quality Islamic education for over 10 years. Located in Addis Ababa, we have successfully taught thousands of students the Quran, Arabic language, and Islamic studies.",
+    "description2": "Our instructors are highly experienced and certified in their fields. By combining modern teaching methods with traditional Islamic education, we ensure that students develop a deep understanding and appreciation for Islamic teachings.",
+    "whatWeOffer": "What We Offer",
+    "achievements": [
+      "Over 500 graduated students",
+      "More than 25 certified teachers",
+      "10 years of service experience",
+      "Local and international recognition",
+      "Modern teaching tools",
+      "Online learning platform"
+    ],
+    "ourAchievements": "Our Achievements",
+    "stat1": "Graduated Students",
+    "stat2": "Professional Teachers",
+    "stat3": "Various Courses",
+    "stat4": "Years of Experience",
+    "ourValues": "Our Values",
+    "values": [
+      {
+        "title": "Integrity",
+        "description": "We work based on Islamic values"
+      },
+      {
+        "title": "Quality",
+        "description": "We provide high-quality education"
+      },
+      {
+        "title": "Community",
+        "description": "We build a strong Islamic community"
+      },
+      {
+        "title": "Goal",
+        "description": "We set clear educational objectives"
+      }
+    ]
+  },
+  "services": {
+    "pageTitle": "Our Services",
+    "pageSubtitle": "Comprehensive Islamic Education Programs",
+    "services": [
+      {
+        "title": "Quran Studies (Tajweed)",
+        "description": "Learn the correct rules of Quranic recitation from certified teachers. Master Tajweed from basic to advanced levels with professional training.",
+        "features": [
+          "Basic Tajweed rules",
+          "Advanced Tajweed teaching",
+          "Quran memorization (Hifz)",
+          "Practical training sessions"
+        ]
+      },
+      {
+        "title": "Islamic Studies",
+        "description": "Comprehensive Islamic education covering essential subjects for spiritual growth and understanding.",
+        "features": [
+          "Aqeedah (Islamic belief)",
+          "Fiqh (Islamic law)",
+          "Sirah (Prophetic biography)",
+          "Akhlaq (Islamic morality)"
+        ]
+      },
+      {
+        "title": "Arabic Language",
+        "description": "Master the Arabic language to understand the Quran in its original language.",
+        "features": [
+          "Arabic grammar (Nahw)",
+          "Arabic morphology (Sarf)",
+          "Conversational Arabic",
+          "Quranic Arabic"
+        ]
+      },
+      {
+        "title": "Children Programs",
+        "description": "Special programs designed for children to learn Islam in fun and engaging ways.",
+        "features": [
+          "Quran for children",
+          "Islamic stories",
+          "Basic prayers and supplications",
+          "Islamic character education"
+        ]
+      },
+      {
+        "title": "Adult Classes",
+        "description": "Flexible programs for adults who want to strengthen their Islamic knowledge.",
+        "features": [
+          "Weekend classes",
+          "Evening sessions",
+          "One-on-one tutoring",
+          "Group discussions"
+        ]
+      },
+      {
+        "title": "Online Learning",
+        "description": "Access our courses from anywhere through our online learning platform.",
+        "features": [
+          "Live virtual classes",
+          "Recorded lessons",
+          "Interactive sessions",
+          "24/7 learning material access"
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "pageTitle": "Contact Us",
+    "pageSubtitle": "Get in Touch",
+    "form": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "subject": "Subject",
+      "message": "Your Message",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully!",
+      "error": "Failed to send message"
+    },
+    "info": {
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Business Hours"
+    }
+  },
+  "register": {
+    "pageTitle": "Register",
+    "pageSubtitle": "Join Our Learning Community",
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "age": "Age",
+      "course": "Select Course",
+      "message": "Additional Information",
+      "register": "Register",
+      "registering": "Registering...",
+      "success": "Registration successful!",
+      "error": "Registration failed"
+    },
+    "courses": [
+      "Quran Studies (Tajweed)",
+      "Islamic Studies",
+      "Arabic Language",
+      "Children Program",
+      "Adult Classes",
+      "Online Learning"
+    ]
+  },
+  "footer": {
+    "about": "About",
+    "services": "Services",
+    "contact": "Contact",
+    "quickLinks": "Quick Links",
+    "followUs": "Follow Us",
+    "copyright": "© 2024 Nida Al-Quran. All rights reserved.",
+    "description": "Your gateway to quality Islamic education and Quranic studies."
+  },
+  "admin": {
+    "login": "Admin Login",
+    "dashboard": "Dashboard",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "loginBtn": "Login",
+    "students": "Students",
+    "attendance": "Attendance",
+    "contacts": "Contacts",
+    "manage": "Manage",
+    "viewAll": "View All",
+    "markAttendance": "Mark Attendance",
+    "date": "Date",
+    "student": "Student",
+    "status": "Status",
+    "present": "Present",
+    "absent": "Absent",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "noData": "No data available"
+  }
+}

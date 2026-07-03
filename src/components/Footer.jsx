@@ -61,12 +61,12 @@ function Footer({ navigateTo }) {
               <ul className="footer-contact">
                 <li>
                   <MapPin size={18} />
-                  <span>አዲስ አበባ፣ ኢትዮጵያ<br />መርካቶ አካባቢ</span>
+                  <span>አዲስ አበባ፣ ኢትዮጵያ</span>
                 </li>
                 <li>
                   <Phone size={18} />
                   <span>
-                    +251 911 234 567<br />
+                    +251 952 552 820<br />
                     +251 922 345 678
                   </span>
                 </li>

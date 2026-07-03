@@ -1,47 +1,21 @@
 import React from 'react';
 import { Check, Target, Eye, Heart, Award, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import '../styles/About.css';
 
 function About() {
-  const values = [
-    {
-      icon: <Heart size={40} />,
-      title: 'ታማኝነት',
-      description: 'በእስላማዊ እሴቶች ላይ ተመስርተን እንሰራለን'
-    },
-    {
-      icon: <Award size={40} />,
-      title: 'ጥራት',
-      description: 'ከፍተኛ ደረጃ ያለው ትምህርት እንሰጣለን'
-    },
-    {
-      icon: <Users size={40} />,
-      title: 'ማህበረሰብ',
-      description: 'ጠንካራ የእስላማዊ ማህበረሰብ እንገነባለን'
-    },
-    {
-      icon: <Target size={40} />,
-      title: 'ግብ',
-      description: 'ግልጽ የትምህርት ግቦች እናስቀምጣለን'
-    }
-  ];
+  const { t } = useTranslation();
 
-  const achievements = [
-    
-    'ከ25 በላይ የተመሰከሩ መምህራን',
-    '5 ዓመታት የአገልግሎት ልምድ',
-    'ከሀገር ውስጥና ውጭ እውቅና',
-    'ዘመናዊ የማስተማሪያ መሳሪያዎች',
-    'የመስመር ላይ የትምህርት መድረክ'
-  ];
+  const values = t('about.values', { returnObjects: true });
+  const achievements = t('about.achievements', { returnObjects: true });
 
   return (
     <div className="about-page">
       {/* Header Section */}
       <section className="about-header">
         <div className="container">
-          <h1 className="page-title fade-in">ስለ ኒዳእ አል ቁርኣን</h1>
-          <p className="page-subtitle fade-in">የእስላማዊ ትምህርት የላቀ ማዕከል</p>
+          <h1 className="page-title fade-in">{t('about.pageTitle')}</h1>
+          <p className="page-subtitle fade-in">{t('about.pageSubtitle')}</p>
           <div className="title-divider"></div>
         </div>
       </section>
@@ -54,11 +28,9 @@ function About() {
               <div className="card-icon">
                 <Target size={48} />
               </div>
-              <h2>የእኛ ተልዕኮ</h2>
+              <h2>{t('about.mission')}</h2>
               <p>
-                ኒዳእ አል ቁርኣን (የቁርኣን ጥሪ) ለሁሉም የዕድሜ ክልል ተማሪዎች ከፍተኛ ጥራት ያለው የእስላማዊ 
-                ትምህርት መስጠት ላይ ያተኮረ ነው። የቁርኣን እና የእስላማዊ ትምህርቶችን መማር ተደራሽ፣ አሳታፊ 
-                እና በመንፈስ የሚያበለጽግ አካባቢ ለመፍጠር እንጥራለን።
+                {t('about.missionText')}
               </p>
             </div>
 
@@ -66,11 +38,9 @@ function About() {
               <div className="card-icon">
                 <Eye size={48} />
               </div>
-              <h2>የእኛ እይታ</h2>
+              <h2>{t('about.vision')}</h2>
               <p>
-                የቁርኣን ትምህርት መሪ ማዕከል ለመሆን፣ የእስላማዊ ውብ ትምህርቶችን በጥበብ እና በርህራሄ 
-                የሚያውቁ፣ የሚለማመዱ እና የሚያሰራጩ ትውልድ ማሳደግ። በማህበረሰቡ ውስጥ አዎንታዊ ለውጥ 
-                የሚያመጡ የእስላማዊ መሪዎችን ማፍራት።
+                {t('about.visionText')}
               </p>
             </div>
           </div>
@@ -82,20 +52,17 @@ function About() {
         <div className="container">
           <div className="about-grid">
             <div className="about-text">
-              <h2>ስለ እኛ ተጨማሪ</h2>
+              <h2>{t('about.aboutMore')}</h2>
               <p>
-                ኒዳእ አል ቁርኣን ከ5 ዓመታት በላይ ጥራት ያለው የእስላማዊ ትምህርት እየሰጠ ያለ የመማሪያ 
-                ማዕከል ነው። በአዲስ አበባ የሚገኝ ሲሆን፣ ለሺዎች ተማሪዎች የቁርኣን፣ ማስተማር ችለናል።
+                {t('about.description1')}
               </p>
               <p>
-                የእኛ መምህራን በጣም ልምድ ያላቸው እና በየመስኮቻቸው የተረጋገጡ ናቸው። ዘመናዊ የማስተማሪያ 
-                ዘዴዎችን እና ባህላዊ የእስላማዊ ትምህርትን በማጣመር፣ ተማሪዎች በጥልቀት እንዲገነዘቡ እና 
-                እንዲለማመዱ እናደርጋለን።
+                {t('about.description2')}
               </p>
 
-              <h3>የምናቀርባቸው ነገሮች</h3>
+              <h3>{t('about.whatWeOffer')}</h3>
               <ul className="features-list">
-                {achievements.map((achievement, index) => (
+                {achievements && achievements.map((achievement, index) => (
                   <li key={index} className="fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                     <Check size={22} />
                     <span>{achievement}</span>
@@ -105,22 +72,22 @@ function About() {
             </div>
 
             <div className="stats-card-about">
-              <h3>የእኛ ስኬቶች</h3>
+              <h3>{t('about.ourAchievements')}</h3>
               <div className="stat-item">
                 <div className="stat-number">500+</div>
-                <div className="stat-label">የተመረቁ ተማሪዎች</div>
+                <div className="stat-label">{t('about.stat1')}</div>
               </div>
               <div className="stat-item">
                 <div className="stat-number">25+</div>
-                <div className="stat-label">ባለሙያ መምህራን</div>
+                <div className="stat-label">{t('about.stat2')}</div>
               </div>
               <div className="stat-item">
                 <div className="stat-number">15+</div>
-                <div className="stat-label">የተለያዩ ኮርሶች</div>
+                <div className="stat-label">{t('about.stat3')}</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">5+</div>
-                <div className="stat-label">ዓመታት ልምድ</div>
+                <div className="stat-number">10+</div>
+                <div className="stat-label">{t('about.stat4')}</div>
               </div>
             </div>
           </div>
@@ -130,15 +97,20 @@ function About() {
       {/* Values Section */}
       <section className="values-section">
         <div className="container">
-          <h2 className="section-title">የእኛ እሴቶች</h2>
+          <h2 className="section-title">{t('about.ourValues')}</h2>
           <div className="values-grid">
-            {values.map((value, index) => (
+            {values && values.map((value, index) => (
               <div 
                 key={index} 
                 className="value-card fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="value-icon">{value.icon}</div>
+                <div className="value-icon">
+                  {index === 0 && <Heart size={40} />}
+                  {index === 1 && <Award size={40} />}
+                  {index === 2 && <Users size={40} />}
+                  {index === 3 && <Target size={40} />}
+                </div>
                 <h3>{value.title}</h3>
                 <p>{value.description}</p>
               </div>
