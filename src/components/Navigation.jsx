@@ -56,7 +56,7 @@ function Navigation({ navigateTo, onAdminClick }) {
             onClick={() => handleNavClick('contact')} 
             className={isActive('contact') ? 'nav-link active' : 'nav-link'}
           >
-            ራኩሙ
+            አግኙን
           </a>
           <button className="btn-nav-register" onClick={() => handleNavClick('register')}>
             ይመዝገቡ
