@@ -89,7 +89,7 @@ function Home() {
         <div className="container">
           <div className="stats-grid">
             <div className="stat-card">
-              <h2 className="stat-number">500+</h2>
+              <h2 className="stat-number">50+</h2>
               <p className="stat-label">{stats?.students}</p>
             </div>
             <div className="stat-card">

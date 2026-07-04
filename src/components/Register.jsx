@@ -150,7 +150,7 @@ function Register() {
                 </div>
                 <div className="contact-support">
                   <h4>ጥያቄዎች አሉዎት?</h4>
-                  <p>📞 +251 911 234 567</p>
+                  <p>📞 +251 952 552 820</p>
                   <p>✉️ info@nidaulquran.com</p>
                 </div>
               </div>
