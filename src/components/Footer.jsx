@@ -14,7 +14,7 @@ function Footer({ navigateTo }) {
             <div className="footer-section">
               <div className="footer-brand">
                 <BookOpen className="footer-brand-icon" />
-                <h3>ኒዳእ አል ቁርኣን</h3>
+                <h3>ኒዳእ አል-ቁርኣን</h3>
               </div>
               <p className="footer-description">
                 የቁርኣን ትምህርት እና የእስላማዊ እውቀት በኩል አእምሮዎችን ማብቃት። ለሁሉም የዕድሜ ክልል 
