@@ -266,7 +266,7 @@ function Contact() {
         <div className="map-placeholder">
           <MapPin size={64} />
           <h3>ያግኙን</h3>
-          <p>አዲስ አበባ፣ መርካቶ አካባቢ</p>
+          <p>አዲስ አበባ፣ </p>
         </div>
       </section>
     </div>
