@@ -9,7 +9,10 @@ const attendanceRoutes = require('./routes/attendance');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: ['https://nida-al-quran.vercel.app', 'http://localhost:5173', 'http://localhost:3000'],
+  credentials: true,
+}));
 app.use(express.json());
 
 connectDB().catch((err) => {
@@ -21,6 +24,12 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/attendance', attendanceRoutes);
+
+// Support both prefixed and unprefixed paths for serverless deployments
+app.use('/users', userRoutes);
+app.use('/admin', adminRoutes);
+app.use('/contacts', contactRoutes);
+app.use('/attendance', attendanceRoutes);
 
 const PORT = process.env.PORT || 5000;
 

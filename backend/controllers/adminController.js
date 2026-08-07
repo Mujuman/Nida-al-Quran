@@ -29,7 +29,8 @@ exports.adminLogin = async (req, res) => {
     await admin.save();
 
     const payload = { admin: { id: admin.id, role: admin.role } };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const jwtSecret = process.env.JWT_SECRET || 'change-this-secret-in-production';
+    const token = jwt.sign(payload, jwtSecret, { expiresIn: '7d' });
 
     res.json({
       token,

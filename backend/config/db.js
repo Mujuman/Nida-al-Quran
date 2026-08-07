@@ -3,56 +3,65 @@ const bcrypt = require('bcryptjs');
 const Admin = require('../models/Admin');
 
 const createDefaultMainAdmin = async () => {
+  if (mongoose.connection.readyState !== 1) {
+    console.warn('Database not connected; skipping default admin creation.');
+    return;
+  }
+
   const email = process.env.MAIN_ADMIN_EMAIL || 'teyba@nida.com';
   const username = process.env.MAIN_ADMIN_USERNAME || 'admin';
   const password = process.env.MAIN_ADMIN_PASSWORD || 'muju123@';
   const fullName = process.env.MAIN_ADMIN_FULLNAME || 'System Administrator';
   const phone = process.env.MAIN_ADMIN_PHONE || '+251974155756';
 
-  const existingAdmin = await Admin.findOne({ email });
-  if (existingAdmin) {
-    if (existingAdmin.role !== 'main_admin') {
-      existingAdmin.role = 'main_admin';
-      existingAdmin.permissions = {
-        ...existingAdmin.permissions,
-        manageAdmins: true,
-      };
-      await existingAdmin.save();
-      console.log('Existing admin promoted to main_admin');
-    } else {
-      console.log('Main admin already exists');
+  try {
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      if (existingAdmin.role !== 'main_admin') {
+        existingAdmin.role = 'main_admin';
+        existingAdmin.permissions = {
+          ...existingAdmin.permissions,
+          manageAdmins: true,
+        };
+        await existingAdmin.save();
+        console.log('Existing admin promoted to main_admin');
+      } else {
+        console.log('Main admin already exists');
+      }
+      return;
     }
-    return;
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    await Admin.create({
+      username,
+      email,
+      password: hashedPassword,
+      fullName,
+      role: 'main_admin',
+      phone,
+      isActive: true,
+      permissions: {
+        manageUsers: true,
+        manageAttendance: true,
+        manageCourses: true,
+        viewReports: true,
+        manageAdmins: true,
+      },
+    });
+
+    console.log(`Created default main admin (${email})`);
+  } catch (err) {
+    console.error('Failed to ensure default admin:', err.message);
   }
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  await Admin.create({
-    username,
-    email,
-    password: hashedPassword,
-    fullName,
-    role: 'main_admin',
-    phone,
-    isActive: true,
-    permissions: {
-      manageUsers: true,
-      manageAttendance: true,
-      manageCourses: true,
-      viewReports: true,
-      manageAdmins: true,
-    },
-  });
-
-  console.log(`Created default main admin (${email})`);
 };
 
 const connectDB = async () => {
-  const mongoUri = process.env.MONGO_URI;
+  const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URL || 'mongodb+srv://mujahid2muju_db_user:rPIRIat3oCTFNHkh@cluster0.kdczffj.mongodb.net/';
 
   if (!mongoUri) {
-    console.warn('MONGO_URI not set. Skipping database connection.');
+    console.warn('MongoDB connection string not set. Skipping database connection.');
     return;
   }
 
