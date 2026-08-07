@@ -1,16 +1,22 @@
-# React + Vite
+# Nida al-Quran
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is ready for deployment on Vercel as a Vite frontend plus serverless API.
 
-Currently, two official plugins are available:
+## Deployment steps
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Push this repository to GitHub.
+2. Import the project in Vercel.
+3. Set the build command to `npm run build`.
+4. Set the output directory to `dist`.
+5. Add the environment variables from [.env.example](.env.example).
 
-## React Compiler
+## Vercel notes
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- The frontend is served from the Vite build output.
+- API routes are handled by the serverless function in [api/index.js](api/index.js).
+- For production, set `VITE_API_URL=/api` so the frontend calls the same-origin Vercel API routes.
 
-## Expanding the ESLint configuration
+## Local development
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Frontend: `npm run dev`
+- Build: `npm run build`
