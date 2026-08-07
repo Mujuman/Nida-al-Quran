@@ -2,22 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
+      "src": "client/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "config": { "distDir": "client/dist" }
     },
     {
-      "src": "api/index.js",
+      "src": "server/api/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/index.js" },
-    { "src": "/admin/(.*)", "dest": "/api/admin.js" },
-    { "src": "/users/(.*)", "dest": "/api/index.js" },
-    { "src": "/contacts/(.*)", "dest": "/api/index.js" },
-    { "src": "/attendance/(.*)", "dest": "/api/index.js" },
+    { "src": "/api/(.*)", "dest": "/server/api/index.js" },
+    { "src": "/admin/(.*)", "dest": "/server/api/index.js" },
+    { "src": "/users/(.*)", "dest": "/server/api/index.js" },
+    { "src": "/contacts/(.*)", "dest": "/server/api/index.js" },
+    { "src": "/attendance/(.*)", "dest": "/server/api/index.js" },
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/(.*)", "dest": "/client/index.html" }
   ]
 }
