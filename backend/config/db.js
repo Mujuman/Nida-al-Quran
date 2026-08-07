@@ -51,6 +51,11 @@ const createDefaultMainAdmin = async () => {
 const connectDB = async () => {
   const mongoUri = process.env.MONGO_URI;
 
+  if (!mongoUri) {
+    console.warn('MONGO_URI not set. Skipping database connection.');
+    return;
+  }
+
   try {
     await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
@@ -71,7 +76,6 @@ const connectDB = async () => {
     await createDefaultMainAdmin();
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
-    process.exit(1);
   }
 };
 
