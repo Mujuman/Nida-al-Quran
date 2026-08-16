@@ -1,6 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
@@ -33,7 +35,12 @@ connectDB().catch((err) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Backend API is running' });
+  res.json({
+    status: 'OK',
+    message: 'Backend API is running',
+    dbState: mongoose.connection.readyState,
+    dbConnected: mongoose.connection.readyState === 1,
+  });
 });
 
 // API Routes

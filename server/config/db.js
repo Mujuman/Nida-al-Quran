@@ -58,10 +58,10 @@ const createDefaultMainAdmin = async () => {
 };
 
 const connectDB = async () => {
-  const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URL || 'mongodb+srv://mujahid2muju_db_user:rPIRIat3oCTFNHkh@cluster0.kdczffj.mongodb.net/';
+  const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.MONGODB_URL;
 
   if (!mongoUri) {
-    console.warn('MongoDB connection string not set. Skipping database connection.');
+    console.error('MongoDB connection string not set. Check Vercel environment variables or server/.env.');
     return;
   }
 
@@ -69,7 +69,7 @@ const connectDB = async () => {
     await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
     });
 
     console.log(`MongoDB connected to ${mongoUri}`);
