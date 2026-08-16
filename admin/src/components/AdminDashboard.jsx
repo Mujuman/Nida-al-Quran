@@ -563,7 +563,7 @@ function AdminDashboard() {
                               className="btn-primary"
                               onClick={() => {
                                 setSelectedStudentForAssign(student);
-                                setAssignedSubAdminId(student.assignedTeacher?._id || '');
+                                setAssignedSubAdminId(student.assignedTeacher ? String(student.assignedTeacher._id || student.assignedTeacher.id) : '');
                                 setShowAssignModal(true);
                               }}
                             >
@@ -822,11 +822,14 @@ function AdminDashboard() {
                 style={{ width: '100%' }}
               >
                 <option value="">-- Unassign --</option>
-                {subAdmins.map((admin) => (
-                  <option key={admin._id || admin.id} value={admin._id || admin.id}>
-                    {admin.fullName} ({admin.email})
-                  </option>
-                ))}
+                {subAdmins.map((admin) => {
+                  const adminId = String(admin._id || admin.id);
+                  return (
+                    <option key={adminId} value={adminId}>
+                      {admin.fullName} ({admin.email})
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
@@ -859,11 +862,14 @@ function AdminDashboard() {
                     required
                   >
                     <option value="">-- Select Student --</option>
-                    {users.map((user) => (
-                      <option key={user._id || user.id} value={user._id || user.id}>
-                        {user.fullName}
-                      </option>
-                    ))}
+                    {users.map((user) => {
+                      const userId = String(user._id || user.id);
+                      return (
+                        <option key={userId} value={userId}>
+                          {user.fullName}
+                        </option>
+                      );
+                    })}
                   </select>
                 </label>
                 <label>
