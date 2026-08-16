@@ -10,7 +10,7 @@ const attendanceRoutes = require('./routes/attendance');
 const app = express();
 
 app.use(cors({
-  origin: ['https://nida-al-quran.vercel.app', 'http://localhost:5173', 'http://localhost:3000'],
+  origin: ['https://nida-al-quran.vercel.app', 'https://nida-al-quran-admin.vercel.app', 'http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
   credentials: true,
 }));
 app.use(express.json());
