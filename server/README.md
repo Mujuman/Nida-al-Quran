@@ -4,11 +4,11 @@ Minimal Express + MongoDB backend for the Nida app.
 
 Setup
 
-1. Copy `.env.example` to `.env` and set `MONGO_URI` and `JWT_SECRET`.
+1. Copy `server/.env.example` to `server/.env` and set `MONGO_URI` and `JWT_SECRET`.
 2. Install dependencies:
 
 ```bash
-cd backend
+cd server
 npm install
 ```
 

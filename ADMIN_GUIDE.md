@@ -241,7 +241,7 @@ apiService.clearToken(true);
 
 ### CORS Configuration
 Frontend can make requests to backend at `http://localhost:5000`
-In production, update CORS settings in `backend/server.js`
+In production, update CORS settings in `server/server.js`
 
 ## 📱 Responsive Design
 

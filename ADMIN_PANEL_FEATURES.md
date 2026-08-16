@@ -334,8 +334,8 @@ All features are implemented, tested, and synced with the database. The admin pa
 - **Password**: admin123
 
 ### To Start Testing:
-1. Start backend: `cd backend && npm start`
-2. Start frontend: `npm run dev`
+1. Start backend: `cd server && npm start`
+2. Start frontend: `cd client && npm run dev`
 3. Navigate to: `http://localhost:5173/admin/login`
 4. Login with demo credentials
 5. Explore all features!

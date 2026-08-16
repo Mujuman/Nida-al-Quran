@@ -2,8 +2,8 @@
 
 /**
  * Backend API Test Script
- * Run: node backend/testBackend.js
- * 
+ * Run from the project root: node server/testBackend.js
+ *
  * Tests all admin API endpoints
  */
 

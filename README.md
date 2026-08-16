@@ -1,22 +1,45 @@
-# Nida al-Quran
+# Nida Al-Quran
 
-This project is ready for deployment on Vercel as a Vite frontend plus serverless API.
+This project is organized into a clear frontend/backend split:
 
-## Deployment steps
+- Frontend: `client/`
+- Backend: `server/`
 
-1. Push this repository to GitHub.
-2. Import the project in Vercel.
-3. Set the build command to `npm run build`.
-4. Set the output directory to `dist`.
-5. Add the environment variables from [.env.example](.env.example).
+## Quick start
 
-## Vercel notes
+### 1) Install frontend dependencies
+```bash
+cd client
+npm install
+```
 
-- The frontend is served from the Vite build output.
-- API routes are handled by the serverless function in [api/index.js](api/index.js).
-- For production, set `VITE_API_URL=/api` so the frontend calls the same-origin Vercel API routes.
+### 2) Install backend dependencies
+```bash
+cd ../server
+npm install
+```
 
-## Local development
+### 3) Start backend
+```bash
+cd server
+npm run dev
+```
 
-- Frontend: `npm run dev`
-- Build: `npm run build`
+### 4) Start frontend
+```bash
+cd client
+npm run dev
+```
+
+The frontend uses Vite and calls the backend on `http://localhost:5000`.
+
+## Project overview
+
+- `client/` contains the React application and all UI code.
+- `server/` contains the Express API, database models, routes, middleware, and config.
+- `vercel.json` handles deployment routing for both the frontend and API.
+
+## Environment files
+
+- Root `.env.example` is the frontend environment template.
+- `server/.env.example` is the backend environment template.
