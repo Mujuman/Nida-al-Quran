@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/apiService';
 import '../styles/Register.css';
 
 function Register() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -105,8 +107,8 @@ function Register() {
       {/* Header Section */}
       <section className="register-header">
         <div className="container">
-          <h1 className="page-title fade-in">ምዝገባ</h1>
-          <p className="page-subtitle fade-in">ከኒዳእ አል ቁርኣን ጋር ጉዞዎን ይጀምሩ</p>
+          <h1 className="page-title fade-in">{t('register.pageTitle')}</h1>
+          <p className="page-subtitle fade-in">{t('register.pageSubtitle')}</p>
           <div className="title-divider"></div>
         </div>
       </section>

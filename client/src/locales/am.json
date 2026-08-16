@@ -155,23 +155,49 @@
     ]
   },
   "contact": {
-    "pageTitle": "ይገኙን",
-    "pageSubtitle": "እኛን ያግኙ",
+    "pageTitle": "ያግኙን",
+    "pageSubtitle": "ከእርስዎ መስማት እንፈልጋለን",
+    "intro": "ከእርስዎ መስማት እንፈልጋለን",
+    "introDesc": "ጥያቄዎች አሉዎት? ያግኙን እና በተቻለ ፍጥነት መልስ እንሰጣለን። የእኛ ቡድን ሁል ጊዜ ለመርዳት ዝግጁ ነው።",
     "form": {
       "name": "ሙሉ ስም",
-      "email": "ኢሜል",
-      "subject": "ርዕስ",
-      "message": "መልእክትዎ",
-      "send": "መልእክት ላክ",
-      "sending": "በመላክ ላይ...",
-      "success": "መልእክት በተሳካ ሁኔታ ተልከዋል!",
-      "error": "መልእክት መላክ ወርቷል"
+      "namePlaceholder": "ሙሉ ስምዎን ያስገቡ",
+      "email": "ኢሜይል አድራሻ",
+      "emailPlaceholder": "your.email@example.com",
+      "phone": "ስልክ ቁጥር",
+      "phonePlaceholder": "+251 911 234 567",
+      "subject": "ርዕሰ ጉዳይ",
+      "subjectPlaceholder": "ይህ ስለ ምን ነው?",
+      "message": "መልእክት",
+      "messagePlaceholder": "መልእክትዎን ይጻፉ...",
+      "type": "የመልእክት ዓይነት",
+      "send": "መልእክት ይላኩ",
+      "sending": "ይላክ ነው...",
+      "success": "መልእክት በተሳካ ሁኔታ ተልኳል!",
+      "successMsg": "ከእርስዎ ግንኙነት ለመመስረት ስላመሰገኑ! በቅርቡ ወደ ሕዝብዎ ወደ ሕዝብ ነገር ማግኘት ይችላሉ።",
+      "error": "መልእክት ለመላክ ተስፈዋል",
+      "formTitle": "ኢሜይል ይላኩልን"
     },
     "info": {
       "address": "አድራሻ",
+      "addressValue": "አዲስ አበባ፣ ኢትዮጵያ",
+      "addressDetail": "መርካቶ አካባቢ",
       "phone": "ስልክ",
-      "email": "ኢሜል",
-      "hours": "የስራ ሰዓት"
+      "phoneValue1": "+251 911 234 567",
+      "phoneValue2": "+251 922 345 678",
+      "email": "ኢሜይል",
+      "emailValue1": "info@nidaulquran.com",
+      "emailValue2": "admin@nidaulquran.com",
+      "hours": "የቢሮ ሰዓታት",
+      "hoursWeekdays": "ቅዳሜ - ሐሙስ: 8:00 ጠዋት - 6:00 ምሽት",
+      "hoursFriday": "አርብ: 2:00 ከሰዓት በኋላ - 6:00 ምሽት"
+    },
+    "social": {
+      "followUs": "በማህበራዊ ሚዲያ ይከተሉን",
+      "facebook": "Facebook",
+      "telegram": "Telegram",
+      "youtube": "YouTube",
+      "instagram": "Instagram"
     }
   },
   "register": {

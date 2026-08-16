@@ -156,39 +156,88 @@
   },
   "contact": {
     "pageTitle": "Contact Us",
-    "pageSubtitle": "Get in Touch",
+    "pageSubtitle": "We'd love to hear from you",
+    "intro": "We want to hear from you",
+    "introDesc": "Questions? Contact us and we'll respond as quickly as possible. Our team is always ready to help.",
     "form": {
       "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
       "email": "Email Address",
+      "emailPlaceholder": "your.email@example.com",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+251 911 234 567",
       "subject": "Subject",
-      "message": "Your Message",
+      "subjectPlaceholder": "What is this about?",
+      "message": "Message",
+      "messagePlaceholder": "Write your message here...",
+      "type": "Message Type",
       "send": "Send Message",
       "sending": "Sending...",
       "success": "Message sent successfully!",
-      "error": "Failed to send message"
+      "successMsg": "Thank you for reaching out! We'll get back to you soon.",
+      "error": "Failed to send message",
+      "formTitle": "Send us a Message"
     },
     "info": {
       "address": "Address",
+      "addressValue": "Addis Ababa, Ethiopia",
+      "addressDetail": "Merkato Area",
       "phone": "Phone",
+      "phoneValue1": "+251 911 234 567",
+      "phoneValue2": "+251 922 345 678",
       "email": "Email",
-      "hours": "Business Hours"
+      "emailValue1": "info@nidaulquran.com",
+      "emailValue2": "admin@nidaulquran.com",
+      "hours": "Business Hours",
+      "hoursWeekdays": "Saturday - Thursday: 8:00 AM - 6:00 PM",
+      "hoursFriday": "Friday: 2:00 PM - 6:00 PM"
+    },
+    "social": {
+      "followUs": "Follow Us on Social Media",
+      "facebook": "Facebook",
+      "telegram": "Telegram",
+      "youtube": "YouTube",
+      "instagram": "Instagram"
     }
   },
   "register": {
     "pageTitle": "Register",
-    "pageSubtitle": "Join Our Learning Community",
+    "pageSubtitle": "Start Your Journey with Nida Al-Quran",
     "form": {
-      "firstName": "First Name",
-      "lastName": "Last Name",
-      "email": "Email",
-      "phone": "Phone",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "your.email@example.com",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+251 911 234 567",
       "age": "Age",
+      "agePlaceholder": "Enter your age",
+      "gender": "Gender",
       "course": "Select Course",
+      "level": "Learning Level",
+      "schedule": "Preferred Schedule",
+      "guardian": "Guardian Name",
+      "guardianPhone": "Guardian Phone",
       "message": "Additional Information",
+      "messagePlaceholder": "Tell us about your goals...",
       "register": "Register",
       "registering": "Registering...",
       "success": "Registration successful!",
-      "error": "Registration failed"
+      "successMsg": "Thank you for registering! We've received your information.",
+      "error": "Registration failed",
+      "nextSteps": "What happens next?",
+      "step1": "Verification email will be sent shortly",
+      "step2": "Our team will contact you within 24 hours",
+      "step3": "Payment information will be sent",
+      "step4": "Your class schedule will be arranged",
+      "questions": "Have questions?",
+      "personalInfo": "Personal Information",
+      "personalInfoDesc": "Enter your basic information",
+      "courseSelection": "Course Selection",
+      "courseSelectionDesc": "Choose your preferred course and level",
+      "additionalInfo": "Additional Information",
+      "additionalInfoDesc": "Provide guardian details and preferences",
+      "formTitle": "Registration Form"
     },
     "courses": [
       "Quran Studies (Tajweed)",
@@ -197,6 +246,17 @@
       "Children Program",
       "Adult Classes",
       "Online Learning"
+    ],
+    "levels": [
+      "Beginner",
+      "Intermediate",
+      "Advanced"
+    ],
+    "schedules": [
+      "Morning Classes",
+      "Afternoon Classes",
+      "Evening Classes",
+      "Weekend Classes"
     ]
   },
   "footer": {

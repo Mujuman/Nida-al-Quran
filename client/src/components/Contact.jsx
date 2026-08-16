@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/apiService';
 import '../styles/Contact.css';
 
 function Contact() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -62,8 +64,8 @@ function Contact() {
       {/* Header Section */}
       <section className="contact-header">
         <div className="container">
-          <h1 className="page-title fade-in">ያግኙን</h1>
-          <p className="page-subtitle fade-in">ከእርስዎ መስማት እንፈልጋለን</p>
+          <h1 className="page-title fade-in">{t('contact.pageTitle')}</h1>
+          <p className="page-subtitle fade-in">{t('contact.pageSubtitle')}</p>
           <div className="title-divider"></div>
         </div>
       </section>
