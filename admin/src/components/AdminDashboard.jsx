@@ -44,6 +44,17 @@ function AdminDashboard() {
   const [attendanceDate, setAttendanceDate] = useState(new Date().toISOString().split('T')[0]);
   const [attendanceCourse, setAttendanceCourse] = useState('');
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [selectedStudentForAssign, setSelectedStudentForAssign] = useState(null);
+  const [assignedSubAdminId, setAssignedSubAdminId] = useState('');
+  const [showMarkAttendanceModal, setShowMarkAttendanceModal] = useState(false);
+  const [attendanceMarking, setAttendanceMarking] = useState({
+    studentId: '',
+    date: new Date().toISOString().split('T')[0],
+    status: 'present',
+    course: '',
+    notes: '',
+  });
 
   const showMessage = (text, type = 'success') => {
     setMessage({ text, type });
@@ -177,6 +188,16 @@ function AdminDashboard() {
           setSubAdmins(Array.isArray(saResponse) ? saResponse : []);
         }
       }
+      if (activeTab === 'assign-students' && isMainAdmin) {
+        // Fetch approved students only
+        const allUsersResponse = await apiService.getAllUsers();
+        const approvedUsers = Array.isArray(allUsersResponse) 
+          ? allUsersResponse.filter(u => u.registrationStatus === 'approved')
+          : [];
+        setUsers(approvedUsers);
+        const saResponse = await apiService.getSubAdmins();
+        setSubAdmins(Array.isArray(saResponse) ? saResponse : []);
+      }
       if (activeTab === 'subadmins' && isMainAdmin) {
         const saResponse = await apiService.getSubAdmins();
         setSubAdmins(Array.isArray(saResponse) ? saResponse : []);
@@ -203,6 +224,52 @@ function AdminDashboard() {
     setSidebarOpen(false);
     setSearchTerm('');
     setFilterStatus('all');
+  };
+
+  const handleAssignStudent = async () => {
+    if (!selectedStudentForAssign || !assignedSubAdminId) {
+      showMessage('Please select a student and a sub-admin.', 'error');
+      return;
+    }
+
+    try {
+      await apiService.assignStudentToTeacher(
+        selectedStudentForAssign._id || selectedStudentForAssign.id,
+        assignedSubAdminId
+      );
+      showMessage('Student assigned successfully.', 'success');
+      setShowAssignModal(false);
+      setSelectedStudentForAssign(null);
+      setAssignedSubAdminId('');
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error assigning student:', err);
+      showMessage(err?.message || 'Unable to assign student.', 'error');
+    }
+  };
+
+  const handleMarkAttendance = async () => {
+    if (!attendanceMarking.studentId || !attendanceMarking.date) {
+      showMessage('Please select a student and date.', 'error');
+      return;
+    }
+
+    try {
+      await apiService.markAttendance(attendanceMarking);
+      showMessage('Attendance marked successfully.', 'success');
+      setShowMarkAttendanceModal(false);
+      setAttendanceMarking({
+        studentId: '',
+        date: new Date().toISOString().split('T')[0],
+        status: 'present',
+        course: '',
+        notes: '',
+      });
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error marking attendance:', err);
+      showMessage(err?.message || 'Unable to mark attendance.', 'error');
+    }
   };
 
   const statsCards = [
@@ -265,7 +332,10 @@ function AdminDashboard() {
               { id: 'users', label: 'Students', icon: Users },
               { id: 'contacts', label: 'Messages', icon: Mail },
               { id: 'attendance', label: 'Attendance', icon: Calendar },
-              ...(isMainAdmin ? [{ id: 'subadmins', label: 'Sub Admins', icon: UserPlus }] : []),
+              ...(isMainAdmin ? [
+                { id: 'assign-students', label: 'Assign Students', icon: UserCheck },
+                { id: 'subadmins', label: 'Sub Admins', icon: UserPlus },
+              ] : []),
             ].map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
@@ -450,6 +520,60 @@ function AdminDashboard() {
                         <td>{admin.role || 'sub_admin'}</td>
                       </tr>
                     ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'assign-students' && isMainAdmin && (
+            <div className="content-panel">
+              <div className="panel-header">
+                <div>
+                  <p className="eyebrow">Assignment</p>
+                  <h2>Assign Students to Sub-admins</h2>
+                </div>
+              </div>
+              <div className="table-card">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>Email</th>
+                      <th>Course</th>
+                      <th>Current Teacher</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.length > 0 ? (
+                      users.map((student) => (
+                        <tr key={student._id || student.id}>
+                          <td>{student.fullName || 'Unknown'}</td>
+                          <td>{student.email || '-'}</td>
+                          <td>{student.course ? student.course.replace(/-/g, ' ') : '-'}</td>
+                          <td>{student.assignedTeacher?.fullName || 'Unassigned'}</td>
+                          <td>
+                            <button
+                              className="btn-primary"
+                              onClick={() => {
+                                setSelectedStudentForAssign(student);
+                                setAssignedSubAdminId(student.assignedTeacher?._id || '');
+                                setShowAssignModal(true);
+                              }}
+                            >
+                              Assign
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="5" style={{ textAlign: 'center', color: '#999' }}>
+                          No approved students found
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -650,6 +774,134 @@ function AdminDashboard() {
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setShowCreateSubAdminModal(false)}>Cancel</button>
                 <button type="submit" className="btn-primary">Create Account</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showAssignModal && selectedStudentForAssign && (
+        <div className="modal-backdrop" onClick={() => setShowAssignModal(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">Assignment</p>
+                <h3>Assign to Sub-admin</h3>
+              </div>
+              <button className="mini-btn" onClick={() => setShowAssignModal(false)}>Close</button>
+            </div>
+
+            <div className="detail-grid">
+              <div className="detail-item">
+                <span>Student</span>
+                <strong>{selectedStudentForAssign.fullName || 'Unknown'}</strong>
+              </div>
+              <div className="detail-item">
+                <span>Email</span>
+                <strong>{selectedStudentForAssign.email || '-'}</strong>
+              </div>
+              <div className="detail-item">
+                <span>Course</span>
+                <strong>{selectedStudentForAssign.course ? selectedStudentForAssign.course.replace(/-/g, ' ') : '-'}</strong>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
+                Select Sub-admin
+              </label>
+              <select
+                value={assignedSubAdminId}
+                onChange={(e) => setAssignedSubAdminId(e.target.value)}
+                className="status-select"
+                style={{ width: '100%' }}
+              >
+                <option value="">-- Unassign --</option>
+                {subAdmins.map((admin) => (
+                  <option key={admin._id || admin.id} value={admin._id || admin.id}>
+                    {admin.fullName} ({admin.email})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="modal-actions">
+              <button type="button" className="btn-secondary" onClick={() => setShowAssignModal(false)}>Cancel</button>
+              <button type="button" className="btn-primary" onClick={handleAssignStudent}>Assign</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showMarkAttendanceModal && (
+        <div className="modal-backdrop" onClick={() => setShowMarkAttendanceModal(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">Attendance</p>
+                <h3>Mark Attendance</h3>
+              </div>
+              <button className="mini-btn" onClick={() => setShowMarkAttendanceModal(false)}>Close</button>
+            </div>
+
+            <form className="subadmin-form" onSubmit={(e) => { e.preventDefault(); handleMarkAttendance(); }}>
+              <div className="form-grid">
+                <label>
+                  Student
+                  <select 
+                    value={attendanceMarking.studentId}
+                    onChange={(e) => setAttendanceMarking({ ...attendanceMarking, studentId: e.target.value })}
+                    required
+                  >
+                    <option value="">-- Select Student --</option>
+                    {users.map((user) => (
+                      <option key={user._id || user.id} value={user._id || user.id}>
+                        {user.fullName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Date
+                  <input 
+                    type="date"
+                    value={attendanceMarking.date}
+                    onChange={(e) => setAttendanceMarking({ ...attendanceMarking, date: e.target.value })}
+                    required
+                  />
+                </label>
+                <label>
+                  Status
+                  <select 
+                    value={attendanceMarking.status}
+                    onChange={(e) => setAttendanceMarking({ ...attendanceMarking, status: e.target.value })}
+                  >
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                    <option value="late">Late</option>
+                    <option value="excused">Excused</option>
+                  </select>
+                </label>
+                <label>
+                  Course
+                  <input 
+                    value={attendanceMarking.course}
+                    onChange={(e) => setAttendanceMarking({ ...attendanceMarking, course: e.target.value })}
+                  />
+                </label>
+                <label className="span-2">
+                  Notes
+                  <textarea 
+                    value={attendanceMarking.notes}
+                    onChange={(e) => setAttendanceMarking({ ...attendanceMarking, notes: e.target.value })}
+                    style={{ minHeight: '80px', padding: '0.8rem 0.9rem', border: '1px solid rgba(15, 31, 71, 0.2)', borderRadius: '12px', fontFamily: 'inherit' }}
+                  />
+                </label>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowMarkAttendanceModal(false)}>Cancel</button>
+                <button type="submit" className="btn-primary">Mark Attendance</button>
               </div>
             </form>
           </div>
