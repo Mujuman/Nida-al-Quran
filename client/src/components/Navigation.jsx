@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Menu, X, BookOpen, Shield } from 'lucide-react';
+import { Menu, X, BookOpen } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import '../styles/Navigation.css';
 
-function Navigation({ navigateTo, onAdminClick }) {
+function Navigation({ navigateTo }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { t } = useTranslation();
@@ -63,10 +63,6 @@ function Navigation({ navigateTo, onAdminClick }) {
           </a>
           <button className="btn-nav-register" onClick={() => handleNavClick('register')}>
             {t('nav.register')}
-          </button>
-          <button className="btn-nav-admin" onClick={onAdminClick}>
-            <Shield size={18} />
-            {t('nav.adminLogin')}
           </button>
           <LanguageSwitcher />
         </div>
