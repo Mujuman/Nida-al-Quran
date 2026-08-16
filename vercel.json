@@ -19,10 +19,6 @@
       "dest": "/server/api/index.js"
     },
     {
-      "src": "/health",
-      "dest": "/server/api/index.js"
-    },
-    {
       "src": "/assets/(.*)",
       "dest": "/client/assets/$1"
     },
