@@ -416,6 +416,59 @@
   background: #f8fafc;
   padding: 0.85rem 1rem;
   margin-bottom: 1rem;
+  line-height: 1.6;
+  color: var(--admin-text);
+}
+
+.detail-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.detail-section {
+  background: rgba(15, 31, 71, 0.02);
+  border: 1px solid rgba(15, 31, 71, 0.08);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+}
+
+.section-title {
+  margin: 0 0 0.9rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f1f47;
+  letter-spacing: -0.02em;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.35rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.status-badge.status-pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #b45309;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.status-badge.status-approved {
+  background: rgba(34, 197, 94, 0.15);
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-badge.status-rejected {
+  background: rgba(239, 68, 68, 0.15);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .message-box span {

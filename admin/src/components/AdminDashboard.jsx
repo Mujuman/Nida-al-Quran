@@ -463,23 +463,97 @@ function AdminDashboard() {
           <div className="modal-card wide" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
-                <p className="eyebrow">Student details</p>
-                <h3>{selectedUser.fullName || 'Student profile'}</h3>
+                <p className="eyebrow">Student Details</p>
+                <h3>{selectedUser.fullName || 'Student Profile'}</h3>
               </div>
               <button className="mini-btn" onClick={() => setShowUserModal(false)}>Close</button>
             </div>
 
-            <div className="detail-grid">
-              <div className="detail-item"><span>Email</span><strong>{selectedUser.email || '-'}</strong></div>
-              <div className="detail-item"><span>Phone</span><strong>{selectedUser.phone || '-'}</strong></div>
-              <div className="detail-item"><span>Course</span><strong>{selectedUser.course || '-'}</strong></div>
-              <div className="detail-item"><span>Level</span><strong>{selectedUser.level || '-'}</strong></div>
-              <div className="detail-item"><span>Schedule</span><strong>{selectedUser.schedule || '-'}</strong></div>
-              <div className="detail-item"><span>Guardian</span><strong>{selectedUser.guardian || '-'}</strong></div>
-              <div className="detail-item"><span>Guardian Phone</span><strong>{selectedUser.guardianPhone || '-'}</strong></div>
-              <div className="detail-item"><span>Age</span><strong>{selectedUser.age || '-'}</strong></div>
-              <div className="detail-item"><span>Gender</span><strong>{selectedUser.gender || '-'}</strong></div>
-              <div className="detail-item"><span>Status</span><strong>{selectedUser.registrationStatus || 'pending'}</strong></div>
+            <div className="detail-sections">
+              {/* Personal Information */}
+              <div className="detail-section">
+                <h4 className="section-title">Personal Information</h4>
+                <div className="detail-grid">
+                  <div className="detail-item"><span>Full Name</span><strong>{selectedUser.fullName || '-'}</strong></div>
+                  <div className="detail-item"><span>Email</span><strong>{selectedUser.email || '-'}</strong></div>
+                  <div className="detail-item"><span>Phone</span><strong>{selectedUser.phone || '-'}</strong></div>
+                  <div className="detail-item"><span>Age</span><strong>{selectedUser.age || '-'}</strong></div>
+                  <div className="detail-item"><span>Gender</span><strong>{selectedUser.gender ? selectedUser.gender.charAt(0).toUpperCase() + selectedUser.gender.slice(1) : '-'}</strong></div>
+                </div>
+              </div>
+
+              {/* Course Information */}
+              <div className="detail-section">
+                <h4 className="section-title">Course & Level</h4>
+                <div className="detail-grid">
+                  <div className="detail-item"><span>Course</span><strong>{selectedUser.course ? selectedUser.course.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '-'}</strong></div>
+                  <div className="detail-item"><span>Level</span><strong>{selectedUser.level ? selectedUser.level.charAt(0).toUpperCase() + selectedUser.level.slice(1) : '-'}</strong></div>
+                  <div className="detail-item"><span>Schedule</span><strong>{selectedUser.schedule ? selectedUser.schedule.charAt(0).toUpperCase() + selectedUser.schedule.slice(1) : '-'}</strong></div>
+                </div>
+              </div>
+
+              {/* Guardian Information */}
+              <div className="detail-section">
+                <h4 className="section-title">Guardian Information</h4>
+                <div className="detail-grid">
+                  <div className="detail-item"><span>Guardian Name</span><strong>{selectedUser.guardian || '-'}</strong></div>
+                  <div className="detail-item"><span>Guardian Phone</span><strong>{selectedUser.guardianPhone || '-'}</strong></div>
+                </div>
+              </div>
+
+              {/* Registration & Account Status */}
+              <div className="detail-section">
+                <h4 className="section-title">Account Status</h4>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span>Registration Status</span>
+                    <strong>
+                      <span className={`status-badge status-${selectedUser.registrationStatus || 'pending'}`}>
+                        {selectedUser.registrationStatus ? selectedUser.registrationStatus.charAt(0).toUpperCase() + selectedUser.registrationStatus.slice(1) : 'Pending'}
+                      </span>
+                    </strong>
+                  </div>
+                  <div className="detail-item">
+                    <span>Email Verified</span>
+                    <strong>{selectedUser.isVerified ? '✓ Yes' : '✗ No'}</strong>
+                  </div>
+                  {selectedUser.assignedTeacher && (
+                    <div className="detail-item">
+                      <span>Assigned Teacher</span>
+                      <strong>{selectedUser.assignedTeacher}</strong>
+                    </div>
+                  )}
+                  <div className="detail-item">
+                    <span>Teaching Active</span>
+                    <strong>{selectedUser.isTeachingActive ? '✓ Active' : '✗ Inactive'}</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Message & Notes */}
+              {selectedUser.message && (
+                <div className="detail-section">
+                  <h4 className="section-title">Student Message</h4>
+                  <div className="message-box">
+                    {selectedUser.message}
+                  </div>
+                </div>
+              )}
+
+              {/* Timestamps */}
+              <div className="detail-section">
+                <h4 className="section-title">Timestamps</h4>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span>Registered</span>
+                    <strong>{selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : '-'}</strong>
+                  </div>
+                  <div className="detail-item">
+                    <span>Last Updated</span>
+                    <strong>{selectedUser.updatedAt ? new Date(selectedUser.updatedAt).toLocaleString() : '-'}</strong>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="modal-actions">
