@@ -1,6 +1,6 @@
-# Nida Backend (MERN)
+# Nida Backend
 
-Minimal Express + MongoDB backend for the Nida app.
+Express + MongoDB backend for the Nida project.
 
 Setup
 
@@ -18,7 +18,16 @@ Run
 npm run dev
 ```
 
-APIs
+API groups
 
-- `POST /api/users/register` — body: `{ name, email, password }` returns `{ token }`
-- `POST /api/users/login` — body: `{ email, password }` returns `{ token }`
+- User routes for registration, login, and profile access
+- Contact routes for public messages and replies
+- Attendance routes for attendance management
+- Admin routes for management and protected staff operations
+
+Environment variables
+
+- `MONGO_URI` — MongoDB connection string
+- `JWT_SECRET` — JWT signing secret
+- `PORT` — Optional API port override
+- `NODE_ENV` — Runtime environment
