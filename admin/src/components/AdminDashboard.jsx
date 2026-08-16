@@ -43,6 +43,88 @@ function AdminDashboard() {
     setTimeout(() => setMessage({ text: '', type: '' }), 3500);
   };
 
+  const handleOpenUser = async (user) => {
+    try {
+      const userDetails = await apiService.getUserDetails(user._id || user.id);
+      setSelectedUser(userDetails);
+      setShowUserModal(true);
+    } catch (err) {
+      console.error('Error fetching user details:', err);
+      showMessage(err?.message || 'Unable to load student details.', 'error');
+    }
+  };
+
+  const handleOpenContact = async (contact) => {
+    try {
+      const contactDetails = await apiService.getContactById(contact._id || contact.id);
+      setSelectedContact(contactDetails);
+      setReplyText(contactDetails.reply || '');
+      setShowReplyModal(true);
+    } catch (err) {
+      console.error('Error fetching contact details:', err);
+      showMessage(err?.message || 'Unable to load message details.', 'error');
+    }
+  };
+
+  const handleUserStatusUpdate = async (nextStatus) => {
+    if (!selectedUser) return;
+    try {
+      await apiService.updateUserStatus(selectedUser._id || selectedUser.id, {
+        registrationStatus: nextStatus,
+      });
+      showMessage('Student status updated.', 'success');
+      setSelectedUser((prev) => ({ ...prev, registrationStatus: nextStatus }));
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error updating user status:', err);
+      showMessage(err?.message || 'Unable to update student status.', 'error');
+    }
+  };
+
+  const handleReplySubmit = async () => {
+    if (!selectedContact || !replyText.trim()) {
+      showMessage('Please enter a reply before sending.', 'error');
+      return;
+    }
+
+    try {
+      const response = await apiService.replyContact(selectedContact._id || selectedContact.id, replyText.trim());
+      showMessage(response?.msg || 'Reply sent successfully.', 'success');
+      setSelectedContact((prev) => ({ ...prev, reply: replyText.trim(), status: 'replied' }));
+      setReplyText('');
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error sending reply:', err);
+      showMessage(err?.message || 'Unable to send reply.', 'error');
+    }
+  };
+
+  const handleMarkContactAsRead = async () => {
+    if (!selectedContact) return;
+    try {
+      const response = await apiService.markContactAsRead(selectedContact._id || selectedContact.id);
+      showMessage('Message marked as read.', 'success');
+      setSelectedContact((prev) => ({ ...prev, ...response, status: 'read' }));
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error marking contact as read:', err);
+      showMessage(err?.message || 'Unable to mark message as read.', 'error');
+    }
+  };
+
+  const handleMarkContactAsSpam = async () => {
+    if (!selectedContact) return;
+    try {
+      await apiService.markContactAsSpam(selectedContact._id || selectedContact.id);
+      showMessage('Message marked as spam.', 'success');
+      setSelectedContact((prev) => ({ ...prev, isSpam: true }));
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error marking contact as spam:', err);
+      showMessage(err?.message || 'Unable to flag message as spam.', 'error');
+    }
+  };
+
   const fetchDashboardData = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -228,7 +310,7 @@ function AdminDashboard() {
                           </span>
                         </td>
                         <td>
-                          <button className="mini-btn" onClick={() => setSelectedUser(user)}>
+                          <button className="mini-btn" onClick={() => handleOpenUser(user)}>
                             <Eye size={14} />
                           </button>
                         </td>
@@ -265,7 +347,7 @@ function AdminDashboard() {
                         <td>{contact.email || '-'}</td>
                         <td>{contact.message?.slice(0, 60) || '-'}</td>
                         <td>
-                          <button className="mini-btn" onClick={() => setSelectedContact(contact)}>
+                          <button className="mini-btn" onClick={() => handleOpenContact(contact)}>
                             <Mail size={14} />
                           </button>
                         </td>
@@ -346,6 +428,86 @@ function AdminDashboard() {
           )}
         </main>
       </div>
+
+      {showUserModal && selectedUser && (
+        <div className="modal-backdrop" onClick={() => setShowUserModal(false)}>
+          <div className="modal-card wide" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">Student details</p>
+                <h3>{selectedUser.fullName || 'Student profile'}</h3>
+              </div>
+              <button className="mini-btn" onClick={() => setShowUserModal(false)}>Close</button>
+            </div>
+
+            <div className="detail-grid">
+              <div className="detail-item"><span>Email</span><strong>{selectedUser.email || '-'}</strong></div>
+              <div className="detail-item"><span>Phone</span><strong>{selectedUser.phone || '-'}</strong></div>
+              <div className="detail-item"><span>Course</span><strong>{selectedUser.course || '-'}</strong></div>
+              <div className="detail-item"><span>Level</span><strong>{selectedUser.level || '-'}</strong></div>
+              <div className="detail-item"><span>Schedule</span><strong>{selectedUser.schedule || '-'}</strong></div>
+              <div className="detail-item"><span>Guardian</span><strong>{selectedUser.guardian || '-'}</strong></div>
+              <div className="detail-item"><span>Guardian Phone</span><strong>{selectedUser.guardianPhone || '-'}</strong></div>
+              <div className="detail-item"><span>Age</span><strong>{selectedUser.age || '-'}</strong></div>
+              <div className="detail-item"><span>Gender</span><strong>{selectedUser.gender || '-'}</strong></div>
+              <div className="detail-item"><span>Status</span><strong>{selectedUser.registrationStatus || 'pending'}</strong></div>
+            </div>
+
+            <div className="modal-actions">
+              <select
+                value={selectedUser.registrationStatus || 'pending'}
+                onChange={(e) => handleUserStatusUpdate(e.target.value)}
+                className="status-select"
+              >
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <button className="btn-primary" onClick={() => setShowUserModal(false)}>Done</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showReplyModal && selectedContact && (
+        <div className="modal-backdrop" onClick={() => setShowReplyModal(false)}>
+          <div className="modal-card wide" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">Message details</p>
+                <h3>{selectedContact.subject || 'Contact message'}</h3>
+              </div>
+              <button className="mini-btn" onClick={() => setShowReplyModal(false)}>Close</button>
+            </div>
+
+            <div className="detail-grid compact">
+              <div className="detail-item"><span>From</span><strong>{selectedContact.fullName || selectedContact.name || '-'}</strong></div>
+              <div className="detail-item"><span>Email</span><strong>{selectedContact.email || '-'}</strong></div>
+              <div className="detail-item"><span>Phone</span><strong>{selectedContact.phone || '-'}</strong></div>
+              <div className="detail-item"><span>Type</span><strong>{selectedContact.type || 'inquiry'}</strong></div>
+              <div className="detail-item"><span>Status</span><strong>{selectedContact.status || 'new'}</strong></div>
+            </div>
+
+            <div className="message-box">
+              <span>Message</span>
+              <p>{selectedContact.message || '-'}</p>
+            </div>
+
+            <textarea
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              placeholder="Write a reply to this message..."
+              className="reply-textarea"
+            />
+
+            <div className="modal-actions">
+              <button className="btn-secondary" onClick={handleMarkContactAsRead}>Mark as read</button>
+              <button className="btn-secondary" onClick={handleMarkContactAsSpam}>Mark as spam</button>
+              <button className="btn-primary" onClick={handleReplySubmit}>Send reply</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
