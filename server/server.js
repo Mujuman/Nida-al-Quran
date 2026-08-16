@@ -9,11 +9,30 @@ const attendanceRoutes = require('./routes/attendance');
 
 const app = express();
 
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+  origin: [
+    'https://nida-al-quran.vercel.app',
+    'https://nida-al-quran-admin.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000',
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 connectDB().catch((err) => {
   console.error('Database connection failed during startup:', err.message);
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', message: 'Backend API is running' });
 });
 
 // API Routes
