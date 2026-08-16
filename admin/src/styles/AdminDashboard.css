@@ -515,6 +515,24 @@
   font: inherit;
 }
 
+.subadmin-form select {
+  width: 100%;
+  height: 52px;
+  box-sizing: border-box;
+  border: 1px solid rgba(15, 31, 71, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.8rem 0.9rem;
+  font-size: 1rem;
+  color: #0f1f47;
+}
+
+.subadmin-form select:focus {
+  outline: none;
+  border-color: rgba(30, 58, 138, 0.5);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.08);
+}
+
 .btn-primary,
 .btn-secondary {
   border: none;

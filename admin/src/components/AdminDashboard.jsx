@@ -458,6 +458,11 @@ function AdminDashboard() {
                   <p className="eyebrow">Attendance</p>
                   <h2>Attendance Management</h2>
                 </div>
+                {!isMainAdmin && (
+                  <button className="btn-primary" onClick={() => setShowMarkAttendanceModal(true)}>
+                    + Mark Attendance
+                  </button>
+                )}
               </div>
               <div className="table-card">
                 <table>
