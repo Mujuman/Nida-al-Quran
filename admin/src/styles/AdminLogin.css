@@ -19,17 +19,21 @@
 .login-container {
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 420px;
+  width: min(100%, 520px);
+  max-width: 520px;
+  padding: 0 0.75rem;
+  box-sizing: border-box;
 }
 
 .login-box {
+  width: 100%;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(212, 175, 55, 0.3);
   border-radius: 18px;
-  padding: 2rem 1.5rem;
+  padding: clamp(1.25rem, 2vw, 2rem) clamp(1rem, 2.5vw, 1.5rem);
   backdrop-filter: blur(14px);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
 }
 
 .login-logo {
@@ -52,7 +56,8 @@
 .login-logo h1 {
   margin: 0;
   color: #d4af37;
-  font-size: 1.6rem;
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
+  line-height: 1.2;
 }
 
 .login-logo p {
@@ -60,7 +65,7 @@
   color: rgba(255,255,255,0.7);
   letter-spacing: 0.15rem;
   text-transform: uppercase;
-  font-size: 0.72rem;
+  font-size: clamp(0.64rem, 1.5vw, 0.75rem);
 }
 
 .error-alert {
@@ -97,12 +102,13 @@
 
 .form-group input {
   width: 100%;
-  padding: 0.8rem 1rem;
+  box-sizing: border-box;
+  padding: 0.85rem 1rem;
   border-radius: 10px;
   border: 1px solid rgba(212, 175, 55, 0.25);
   background: rgba(255,255,255,0.08);
   color: #fff;
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 2vw, 1rem);
 }
 
 .form-group input::placeholder {
@@ -115,8 +121,9 @@
   background: linear-gradient(135deg, #b8941f, #d4af37);
   color: #0f1f47;
   font-weight: 700;
-  padding: 0.9rem 1rem;
+  padding: clamp(0.8rem, 2vw, 0.95rem) 1rem;
   cursor: pointer;
+  font-size: clamp(1rem, 2vw, 1.1rem);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -168,6 +175,39 @@
   justify-content: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .admin-login-page {
+    padding: 0.75rem;
+  }
+
+  .login-box {
+    border-radius: 14px;
+    padding: 1.2rem 0.9rem;
+  }
+
+  .login-logo {
+    margin-bottom: 1.25rem;
+  }
+
+  .logo-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .form-group label {
+    font-size: 0.76rem;
+  }
+
+  .login-footer p {
+    letter-spacing: 0.05rem;
+  }
+
+  .role-badge {
+    font-size: 0.68rem;
+    padding: 0.3rem 0.65rem;
+  }
 }
 
 .role-badge {
