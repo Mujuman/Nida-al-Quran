@@ -344,30 +344,5 @@
     "followUs": "Follow Us",
     "copyright": "© 2024 Nida Al-Quran. All rights reserved.",
     "description": "Your gateway to quality Islamic education and Quranic studies."
-  },
-  "admin": {
-    "login": "Admin Login",
-    "dashboard": "Dashboard",
-    "logout": "Logout",
-    "username": "Username",
-    "password": "Password",
-    "loginBtn": "Login",
-    "students": "Students",
-    "attendance": "Attendance",
-    "contacts": "Contacts",
-    "manage": "Manage",
-    "viewAll": "View All",
-    "markAttendance": "Mark Attendance",
-    "date": "Date",
-    "student": "Student",
-    "status": "Status",
-    "present": "Present",
-    "absent": "Absent",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "add": "Add",
-    "noData": "No data available"
   }
 }

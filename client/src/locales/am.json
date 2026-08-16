@@ -339,30 +339,5 @@
     "followUs": "ይከተሉን",
     "copyright": "© 2024 ኒዳእ አል ቁርኣን። ሁሉም መብቶች የተጠበቁ ናቸው።",
     "description": "ለጥራት ያለው የእስላማዊ ትምህርት እና የቁርኣን ጥናቶች ብርሃን።"
-  },
-  "admin": {
-    "login": "አስተዳዳሪ ログイン",
-    "dashboard": "ዳሽቦርድ",
-    "logout": "ወጣ",
-    "username": "ተጠቃሚ ስም",
-    "password": "ይለፉ ቃል",
-    "loginBtn": "ወጣ",
-    "students": "ተማሪዎች",
-    "attendance": "ሠራ",
-    "contacts": "ዋጋዎች",
-    "manage": "ያስተዳድሩ",
-    "viewAll": "ሁሉንም ይመልከቱ",
-    "markAttendance": "ሠራ ምልክት ያድርጉ",
-    "date": "ቀን",
-    "student": "ተማሪ",
-    "status": "ሁኔታ",
-    "present": "ተገኝተዋል",
-    "absent": "ሌላ ሥራ ነበር",
-    "save": "ያስቀምጡ",
-    "cancel": "ሰርዝ",
-    "delete": "ሰርዝ",
-    "edit": "ያርሙ",
-    "add": "ጨምር",
-    "noData": "ምንም ውሂብ የለም"
   }
 }
