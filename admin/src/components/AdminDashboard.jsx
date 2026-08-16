@@ -32,6 +32,13 @@ function AdminDashboard() {
   const [showCreateSubAdminModal, setShowCreateSubAdminModal] = useState(false);
   const [showEditSubAdminModal, setShowEditSubAdminModal] = useState(false);
   const [selectedSubAdmin, setSelectedSubAdmin] = useState(null);
+  const [newSubAdmin, setNewSubAdmin] = useState({
+    username: '',
+    email: '',
+    password: '',
+    fullName: '',
+    phone: '',
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [attendanceDate, setAttendanceDate] = useState(new Date().toISOString().split('T')[0]);
@@ -96,6 +103,21 @@ function AdminDashboard() {
     } catch (err) {
       console.error('Error sending reply:', err);
       showMessage(err?.message || 'Unable to send reply.', 'error');
+    }
+  };
+
+  const handleCreateSubAdmin = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await apiService.createSubAdmin(newSubAdmin);
+      showMessage(response?.msg || 'Sub-admin created successfully.', 'success');
+      setShowCreateSubAdminModal(false);
+      setNewSubAdmin({ username: '', email: '', password: '', fullName: '', phone: '' });
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error creating sub-admin:', err);
+      showMessage(err?.message || 'Could not create sub-admin.', 'error');
     }
   };
 
@@ -374,15 +396,17 @@ function AdminDashboard() {
                       <th>Student</th>
                       <th>Course</th>
                       <th>Date</th>
+                      <th>Recorded By</th>
                       <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {attendance.map((item) => (
                       <tr key={item._id || item.id}>
-                        <td>{item.studentName || 'Unknown'}</td>
+                        <td>{item.student?.fullName || item.studentName || 'Unknown'}</td>
                         <td>{item.course || '-'}</td>
-                        <td>{item.date || '-'}</td>
+                        <td>{item.date ? new Date(item.date).toLocaleDateString() : '-'}</td>
+                        <td>{item.recordedBy?.fullName || item.recordedBy || 'System'}</td>
                         <td>
                           <span className={`status-badge ${item.status || 'present'}`}>
                             {item.status || 'Present'}
@@ -403,6 +427,9 @@ function AdminDashboard() {
                   <p className="eyebrow">Admins</p>
                   <h2>Sub-admin Management</h2>
                 </div>
+                <button className="btn-primary" onClick={() => setShowCreateSubAdminModal(true)}>
+                  + Create Sub Admin
+                </button>
               </div>
               <div className="table-card">
                 <table>
@@ -410,6 +437,7 @@ function AdminDashboard() {
                     <tr>
                       <th>Name</th>
                       <th>Email</th>
+                      <th>Username</th>
                       <th>Role</th>
                     </tr>
                   </thead>
@@ -418,6 +446,7 @@ function AdminDashboard() {
                       <tr key={admin._id || admin.id}>
                         <td>{admin.fullName || 'Unknown'}</td>
                         <td>{admin.email || '-'}</td>
+                        <td>{admin.username || '-'}</td>
                         <td>{admin.role || 'sub_admin'}</td>
                       </tr>
                     ))}
@@ -505,6 +534,50 @@ function AdminDashboard() {
               <button className="btn-secondary" onClick={handleMarkContactAsSpam}>Mark as spam</button>
               <button className="btn-primary" onClick={handleReplySubmit}>Send reply</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showCreateSubAdminModal && (
+        <div className="modal-backdrop" onClick={() => setShowCreateSubAdminModal(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">Create manager</p>
+                <h3>Create Sub Admin</h3>
+              </div>
+              <button className="mini-btn" onClick={() => setShowCreateSubAdminModal(false)}>Close</button>
+            </div>
+
+            <form className="subadmin-form" onSubmit={handleCreateSubAdmin}>
+              <div className="form-grid">
+                <label>
+                  Full name
+                  <input value={newSubAdmin.fullName} onChange={(e) => setNewSubAdmin({ ...newSubAdmin, fullName: e.target.value })} required />
+                </label>
+                <label>
+                  Username
+                  <input value={newSubAdmin.username} onChange={(e) => setNewSubAdmin({ ...newSubAdmin, username: e.target.value })} required />
+                </label>
+                <label>
+                  Email
+                  <input type="email" value={newSubAdmin.email} onChange={(e) => setNewSubAdmin({ ...newSubAdmin, email: e.target.value })} required />
+                </label>
+                <label>
+                  Phone
+                  <input value={newSubAdmin.phone} onChange={(e) => setNewSubAdmin({ ...newSubAdmin, phone: e.target.value })} />
+                </label>
+                <label className="span-2">
+                  Password
+                  <input type="password" value={newSubAdmin.password} onChange={(e) => setNewSubAdmin({ ...newSubAdmin, password: e.target.value })} required />
+                </label>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowCreateSubAdminModal(false)}>Cancel</button>
+                <button type="submit" className="btn-primary">Create Account</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
