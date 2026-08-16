@@ -9,7 +9,7 @@ function Register() {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    password: 'default123', // For now, we'll use a default password
+    password: 'default123',
     phone: '',
     age: '',
     gender: '',
@@ -25,6 +25,10 @@ function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const nextSteps = t('register.form.nextSteps', { returnObjects: true }) || [];
+  const benefitCards = t('register.form.benefits', { returnObjects: true }) || [];
+  const tipList = t('register.form.tipList', { returnObjects: true }) || [];
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -37,9 +41,8 @@ function Register() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    
+
     try {
-      // Prepare data for registration
       const registrationData = {
         fullName: formData.fullName,
         email: formData.email,
@@ -55,14 +58,12 @@ function Register() {
         message: formData.message,
       };
 
-      // Call the API to register user
       const response = await apiService.registerUser(registrationData);
-      
+
       if (response.token) {
-        // Save token to localStorage
         apiService.saveToken(response.token);
         setIsSubmitted(true);
-        
+
         setTimeout(() => {
           setIsSubmitted(false);
           setCurrentStep(1);
@@ -82,11 +83,11 @@ function Register() {
           });
         }, 5000);
       } else {
-        setError(response.msg || 'Registration failed. Please try again.');
+        setError(response.msg || t('register.form.errorTryAgain'));
       }
     } catch (err) {
       console.error('Registration error:', err);
-      setError('An error occurred. Please try again later.');
+      setError(t('register.form.errorGeneral'));
     } finally {
       setIsLoading(false);
     }
@@ -104,7 +105,6 @@ function Register() {
 
   return (
     <div className="register-page">
-      {/* Header Section */}
       <section className="register-header">
         <div className="container">
           <h1 className="page-title fade-in">{t('register.pageTitle')}</h1>
@@ -113,7 +113,6 @@ function Register() {
         </div>
       </section>
 
-      {/* Registration Content */}
       <section className="register-content-section">
         <div className="container">
           {error && (
@@ -132,26 +131,25 @@ function Register() {
               <span>{error}</span>
             </div>
           )}
-          
+
           {isSubmitted ? (
             <div className="success-registration">
               <div className="success-animation">
                 <CheckCircle size={80} className="success-check" />
               </div>
-              <h2>ምዝገባ ተሳክቷል!</h2>
-              <p>ስላመዘገቡ እናመሰግናለን። የምዝገባዎ መረጃ ተቀብለናል።</p>
+              <h2>{t('register.form.successTitle')}</h2>
+              <p>{t('register.form.successText')}</p>
               <div className="success-details">
                 <div className="success-info">
-                  <h3>ቀጣይ ደረጃዎች:</h3>
+                  <h3>{t('register.form.nextStepsTitle')}</h3>
                   <ul>
-                    <li>የማረጋገጫ ኢሜይል በቅርቡ ይደርስዎታል</li>
-                    <li>የእኛ ቡድን በ24 ሰዓታት ውስጥ ያግኝዎታል</li>
-                    <li>የመክፈያ መረጃ ይላክልዎታል</li>
-                    <li>የክፍል መርሐ ግብርዎ ይደረደርልዎታል</li>
+                    {nextSteps.map((step, index) => (
+                      <li key={index}>{step}</li>
+                    ))}
                   </ul>
                 </div>
                 <div className="contact-support">
-                  <h4>ጥያቄዎች አሉዎት?</h4>
+                  <h4>{t('register.form.questions')}</h4>
                   <p>📞 +251 911 234 567</p>
                   <p>✉️ info@nidaulquran.com</p>
                 </div>
@@ -159,39 +157,36 @@ function Register() {
             </div>
           ) : (
             <div className="registration-container">
-              {/* Progress Steps */}
               <div className="progress-steps">
                 <div className={`step ${currentStep >= 1 ? 'active' : ''} ${currentStep > 1 ? 'completed' : ''}`}>
                   <div className="step-number">1</div>
-                  <div className="step-label">የግል መረጃ</div>
+                  <div className="step-label">{t('register.form.personalInfo')}</div>
                 </div>
                 <div className="step-line"></div>
                 <div className={`step ${currentStep >= 2 ? 'active' : ''} ${currentStep > 2 ? 'completed' : ''}`}>
                   <div className="step-number">2</div>
-                  <div className="step-label">የኮርስ ምርጫ</div>
+                  <div className="step-label">{t('register.form.courseSelection')}</div>
                 </div>
                 <div className="step-line"></div>
                 <div className={`step ${currentStep >= 3 ? 'active' : ''}`}>
                   <div className="step-number">3</div>
-                  <div className="step-label">ተጨማሪ መረጃ</div>
+                  <div className="step-label">{t('register.form.additionalInfo')}</div>
                 </div>
               </div>
 
-              {/* Registration Form */}
               <form className="registration-form" onSubmit={handleSubmit}>
-                {/* Step 1: Personal Information */}
                 {currentStep === 1 && (
                   <div className="form-step fade-in">
                     <div className="step-header">
                       <User size={32} />
-                      <h2>የግል መረጃ</h2>
-                      <p>የእርስዎን መሰረታዊ መረጃ ያስገቡ</p>
+                      <h2>{t('register.form.personalInfo')}</h2>
+                      <p>{t('register.form.personalInfoDesc')}</p>
                     </div>
 
                     <div className="form-group">
                       <label htmlFor="fullName">
                         <User size={18} />
-                        ሙሉ ስም *
+                        {t('register.form.fullName')} *
                       </label>
                       <input
                         type="text"
@@ -199,7 +194,7 @@ function Register() {
                         name="fullName"
                         value={formData.fullName}
                         onChange={handleInputChange}
-                        placeholder="ሙሉ ስምዎን ያስገቡ"
+                        placeholder={t('register.form.fullNamePlaceholder')}
                         required
                       />
                     </div>
@@ -208,7 +203,7 @@ function Register() {
                       <div className="form-group">
                         <label htmlFor="email">
                           <Mail size={18} />
-                          ኢሜይል አድራሻ *
+                          {t('register.form.email')} *
                         </label>
                         <input
                           type="email"
@@ -216,7 +211,7 @@ function Register() {
                           name="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          placeholder="your.email@example.com"
+                          placeholder={t('register.form.emailPlaceholder')}
                           required
                         />
                       </div>
@@ -224,7 +219,7 @@ function Register() {
                       <div className="form-group">
                         <label htmlFor="phone">
                           <Phone size={18} />
-                          ስልክ ቁጥር *
+                          {t('register.form.phone')} *
                         </label>
                         <input
                           type="tel"
@@ -232,7 +227,7 @@ function Register() {
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          placeholder="+251 911 234 567"
+                          placeholder={t('register.form.phonePlaceholder')}
                           required
                         />
                       </div>
@@ -242,7 +237,7 @@ function Register() {
                       <div className="form-group">
                         <label htmlFor="age">
                           <Calendar size={18} />
-                          እድመ *
+                          {t('register.form.age')} *
                         </label>
                         <input
                           type="number"
@@ -250,7 +245,7 @@ function Register() {
                           name="age"
                           value={formData.age}
                           onChange={handleInputChange}
-                          placeholder="የእርስዎን እድሜ ያስገቡ"
+                          placeholder={t('register.form.agePlaceholder')}
                           min="5"
                           max="100"
                           required
@@ -260,7 +255,7 @@ function Register() {
                       <div className="form-group">
                         <label htmlFor="gender">
                           <Users size={18} />
-                          ጾታ *
+                          {t('register.form.gender')} *
                         </label>
                         <select
                           id="gender"
@@ -269,34 +264,33 @@ function Register() {
                           onChange={handleInputChange}
                           required
                         >
-                          <option value="">ጾታ ይምረጡ</option>
-                          <option value="male">ወንድ</option>
-                          <option value="female">ሴት</option>
+                          <option value="">{t('register.form.genderSelect')}</option>
+                          <option value="male">{t('register.form.genderMale')}</option>
+                          <option value="female">{t('register.form.genderFemale')}</option>
                         </select>
                       </div>
                     </div>
 
                     <div className="form-navigation">
                       <button type="button" className="btn btn-next" onClick={nextStep} disabled={isLoading}>
-                        ቀጣይ ደረጃ →
+                        {t('register.form.next')} →
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* Step 2: Course Selection */}
                 {currentStep === 2 && (
                   <div className="form-step fade-in">
                     <div className="step-header">
                       <BookOpen size={32} />
-                      <h2>የኮርስ ምርጫ</h2>
-                      <p>የሚፈልጉትን ኮርስ ይምረጡ</p>
+                      <h2>{t('register.form.courseSelection')}</h2>
+                      <p>{t('register.form.courseSelectionDesc')}</p>
                     </div>
 
                     <div className="form-group">
                       <label htmlFor="course">
                         <BookOpen size={18} />
-                        ኮርስ *
+                        {t('register.form.course')} *
                       </label>
                       <select
                         id="course"
@@ -305,14 +299,14 @@ function Register() {
                         onChange={handleInputChange}
                         required
                       >
-                        <option value="">ኮርስ ይምረጡ</option>
-                        <option value="quran-recitation">የቁርኣን ትምህርት (ታጅዊድ)</option>
-                        <option value="quran-memorization">የቁርኣን ማስታወሻ (ሂፍዝ)</option>
-                        <option value="islamic-studies">የእስላማዊ ጥናቶች</option>
-                        <option value="arabic-language">የአረብኛ ቋንቋ</option>
-                        <option value="children-program">የህጻናት ፕሮግራም</option>
-                        <option value="adult-classes">የአዋቂዎች ክፍሎች</option>
-                        <option value="online-learning">የመስመር ላይ ትምህርት</option>
+                        <option value="">{t('register.form.courseSelect')}</option>
+                        <option value="quran-recitation">{t('register.courses.0')}</option>
+                        <option value="quran-memorization">{t('register.courses.1')}</option>
+                        <option value="islamic-studies">{t('register.courses.2')}</option>
+                        <option value="arabic-language">{t('register.courses.3')}</option>
+                        <option value="children-program">{t('register.courses.4')}</option>
+                        <option value="adult-classes">{t('register.courses.5')}</option>
+                        <option value="online-learning">{t('register.courses.6')}</option>
                       </select>
                     </div>
 
@@ -320,7 +314,7 @@ function Register() {
                       <div className="form-group">
                         <label htmlFor="level">
                           <Award size={18} />
-                          ደረጃ *
+                          {t('register.form.level')} *
                         </label>
                         <select
                           id="level"
@@ -329,17 +323,17 @@ function Register() {
                           onChange={handleInputChange}
                           required
                         >
-                          <option value="">ደረጃ ይምረጡ</option>
-                          <option value="beginner">ጀማሪ</option>
-                          <option value="intermediate">መካከለኛ</option>
-                          <option value="advanced">ከፍተኛ</option>
+                          <option value="">{t('register.form.levelSelect')}</option>
+                          <option value="beginner">{t('register.levels.0')}</option>
+                          <option value="intermediate">{t('register.levels.1')}</option>
+                          <option value="advanced">{t('register.levels.2')}</option>
                         </select>
                       </div>
 
                       <div className="form-group">
                         <label htmlFor="schedule">
                           <Calendar size={18} />
-                          የመርሐ ግብር ምርጫ *
+                          {t('register.form.schedule')} *
                         </label>
                         <select
                           id="schedule"
@@ -348,57 +342,55 @@ function Register() {
                           onChange={handleInputChange}
                           required
                         >
-                          <option value="">መርሐ ግብር ይምረጡ</option>
-                          <option value="morning">ጠዋት (8:00 - 12:00)</option>
-                          <option value="afternoon">ከሰዓት በኋላ (2:00 - 5:00)</option>
-                          <option value="evening">ምሽት (5:00 - 8:00)</option>
-                          <option value="weekend">የቅዳሜና እሁድ</option>
-                          <option value="flexible">ተለዋዋጭ</option>
+                          <option value="">{t('register.form.scheduleSelect')}</option>
+                          <option value="morning">{t('register.schedules.0')}</option>
+                          <option value="afternoon">{t('register.schedules.1')}</option>
+                          <option value="evening">{t('register.schedules.2')}</option>
+                          <option value="weekend">{t('register.schedules.3')}</option>
+                          <option value="flexible">{t('register.schedules.4')}</option>
                         </select>
                       </div>
                     </div>
 
                     <div className="info-box">
-                      <h4>💡 ጠቃሚ መረጃ</h4>
+                      <h4>💡 {t('register.form.tipTitle')}</h4>
                       <ul>
-                        <li>ሁሉም ኮርሶች በተመሰከሩ መምህራን ይሰጣሉ</li>
-                        <li>የመስመር ላይ እና አካላዊ ክፍሎች ይገኛሉ</li>
-                        <li>የመርሐ ግብር ተለዋዋጭነት አለ</li>
-                        <li>የምስክር ወረቀት ይሰጣል</li>
+                        {tipList.map((tip, index) => (
+                          <li key={index}>{tip}</li>
+                        ))}
                       </ul>
                     </div>
 
                     <div className="form-navigation">
                       <button type="button" className="btn btn-prev" onClick={prevStep} disabled={isLoading}>
-                        ← ወደ ኋላ
+                        ← {t('register.form.previous')}
                       </button>
                       <button type="button" className="btn btn-next" onClick={nextStep} disabled={isLoading}>
-                        ቀጣይ ደረጃ →
+                        {t('register.form.next')} →
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* Step 3: Additional Information */}
                 {currentStep === 3 && (
                   <div className="form-step fade-in">
                     <div className="step-header">
                       <Award size={32} />
-                      <h2>ተጨማሪ መረጃ</h2>
-                      <p>ምዝገባዎን ያጠናቅቁ</p>
+                      <h2>{t('register.form.additionalInfo')}</h2>
+                      <p>{t('register.form.additionalInfoDesc')}</p>
                     </div>
 
                     {formData.age && parseInt(formData.age) < 18 && (
                       <>
                         <div className="guardian-section">
-                          <h3>የወላጅ/አሳዳጊ መረጃ</h3>
-                          <p className="section-note">ለ18 ዓመት በታች ላሉ ተማሪዎች የወላጅ መረጃ ያስፈልጋል</p>
+                          <h3>{t('register.form.guardianTitle')}</h3>
+                          <p className="section-note">{t('register.form.guardianNote')}</p>
                         </div>
 
                         <div className="form-group">
                           <label htmlFor="guardian">
                             <User size={18} />
-                            የወላጅ/አሳዳጊ ስም *
+                            {t('register.form.guardian')} *
                           </label>
                           <input
                             type="text"
@@ -406,7 +398,7 @@ function Register() {
                             name="guardian"
                             value={formData.guardian}
                             onChange={handleInputChange}
-                            placeholder="የወላጅ/አሳዳጊ ሙሉ ስም"
+                            placeholder={t('register.form.guardianPlaceholder')}
                             required={formData.age && parseInt(formData.age) < 18}
                           />
                         </div>
@@ -414,7 +406,7 @@ function Register() {
                         <div className="form-group">
                           <label htmlFor="guardianPhone">
                             <Phone size={18} />
-                            የወላጅ/አሳዳጊ ስልክ *
+                            {t('register.form.guardianPhone')} *
                           </label>
                           <input
                             type="tel"
@@ -422,7 +414,7 @@ function Register() {
                             name="guardianPhone"
                             value={formData.guardianPhone}
                             onChange={handleInputChange}
-                            placeholder="+251 911 234 567"
+                            placeholder={t('register.form.guardianPhonePlaceholder')}
                             required={formData.age && parseInt(formData.age) < 18}
                           />
                         </div>
@@ -431,7 +423,7 @@ function Register() {
 
                     <div className="form-group">
                       <label htmlFor="message">
-                        ተጨማሪ መረጃ
+                        {t('register.form.message')}
                       </label>
                       <textarea
                         id="message"
@@ -439,7 +431,7 @@ function Register() {
                         value={formData.message}
                         onChange={handleInputChange}
                         rows="5"
-                        placeholder="ስለ መማሪያ ግቦችዎ ወይም ሌላ ማንኛውም ጥያቄ ካለዎት እዚህ ይጻፉ..."
+                        placeholder={t('register.form.messagePlaceholder')}
                       ></textarea>
                     </div>
 
@@ -447,37 +439,37 @@ function Register() {
                       <label className="checkbox-label">
                         <input type="checkbox" required />
                         <span>
-                          <a href="#" className="terms-link">የአገልግሎት ውሎችን</a> እና{' '}
-                          <a href="#" className="terms-link">የግላዊነት ፖሊሲን</a> አንብቤ ተስማምቻለሁ
+                          <a href="#" className="terms-link">{t('register.form.termsLink')}</a> {t('register.form.termsAnd')} {' '}
+                          <a href="#" className="terms-link">{t('register.form.privacyLink')}</a> {t('register.form.agreeText')}
                         </span>
                       </label>
                     </div>
 
                     <div className="registration-summary">
-                      <h3>የምዝገባ ማጠቃለያ</h3>
+                      <h3>{t('register.form.summaryTitle')}</h3>
                       <div className="summary-grid">
                         <div className="summary-item">
-                          <strong>ስም:</strong>
+                          <strong>{t('register.form.summaryName')}:</strong>
                           <span>{formData.fullName || '-'}</span>
                         </div>
                         <div className="summary-item">
-                          <strong>ኢሜይል:</strong>
+                          <strong>{t('register.form.summaryEmail')}:</strong>
                           <span>{formData.email || '-'}</span>
                         </div>
                         <div className="summary-item">
-                          <strong>ስልክ:</strong>
+                          <strong>{t('register.form.summaryPhone')}:</strong>
                           <span>{formData.phone || '-'}</span>
                         </div>
                         <div className="summary-item">
-                          <strong>ኮርስ:</strong>
+                          <strong>{t('register.form.summaryCourse')}:</strong>
                           <span>{formData.course || '-'}</span>
                         </div>
                         <div className="summary-item">
-                          <strong>ደረጃ:</strong>
+                          <strong>{t('register.form.summaryLevel')}:</strong>
                           <span>{formData.level || '-'}</span>
                         </div>
                         <div className="summary-item">
-                          <strong>መርሐ ግብር:</strong>
+                          <strong>{t('register.form.summarySchedule')}:</strong>
                           <span>{formData.schedule || '-'}</span>
                         </div>
                       </div>
@@ -485,10 +477,10 @@ function Register() {
 
                     <div className="form-navigation">
                       <button type="button" className="btn btn-prev" onClick={prevStep} disabled={isLoading}>
-                        ← ወደ ኋላ
+                        ← {t('register.form.previous')}
                       </button>
                       <button type="submit" className="btn btn-submit-final" disabled={isLoading}>
-                        {isLoading ? 'በመጠበቅ ላይ...' : 'ምዝገባ አጠናቅቅ ✓'}
+                        {isLoading ? t('register.form.submitLoading') : t('register.form.submit')}
                       </button>
                     </div>
                   </div>
@@ -499,32 +491,18 @@ function Register() {
         </div>
       </section>
 
-      {/* Why Register Section */}
       {!isSubmitted && (
         <section className="why-register-section">
           <div className="container">
-            <h2>ለምን ከእኛ ጋር መመዝገብ አለብዎት?</h2>
+            <h2>{t('register.form.whyRegisterTitle')}</h2>
             <div className="benefits-grid">
-              <div className="benefit-card">
-                <div className="benefit-icon">🎓</div>
-                <h3>የተረጋገጡ መምህራን</h3>
-                <p>በየመስኮቻቸው የተረጋገጡ እና ልምድ ያላቸው መምህራን</p>
-              </div>
-              <div className="benefit-card">
-                <div className="benefit-icon">📚</div>
-                <h3>አጠቃላይ ኮርሶች</h3>
-                <p>ሁሉንም ደረጃዎች የሚሸፍኑ የተዋቀሩ ኮርሶች</p>
-              </div>
-              <div className="benefit-card">
-                <div className="benefit-icon">🏆</div>
-                <h3>ምስክር ወረቀቶች</h3>
-                <p>ማጠናቀቅን የሚያረጋግጡ ምስክር ወረቀቶች</p>
-              </div>
-              <div className="benefit-card">
-                <div className="benefit-icon">💰</div>
-                <h3>ተመጣጣኝ ዋጋ</h3>
-                <p>ለሁሉም የሚደርስ የዋጋ አሰጣጥ</p>
-              </div>
+              {benefitCards.map((benefit, index) => (
+                <div className="benefit-card" key={index}>
+                  <div className="benefit-icon">{['🎓', '📚', '🏆', '💰'][index]}</div>
+                  <h3>{benefit}</h3>
+                  <p>{t(`register.form.benefitDesc.${index}`)}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>

@@ -171,11 +171,20 @@
       "message": "Message",
       "messagePlaceholder": "Write your message here...",
       "type": "Message Type",
+      "types": {
+        "inquiry": "Inquiry",
+        "complaint": "Complaint",
+        "suggestion": "Suggestion",
+        "registration": "Registration"
+      },
       "send": "Send Message",
       "sending": "Sending...",
       "success": "Message sent successfully!",
+      "successTitle": "Your message has been sent!",
       "successMsg": "Thank you for reaching out! We'll get back to you soon.",
       "error": "Failed to send message",
+      "errorTryAgain": "Failed to send message. Please try again.",
+      "errorGeneral": "An error occurred. Please try again later.",
       "formTitle": "Send us a Message"
     },
     "info": {
@@ -213,11 +222,19 @@
       "age": "Age",
       "agePlaceholder": "Enter your age",
       "gender": "Gender",
+      "genderSelect": "Select gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
       "course": "Select Course",
+      "courseSelect": "Select a course",
       "level": "Learning Level",
+      "levelSelect": "Select level",
       "schedule": "Preferred Schedule",
+      "scheduleSelect": "Select schedule",
       "guardian": "Guardian Name",
+      "guardianPlaceholder": "Enter guardian full name",
       "guardianPhone": "Guardian Phone",
+      "guardianPhonePlaceholder": "+251 911 234 567",
       "message": "Additional Information",
       "messagePlaceholder": "Tell us about your goals...",
       "register": "Register",
@@ -225,6 +242,8 @@
       "success": "Registration successful!",
       "successMsg": "Thank you for registering! We've received your information.",
       "error": "Registration failed",
+      "errorTryAgain": "Registration failed. Please try again.",
+      "errorGeneral": "An error occurred. Please try again later.",
       "nextSteps": "What happens next?",
       "step1": "Verification email will be sent shortly",
       "step2": "Our team will contact you within 24 hours",
@@ -237,10 +256,57 @@
       "courseSelectionDesc": "Choose your preferred course and level",
       "additionalInfo": "Additional Information",
       "additionalInfoDesc": "Provide guardian details and preferences",
-      "formTitle": "Registration Form"
+      "formTitle": "Registration Form",
+      "next": "Next Step",
+      "previous": "Back",
+      "submit": "Complete Registration",
+      "submitLoading": "Processing...",
+      "successTitle": "Registration successful!",
+      "successText": "Thank you for registering! We have received your information.",
+      "nextStepsTitle": "What happens next?",
+      "nextSteps": [
+        "A verification email will be sent shortly",
+        "Our team will contact you within 24 hours",
+        "Payment information will be sent",
+        "Your class schedule will be arranged"
+      ],
+      "guardianTitle": "Guardian Information",
+      "guardianNote": "Guardian details are required for students under 18.",
+      "summaryTitle": "Registration Summary",
+      "summaryName": "Name",
+      "summaryEmail": "Email",
+      "summaryPhone": "Phone",
+      "summaryCourse": "Course",
+      "summaryLevel": "Level",
+      "summarySchedule": "Schedule",
+      "termsLink": "Terms of Service",
+      "privacyLink": "Privacy Policy",
+      "termsAnd": "and",
+      "agreeText": "I have read and agreed to the",
+      "whyRegisterTitle": "Why register with us?",
+      "benefits": [
+        "Qualified instructors",
+        "Comprehensive courses",
+        "Certificates",
+        "Affordable pricing"
+      ],
+      "benefitDesc": {
+        "0": "Experienced and certified teachers dedicated to student growth.",
+        "1": "Well-structured programs for every level and age group.",
+        "2": "Recognized achievements that validate learning progress.",
+        "3": "Flexible and fair pricing for all learners."
+      },
+      "tipTitle": "Helpful Information",
+      "tipList": [
+        "All courses are taught by qualified teachers.",
+        "Both online and physical classes are available.",
+        "Flexible scheduling options are available.",
+        "Certificates are provided after completion."
+      ]
     },
     "courses": [
       "Quran Studies (Tajweed)",
+      "Quran Memorization (Hifz)",
       "Islamic Studies",
       "Arabic Language",
       "Children Program",
@@ -253,10 +319,11 @@
       "Advanced"
     ],
     "schedules": [
-      "Morning Classes",
-      "Afternoon Classes",
-      "Evening Classes",
-      "Weekend Classes"
+      "Morning (8:00 - 12:00)",
+      "Afternoon (2:00 - 5:00)",
+      "Evening (5:00 - 8:00)",
+      "Weekend",
+      "Flexible"
     ]
   },
   "footer": {
@@ -264,6 +331,17 @@
     "services": "Services",
     "contact": "Contact",
     "quickLinks": "Quick Links",
+    "coursesTitle": "Our Courses",
+    "courses": [
+      "Quran Studies",
+      "Islamic Studies",
+      "Arabic Language",
+      "Children Program",
+      "Online Learning"
+    ],
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "questions": "Questions",
     "followUs": "Follow Us",
     "copyright": "© 2024 Nida Al-Quran. All rights reserved.",
     "description": "Your gateway to quality Islamic education and Quranic studies."

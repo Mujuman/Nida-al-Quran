@@ -18,6 +18,13 @@ function Contact() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const typeOptions = [
+    { value: 'inquiry', label: t('contact.form.types.inquiry') },
+    { value: 'complaint', label: t('contact.form.types.complaint') },
+    { value: 'suggestion', label: t('contact.form.types.suggestion') },
+    { value: 'registration', label: t('contact.form.types.registration') },
+  ];
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -33,8 +40,8 @@ function Contact() {
 
     try {
       const response = await apiService.submitContact(formData);
-      
-      if (response.contactId || response.msg === 'Message sent successfully') {
+
+      if (response.contactId || response.msg === 'Message sent successfully' || response.msg === 'Message sent successfully!') {
         setIsSubmitted(true);
         setFormData({
           fullName: '',
@@ -49,11 +56,11 @@ function Contact() {
           setIsSubmitted(false);
         }, 4000);
       } else {
-        setError(response.msg || 'Failed to send message. Please try again.');
+        setError(response.msg || t('contact.form.errorTryAgain'));
       }
     } catch (err) {
       console.error('Contact error:', err);
-      setError('An error occurred. Please try again later.');
+      setError(t('contact.form.errorGeneral'));
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +68,6 @@ function Contact() {
 
   return (
     <div className="contact-page">
-      {/* Header Section */}
       <section className="contact-header">
         <div className="container">
           <h1 className="page-title fade-in">{t('contact.pageTitle')}</h1>
@@ -70,18 +76,13 @@ function Contact() {
         </div>
       </section>
 
-      {/* Contact Content */}
       <section className="contact-content-section">
         <div className="container">
           <div className="contact-grid">
-            {/* Contact Information */}
             <div className="contact-info-side">
               <div className="contact-intro">
-                <h2>እንደሚገናኙን</h2>
-                <p>
-                  ጥያቄዎች አሉዎት? ያግኙን እና በተቻለ ፍጥነት መልስ እንሰጣለን። የእኛ ቡድን ሁል ጊዜ 
-                  ለመርዳት ዝግጁ ነው።
-                </p>
+                <h2>{t('contact.intro')}</h2>
+                <p>{t('contact.introDesc')}</p>
               </div>
 
               <div className="contact-details">
@@ -90,9 +91,9 @@ function Contact() {
                     <MapPin size={28} />
                   </div>
                   <div className="contact-item-content">
-                    <h4>አድራሻ</h4>
-                    <p>አዲስ አበባ፣ ኢትዮጵያ</p>
-                    <p>መርካቶ አካባቢ</p>
+                    <h4>{t('contact.info.address')}</h4>
+                    <p>{t('contact.info.addressValue')}</p>
+                    <p>{t('contact.info.addressDetail')}</p>
                   </div>
                 </div>
 
@@ -101,9 +102,9 @@ function Contact() {
                     <Phone size={28} />
                   </div>
                   <div className="contact-item-content">
-                    <h4>ስልክ</h4>
-                    <p>+251 911 234 567</p>
-                    <p>+251 922 345 678</p>
+                    <h4>{t('contact.info.phone')}</h4>
+                    <p>{t('contact.info.phoneValue1')}</p>
+                    <p>{t('contact.info.phoneValue2')}</p>
                   </div>
                 </div>
 
@@ -112,9 +113,9 @@ function Contact() {
                     <Mail size={28} />
                   </div>
                   <div className="contact-item-content">
-                    <h4>ኢሜይል</h4>
-                    <p>info@nidaulquran.com</p>
-                    <p>admin@nidaulquran.com</p>
+                    <h4>{t('contact.info.email')}</h4>
+                    <p>{t('contact.info.emailValue1')}</p>
+                    <p>{t('contact.info.emailValue2')}</p>
                   </div>
                 </div>
 
@@ -123,26 +124,26 @@ function Contact() {
                     <Clock size={28} />
                   </div>
                   <div className="contact-item-content">
-                    <h4>የቢሮ ሰዓታት</h4>
-                    <p><strong>ቅዳሜ - ሐሙስ:</strong> 8:00 ጠዋት - 6:00 ምሽት</p>
-                    <p><strong>አርብ:</strong> 2:00 ከሰዓት በኋላ - 6:00 ምሽት</p>
+                    <h4>{t('contact.info.hours')}</h4>
+                    <p><strong>{t('contact.info.hoursWeekdays')}</strong></p>
+                    <p><strong>{t('contact.info.hoursFriday')}</strong></p>
                   </div>
                 </div>
               </div>
 
               <div className="social-connect">
-                <h3>በማህበራዊ ሚዲያ ይከተሉን</h3>
+                <h3>{t('contact.social.followUs')}</h3>
                 <div className="social-links">
-                  <a href="#" className="social-link">Facebook</a>
-                  <a href="#" className="social-link">Telegram</a>
-                  <a href="#" className="social-link">YouTube</a>
-                  <a href="#" className="social-link">Instagram</a>
+                  <a href="#" className="social-link">{t('contact.social.facebook')}</a>
+                  <a href="#" className="social-link">{t('contact.social.telegram')}</a>
+                  <a href="#" className="social-link">{t('contact.social.youtube')}</a>
+                  <a href="#" className="social-link">{t('contact.social.instagram')}</a>
                 </div>
               </div>
             </div>
 
-            {/* Contact Form */}
-            <div className="contact-form-side slide-in-right">              {error && (
+            <div className="contact-form-side slide-in-right">
+              {error && (
                 <div style={{
                   backgroundColor: '#fee',
                   border: '1px solid #f88',
@@ -161,114 +162,104 @@ function Contact() {
               {isSubmitted ? (
                 <div className="success-message-box">
                   <CheckCircle size={64} className="success-icon" />
-                  <h2>መልእክትዎ ተልኳል!</h2>
-                  <p>በቅርቡ እናግኝዎታለን። ስላገናኙን እናመሰግናለን።</p>
+                  <h2>{t('contact.form.successTitle')}</h2>
+                  <p>{t('contact.form.successMsg')}</p>
                 </div>
               ) : (
                 <form className="contact-form" onSubmit={handleSubmit}>
-                  <h3>መልእክት ይላኩልን</h3>
-                  
+                  <h3>{t('contact.form.formTitle')}</h3>
+
                   <div className="form-group">
-                    <label htmlFor="fullName">ሙሉ ስም *</label>
+                    <label htmlFor="fullName">{t('contact.form.name')} *</label>
                     <input
                       type="text"
                       id="fullName"
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      placeholder="ሙሉ ስምዎን ያስገቡ"
+                      placeholder={t('contact.form.namePlaceholder')}
                       required
                     />
                   </div>
 
                   <div className="form-row">
                     <div className="form-group">
-                      <label htmlFor="email">ኢሜይል *</label>
+                      <label htmlFor="email">{t('contact.form.email')} *</label>
                       <input
                         type="email"
                         id="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="your.email@example.com"
+                        placeholder={t('contact.form.emailPlaceholder')}
                         required
                       />
                     </div>
 
                     <div className="form-group">
-                      <label htmlFor="phone">ስልክ ቁጥር *</label>
+                      <label htmlFor="phone">{t('contact.form.phone')} *</label>
                       <input
                         type="tel"
                         id="phone"
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="+251 911 234 567"
+                        placeholder={t('contact.form.phonePlaceholder')}
                         required
                       />
                     </div>
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="subject">ርዕስ *</label>
+                    <label htmlFor="subject">{t('contact.form.subject')} *</label>
                     <input
                       type="text"
                       id="subject"
                       name="subject"
                       value={formData.subject}
                       onChange={handleInputChange}
-                      placeholder="የመልእክትዎ ርዕስ"
+                      placeholder={t('contact.form.subjectPlaceholder')}
                       required
                     />
                   </div>
 
                   <div className="form-row">
                     <div className="form-group" style={{ flex: 1 }}>
-                      <label htmlFor="type">ታይፕ</label>
+                      <label htmlFor="type">{t('contact.form.type')}</label>
                       <select
                         id="type"
                         name="type"
                         value={formData.type}
                         onChange={handleInputChange}
                       >
-                        <option value="inquiry">ጥያቄ</option>
-                        <option value="complaint">ቅሬታ</option>
-                        <option value="suggestion">ሐሳብ</option>
-                        <option value="registration">ምዝገባ</option>
+                        {typeOptions.map(option => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="message">መልእክት *</label>
+                    <label htmlFor="message">{t('contact.form.message')} *</label>
                     <textarea
                       id="message"
                       name="message"
                       value={formData.message}
                       onChange={handleInputChange}
                       rows="6"
-                      placeholder="መልእክትዎን እዚህ ይጻፉ..."
+                      placeholder={t('contact.form.messagePlaceholder')}
                       required
                     ></textarea>
                   </div>
 
                   <button type="submit" className="btn-submit" disabled={isLoading}>
                     <Send size={20} />
-                    <span>{isLoading ? 'በመላክ ላይ...' : 'መልእክት ላክ'}</span>
+                    <span>{isLoading ? t('contact.form.sending') : t('contact.form.send')}</span>
                   </button>
                 </form>
               )}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Map Section (Placeholder) */}
-      <section className="map-section">
-        <div className="map-placeholder">
-          <MapPin size={64} />
-          <h3>ያግኙን</h3>
-          <p>አዲስ አበባ፣ መርካቶ አካባቢ</p>
         </div>
       </section>
     </div>

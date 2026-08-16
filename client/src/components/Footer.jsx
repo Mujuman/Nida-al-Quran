@@ -6,13 +6,13 @@ import '../styles/Footer.css';
 function Footer({ navigateTo }) {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
+  const courses = t('footer.courses', { returnObjects: true }) || [];
 
   return (
     <footer className="footer">
       <div className="footer-content">
         <div className="container">
           <div className="footer-grid">
-            {/* About Section */}
             <div className="footer-section">
               <div className="footer-brand">
                 <BookOpen className="footer-brand-icon" />
@@ -34,7 +34,6 @@ function Footer({ navigateTo }) {
               </div>
             </div>
 
-            {/* Quick Links */}
             <div className="footer-section">
               <h4>{t('footer.quickLinks')}</h4>
               <ul className="footer-links">
@@ -46,38 +45,34 @@ function Footer({ navigateTo }) {
               </ul>
             </div>
 
-            {/* Courses */}
             <div className="footer-section">
-              <h4>ኮርሶቻችን</h4>
+              <h4>{t('footer.coursesTitle')}</h4>
               <ul className="footer-links">
-                <li><a href="#">የቁርኣን ትምህርት</a></li>
-                <li><a href="#">የእስላማዊ ጥናቶች</a></li>
-                <li><a href="#">የአረብኛ ቋንቋ</a></li>
-                <li><a href="#">የህጻናት ፕሮግራም</a></li>
-                <li><a href="#">የመስመር ላይ ትምህርት</a></li>
+                {courses.map((course, index) => (
+                  <li key={index}><a href="#">{course}</a></li>
+                ))}
               </ul>
             </div>
 
-            {/* Contact Info */}
             <div className="footer-section">
               <h4>{t('footer.about')}</h4>
               <ul className="footer-contact">
                 <li>
                   <MapPin size={18} />
-                  <span>አዲስ አበባ፣ ኢትዮጵያ<br />መርካቶ አካባቢ</span>
+                  <span>{t('contact.info.addressValue')}<br />{t('contact.info.addressDetail')}</span>
                 </li>
                 <li>
                   <Phone size={18} />
                   <span>
-                    +251 911 234 567<br />
-                    +251 922 345 678
+                    {t('contact.info.phoneValue1')}<br />
+                    {t('contact.info.phoneValue2')}
                   </span>
                 </li>
                 <li>
                   <Mail size={18} />
                   <span>
-                    info@nidaulquran.com<br />
-                    admin@nidaulquran.com
+                    {t('contact.info.emailValue1')}<br />
+                    {t('contact.info.emailValue2')}
                   </span>
                 </li>
               </ul>
@@ -86,17 +81,16 @@ function Footer({ navigateTo }) {
         </div>
       </div>
 
-      {/* Footer Bottom */}
       <div className="footer-bottom">
         <div className="container">
           <div className="footer-bottom-content">
             <p>&copy; {currentYear} {t('nav.brand')}. {t('footer.copyright')}</p>
             <div className="footer-bottom-links">
-              <a href="#">የግላዊነት ፖሊሲ</a>
+              <a href="#">{t('footer.privacyPolicy')}</a>
               <span className="divider">|</span>
-              <a href="#">የአገልግሎት ውሎች</a>
+              <a href="#">{t('footer.terms')}</a>
               <span className="divider">|</span>
-              <a href="#">ጥያቄዎች</a>
+              <a href="#">{t('footer.questions')}</a>
             </div>
           </div>
         </div>
