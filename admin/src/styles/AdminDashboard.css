@@ -30,6 +30,8 @@
 
 .header-content {
   max-width: 1600px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
   height: 100%;
   padding: 0 1.25rem;
@@ -180,10 +182,15 @@
 
 .admin-content {
   flex: 1;
+  min-width: 0;
   padding: 1.5rem;
+  box-sizing: border-box;
 }
 
 .content-panel {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(15, 31, 71, 0.08);
   border-radius: 18px;
@@ -333,6 +340,7 @@
 }
 
 .table-card {
+  max-width: 100%;
   overflow: auto;
   border: 1px solid rgba(15, 31, 71, 0.12);
   border-radius: 16px;
@@ -351,6 +359,7 @@
   padding: 1rem 1.1rem;
   text-align: left;
   border-bottom: 1px solid rgba(15, 31, 71, 0.08);
+  overflow-wrap: anywhere;
 }
 
 .table-card th {
