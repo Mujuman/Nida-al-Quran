@@ -164,7 +164,7 @@ function AdminDashboard() {
       const statsResponse = await apiService.getDashboardStats();
       setStats(statsResponse);
 
-      if (activeTab === 'users') {
+      if (activeTab === 'dashboard' || activeTab === 'users') {
         const usersResponse = await apiService.getAllUsers();
         setUsers(Array.isArray(usersResponse) ? usersResponse : []);
         if (isMainAdmin) {
@@ -278,6 +278,11 @@ function AdminDashboard() {
     { label: 'Approved', value: stats.approvedRegistrations || 0, icon: CheckCircle, color: 'green' },
     { label: 'Messages', value: stats.totalContacts || 0, icon: Mail, color: 'purple' },
   ];
+  const recentStudents = [...users]
+    .sort((firstStudent, secondStudent) => (
+      new Date(secondStudent.createdAt || 0) - new Date(firstStudent.createdAt || 0)
+    ))
+    .slice(0, 5);
 
   return (
     <div className="admin-dashboard">
@@ -369,6 +374,55 @@ function AdminDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="recent-students-section">
+                <div className="panel-header">
+                  <div>
+                    <p className="eyebrow">Latest activity</p>
+                    <h3>Recent Registered Students</h3>
+                  </div>
+                  <button className="btn-secondary" onClick={() => switchTab('users')}>
+                    View All Students
+                  </button>
+                </div>
+
+                <div className="table-card">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Registered</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recentStudents.length > 0 ? recentStudents.map((student) => (
+                        <tr key={student._id || student.id}>
+                          <td>{student.fullName || student.name || 'Unknown'}</td>
+                          <td>{student.email || '-'}</td>
+                          <td>{student.createdAt ? new Date(student.createdAt).toLocaleDateString() : '-'}</td>
+                          <td>
+                            <span className={`status-badge ${student.registrationStatus || 'pending'}`}>
+                              {student.registrationStatus || 'Pending'}
+                            </span>
+                          </td>
+                          <td>
+                            <button className="mini-btn" onClick={() => handleOpenUser(student)}>
+                              <Eye size={14} />
+                            </button>
+                          </td>
+                        </tr>
+                      )) : (
+                        <tr>
+                          <td colSpan="5" className="empty-table-message">No registered students yet.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}

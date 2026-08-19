@@ -222,6 +222,35 @@
   gap: 1rem;
 }
 
+.recent-students-section {
+  margin-top: 1.5rem;
+}
+
+.recent-students-section .panel-header {
+  margin-bottom: 0.8rem;
+}
+
+.recent-students-section h3 {
+  margin: 0;
+  color: var(--admin-dark-navy);
+  font-size: 1.15rem;
+}
+
+.btn-secondary {
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: white;
+  color: var(--admin-dark-navy);
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.empty-table-message {
+  color: var(--admin-text-muted);
+  text-align: center !important;
+}
+
 .stat-card {
   background: linear-gradient(135deg, #fff, #f8fafc);
   border: 1px solid var(--admin-border);
