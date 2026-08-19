@@ -278,6 +278,11 @@ function AdminDashboard() {
     { label: 'Approved', value: stats.approvedRegistrations || 0, icon: CheckCircle, color: 'green' },
     { label: 'Messages', value: stats.totalContacts || 0, icon: Mail, color: 'purple' },
   ];
+  const recentStudents = [...users]
+    .sort((firstStudent, secondStudent) => (
+      new Date(secondStudent.createdAt || 0) - new Date(firstStudent.createdAt || 0)
+    ))
+    .slice(0, 5);
   const normalizedSearchTerm = searchTerm.trim().toLowerCase();
   const matchesSearch = (values) => !normalizedSearchTerm || values.some((value) => (
     String(value || '').toLowerCase().includes(normalizedSearchTerm)
@@ -315,12 +320,6 @@ function AdminDashboard() {
       )}
     </div>
   );
-  const recentStudents = [...users]
-    .sort((firstStudent, secondStudent) => (
-      new Date(secondStudent.createdAt || 0) - new Date(firstStudent.createdAt || 0)
-    ))
-    .slice(0, 5);
-
   return (
     <div className="admin-dashboard">
       <header className="admin-header">
