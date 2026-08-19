@@ -373,6 +373,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  overflow-y: auto;
   z-index: 200;
 }
 
@@ -387,6 +388,13 @@
 
 .modal-card.wide {
   width: min(100%, 820px);
+}
+
+.student-details-modal {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 2rem);
+  box-sizing: border-box;
 }
 
 .modal-header {
@@ -454,7 +462,8 @@
   flex-direction: column;
   gap: 1.25rem;
   margin-bottom: 1.5rem;
-  max-height: 500px;
+  min-height: 0;
+  max-height: none;
   overflow-y: auto;
   padding-right: 0.5rem;
 }
@@ -534,6 +543,10 @@
   justify-content: flex-end;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.student-details-modal .modal-actions {
+  flex-shrink: 0;
 }
 
 .status-select {
@@ -685,6 +698,47 @@
   .modal-card {
     padding: 1.2rem 1rem;
     border-radius: 18px;
+  }
+
+  .student-details-modal {
+    width: 100%;
+    max-height: calc(100dvh - 1rem);
+    padding: 1rem 0.8rem 0.8rem;
+    border-radius: 16px;
+  }
+
+  .student-details-modal .modal-header {
+    align-items: flex-start;
+  }
+
+  .student-details-modal .modal-header h3 {
+    max-width: calc(100vw - 7rem);
+    overflow-wrap: anywhere;
+    font-size: clamp(1.45rem, 7vw, 2rem);
+  }
+
+  .student-details-modal .detail-sections {
+    gap: 0.8rem;
+    padding-right: 0.15rem;
+  }
+
+  .student-details-modal .detail-section {
+    padding: 0.8rem;
+  }
+
+  .student-details-modal .detail-grid,
+  .student-details-modal .detail-grid.compact {
+    grid-template-columns: 1fr;
+  }
+
+  .student-details-modal .modal-actions {
+    gap: 0.6rem;
+  }
+
+  .student-details-modal .status-select,
+  .student-details-modal .modal-actions .btn-primary {
+    flex: 1 1 100%;
+    width: 100%;
   }
 
   .form-grid {

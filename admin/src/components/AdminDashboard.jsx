@@ -643,7 +643,7 @@ function AdminDashboard() {
 
       {showUserModal && selectedUser && (
         <div className="modal-backdrop" onClick={() => setShowUserModal(false)}>
-          <div className="modal-card wide" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-card wide student-details-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
                 <p className="eyebrow">Student Details</p>
