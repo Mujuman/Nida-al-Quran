@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { sendRegistrationNotification } = require('../utils/adminNotifications');
 
 // Register user with full details
 exports.registerUser = async (req, res) => {
@@ -39,6 +40,7 @@ exports.registerUser = async (req, res) => {
     });
 
     await user.save();
+    await sendRegistrationNotification(user);
 
     // Generate token
     const payload = { user: { id: user.id } };

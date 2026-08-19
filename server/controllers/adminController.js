@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Contact = require('../models/Contact');
 const Attendance = require('../models/Attendance');
+const { sendAssignmentNotification } = require('../utils/adminNotifications');
 
 // ============================================================
 // Admin Login (any role)
@@ -354,6 +355,7 @@ exports.assignStudentToTeacher = async (req, res) => {
         $addToSet: { assignedStudents: userId },
       });
       user.assignedTeacher = teacherId;
+      await sendAssignmentNotification(user, teacher);
     } else {
       // Unassign
       user.assignedTeacher = null;
