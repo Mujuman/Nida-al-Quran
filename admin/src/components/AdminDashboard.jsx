@@ -278,6 +278,43 @@ function AdminDashboard() {
     { label: 'Approved', value: stats.approvedRegistrations || 0, icon: CheckCircle, color: 'green' },
     { label: 'Messages', value: stats.totalContacts || 0, icon: Mail, color: 'purple' },
   ];
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+  const matchesSearch = (values) => !normalizedSearchTerm || values.some((value) => (
+    String(value || '').toLowerCase().includes(normalizedSearchTerm)
+  ));
+  const filteredRecentStudents = recentStudents.filter((student) => matchesSearch([
+    student.fullName, student.email, student.registrationStatus,
+  ]));
+  const filteredUsers = users.filter((user) => matchesSearch([
+    user.fullName, user.email, user.registrationStatus,
+  ]));
+  const filteredContacts = contacts.filter((contact) => matchesSearch([
+    contact.name, contact.email, contact.message,
+  ]));
+  const filteredAttendance = attendance.filter((item) => matchesSearch([
+    item.student?.fullName, item.studentName, item.course, item.recordedBy?.fullName,
+    item.status, item.date && new Date(item.date).toLocaleDateString(),
+  ]));
+  const filteredSubAdmins = subAdmins.filter((admin) => matchesSearch([
+    admin.fullName, admin.email, admin.username, admin.role,
+  ]));
+  const searchBar = (placeholder) => (
+    <div className="admin-search">
+      <Search size={18} aria-hidden="true" />
+      <input
+        type="search"
+        value={searchTerm}
+        onChange={(event) => setSearchTerm(event.target.value)}
+        placeholder={placeholder}
+        aria-label={placeholder}
+      />
+      {searchTerm && (
+        <button type="button" className="search-clear" onClick={() => setSearchTerm('')} aria-label="Clear search">
+          <X size={16} />
+        </button>
+      )}
+    </div>
+  );
   const recentStudents = [...users]
     .sort((firstStudent, secondStudent) => (
       new Date(secondStudent.createdAt || 0) - new Date(firstStudent.createdAt || 0)
@@ -386,6 +423,7 @@ function AdminDashboard() {
                     View All Students
                   </button>
                 </div>
+                {searchBar('Search recent students')}
 
                 <div className="table-card">
                   <table>
@@ -399,7 +437,7 @@ function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {recentStudents.length > 0 ? recentStudents.map((student) => (
+                      {filteredRecentStudents.length > 0 ? filteredRecentStudents.map((student) => (
                         <tr key={student._id || student.id}>
                           <td>{student.fullName || student.name || 'Unknown'}</td>
                           <td>{student.email || '-'}</td>
@@ -417,7 +455,7 @@ function AdminDashboard() {
                         </tr>
                       )) : (
                         <tr>
-                          <td colSpan="5" className="empty-table-message">No registered students yet.</td>
+                          <td colSpan="5" className="empty-table-message">No matching students found.</td>
                         </tr>
                       )}
                     </tbody>
@@ -435,6 +473,7 @@ function AdminDashboard() {
                   <h2>Student Management</h2>
                 </div>
               </div>
+              {searchBar('Search students by name, email, or status')}
               <div className="table-card">
                 <table>
                   <thead>
@@ -446,7 +485,7 @@ function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map((user) => (
+                    {filteredUsers.map((user) => (
                       <tr key={user._id || user.id}>
                         <td>{user.fullName || user.name || 'Unknown'}</td>
                         <td>{user.email || '-'}</td>
@@ -476,6 +515,7 @@ function AdminDashboard() {
                   <h2>Contact Messages</h2>
                 </div>
               </div>
+              {searchBar('Search messages by name, email, or text')}
               <div className="table-card">
                 <table>
                   <thead>
@@ -487,7 +527,7 @@ function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {contacts.map((contact) => (
+                    {filteredContacts.map((contact) => (
                       <tr key={contact._id || contact.id}>
                         <td>{contact.name || 'Unknown'}</td>
                         <td>{contact.email || '-'}</td>
@@ -518,6 +558,7 @@ function AdminDashboard() {
                   </button>
                 )}
               </div>
+              {searchBar('Search attendance records')}
               <div className="table-card">
                 <table>
                   <thead>
@@ -530,7 +571,7 @@ function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {attendance.map((item) => (
+                    {filteredAttendance.map((item) => (
                       <tr key={item._id || item.id}>
                         <td>{item.student?.fullName || item.studentName || 'Unknown'}</td>
                         <td>{item.course || '-'}</td>
@@ -560,6 +601,7 @@ function AdminDashboard() {
                   + Create Sub Admin
                 </button>
               </div>
+              {searchBar('Search sub-admins by name, email, or username')}
               <div className="table-card">
                 <table>
                   <thead>
@@ -571,7 +613,7 @@ function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {subAdmins.map((admin) => (
+                    {filteredSubAdmins.map((admin) => (
                       <tr key={admin._id || admin.id}>
                         <td>{admin.fullName || 'Unknown'}</td>
                         <td>{admin.email || '-'}</td>
@@ -593,6 +635,7 @@ function AdminDashboard() {
                   <h2>Assign Students to Sub-admins</h2>
                 </div>
               </div>
+              {searchBar('Search students to assign')}
               <div className="table-card">
                 <table>
                   <thead>
@@ -606,7 +649,7 @@ function AdminDashboard() {
                   </thead>
                   <tbody>
                     {users.length > 0 ? (
-                      users.map((student) => (
+                      filteredUsers.map((student) => (
                         <tr key={student._id || student.id}>
                           <td>{student.fullName || 'Unknown'}</td>
                           <td>{student.email || '-'}</td>

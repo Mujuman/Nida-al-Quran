@@ -251,6 +251,45 @@
   text-align: center !important;
 }
 
+.admin-search {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: min(100%, 460px);
+  margin: 0 0 1rem auto;
+  padding: 0.65rem 0.8rem;
+  box-sizing: border-box;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--admin-text-muted);
+}
+
+.admin-search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--admin-text);
+  font: inherit;
+}
+
+.admin-search input::placeholder {
+  color: var(--admin-text-muted);
+}
+
+.search-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem;
+  border: 0;
+  background: transparent;
+  color: var(--admin-text-muted);
+  cursor: pointer;
+}
+
 .stat-card {
   background: linear-gradient(135deg, #fff, #f8fafc);
   border: 1px solid var(--admin-border);
@@ -693,6 +732,11 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 0.8rem;
+  }
+
+  .admin-search {
+    width: 100%;
+    margin-left: 0;
   }
 
   .modal-card {
