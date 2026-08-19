@@ -473,7 +473,7 @@ function AdminDashboard() {
                 </div>
               </div>
               {searchBar('Search students by name, email, or status')}
-              <div className="table-card">
+              <div className="table-card contact-messages-table">
                 <table>
                   <thead>
                     <tr>
@@ -799,7 +799,7 @@ function AdminDashboard() {
 
       {showReplyModal && selectedContact && (
         <div className="modal-backdrop" onClick={() => setShowReplyModal(false)}>
-          <div className="modal-card wide" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-card wide message-details-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
                 <p className="eyebrow">Message details</p>

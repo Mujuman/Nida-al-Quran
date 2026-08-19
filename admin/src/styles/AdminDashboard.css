@@ -354,6 +354,30 @@
   background: transparent;
 }
 
+.contact-messages-table table {
+  table-layout: fixed;
+}
+
+.contact-messages-table th:nth-child(1),
+.contact-messages-table td:nth-child(1) {
+  width: 18%;
+}
+
+.contact-messages-table th:nth-child(2),
+.contact-messages-table td:nth-child(2) {
+  width: 28%;
+}
+
+.contact-messages-table th:nth-child(3),
+.contact-messages-table td:nth-child(3) {
+  width: 44%;
+}
+
+.contact-messages-table th:nth-child(4),
+.contact-messages-table td:nth-child(4) {
+  width: 10%;
+}
+
 .table-card th,
 .table-card td {
   padding: 1rem 1.1rem;
@@ -476,6 +500,7 @@
 .detail-item {
   display: flex;
   flex-direction: column;
+  min-width: 0;
   gap: 0.3rem;
   background: #f8fafc;
   border: 1px solid var(--admin-border);
@@ -493,6 +518,7 @@
 .detail-item strong {
   font-size: 0.92rem;
   color: var(--admin-text);
+  overflow-wrap: anywhere;
 }
 
 .message-box {
@@ -571,6 +597,14 @@
   line-height: 1.6;
   color: var(--admin-text);
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.message-details-modal {
+  box-sizing: border-box;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
 }
 
 .reply-textarea {
@@ -790,6 +824,36 @@
 
   .student-details-modal .status-select,
   .student-details-modal .modal-actions .btn-primary {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .message-details-modal {
+    width: 100%;
+    max-height: calc(100dvh - 1rem);
+    padding: 1rem 0.8rem 0.8rem;
+    border-radius: 16px;
+  }
+
+  .message-details-modal .modal-header {
+    align-items: flex-start;
+  }
+
+  .message-details-modal .modal-header h3 {
+    max-width: calc(100vw - 7rem);
+    overflow-wrap: anywhere;
+    font-size: clamp(1.45rem, 7vw, 2rem);
+  }
+
+  .message-details-modal .detail-grid.compact {
+    grid-template-columns: 1fr;
+  }
+
+  .message-details-modal .modal-actions {
+    align-items: stretch;
+  }
+
+  .message-details-modal .modal-actions > * {
     flex: 1 1 100%;
     width: 100%;
   }
