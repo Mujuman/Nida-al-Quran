@@ -111,7 +111,7 @@ exports.getUserDetails = async (req, res) => {
 };
 
 // ============================================================
-// Update User Status (Main Admin only)
+// Update User Status (main admin or assigned sub-admin)
 // ============================================================
 exports.updateUserStatus = async (req, res) => {
   try {
@@ -120,6 +120,15 @@ exports.updateUserStatus = async (req, res) => {
     let user = await User.findById(req.params.userId);
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
+    }
+
+    if (req.admin.role === 'sub_admin') {
+      const adminDoc = await Admin.findById(req.admin.id).select('assignedStudents');
+      const isAssigned = adminDoc?.assignedStudents
+        .some((studentId) => studentId.toString() === req.params.userId);
+      if (!isAssigned) {
+        return res.status(403).json({ msg: 'Access denied. Not your student.' });
+      }
     }
 
     if (registrationStatus) user.registrationStatus = registrationStatus;
