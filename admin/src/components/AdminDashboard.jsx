@@ -186,7 +186,7 @@ function AdminDashboard() {
           setSubAdmins(Array.isArray(saResponse) ? saResponse : []);
         }
       }
-      if (activeTab === 'contacts') {
+      if (activeTab === 'contacts' && isMainAdmin) {
         const contactsResponse = await apiService.getAllContacts();
         setContacts(Array.isArray(contactsResponse) ? contactsResponse : []);
       }
@@ -227,6 +227,12 @@ function AdminDashboard() {
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
+
+  useEffect(() => {
+    if (!isMainAdmin && activeTab === 'contacts') {
+      setActiveTab('dashboard');
+    }
+  }, [activeTab, isMainAdmin]);
 
   const handleLogout = () => {
     apiService.clearToken(true);
@@ -393,7 +399,7 @@ function AdminDashboard() {
             {[
               { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
               { id: 'users', label: 'Students', icon: Users },
-              { id: 'contacts', label: 'Messages', icon: Mail },
+              ...(isMainAdmin ? [{ id: 'contacts', label: 'Messages', icon: Mail }] : []),
               { id: 'attendance', label: 'Attendance', icon: Calendar },
               ...(isMainAdmin ? [
                 { id: 'assign-students', label: 'Assign Students', icon: UserCheck },
@@ -528,7 +534,7 @@ function AdminDashboard() {
             </div>
           )}
 
-          {activeTab === 'contacts' && (
+          {activeTab === 'contacts' && isMainAdmin && (
             <div className="content-panel">
               <div className="panel-header">
                 <div>
