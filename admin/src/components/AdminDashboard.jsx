@@ -495,7 +495,7 @@ function AdminDashboard() {
                 </div>
               </div>
               {searchBar('Search students by name, email, or status')}
-              <div className="table-card contact-messages-table">
+              <div className="table-card">
                 <table>
                   <thead>
                     <tr>
@@ -537,7 +537,7 @@ function AdminDashboard() {
                 </div>
               </div>
               {searchBar('Search messages by name, email, or text')}
-              <div className="table-card">
+              <div className="table-card contact-messages-table">
                 <table>
                   <thead>
                     <tr>
@@ -580,7 +580,7 @@ function AdminDashboard() {
                 )}
               </div>
               {searchBar('Search attendance records')}
-              <div className="table-card">
+              <div className="table-card attendance-table">
                 <table>
                   <thead>
                     <tr>
@@ -899,7 +899,7 @@ function AdminDashboard() {
 
       {showCreateSubAdminModal && (
         <div className="modal-backdrop" onClick={() => setShowCreateSubAdminModal(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-card attendance-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
                 <p className="eyebrow">Create manager</p>

@@ -378,6 +378,10 @@
   width: 10%;
 }
 
+.attendance-table table {
+  min-width: 720px;
+}
+
 .table-card th,
 .table-card td {
   padding: 1rem 1.1rem;
@@ -467,6 +471,13 @@
 
 .modal-card.wide {
   width: min(100%, 820px);
+}
+
+.attendance-modal {
+  width: min(100%, 820px);
+  max-height: calc(100dvh - 2rem);
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .student-details-modal {
@@ -829,6 +840,31 @@
   .modal-card {
     padding: 1.2rem 1rem;
     border-radius: 18px;
+  }
+
+  .attendance-modal {
+    width: 100%;
+    max-height: calc(100dvh - 1rem);
+    padding: 1rem 0.8rem 0.8rem;
+    border-radius: 16px;
+  }
+
+  .attendance-modal .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .attendance-modal .span-2 {
+    grid-column: span 1;
+  }
+
+  .attendance-modal .modal-actions {
+    align-items: stretch;
+  }
+
+  .attendance-modal .modal-actions > * {
+    flex: 1 1 100%;
+    width: 100%;
   }
 
   .student-details-modal {
