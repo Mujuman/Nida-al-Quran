@@ -64,6 +64,9 @@ function AdminDashboard() {
   const handleOpenUser = async (user) => {
     try {
       const userDetails = await apiService.getUserDetails(user._id || user.id);
+      if (!userDetails || userDetails.msg || !(userDetails._id || userDetails.id)) {
+        throw new Error(userDetails?.msg || 'Unable to load student details.');
+      }
       setSelectedUser(userDetails);
       setShowUserModal(true);
     } catch (err) {
@@ -655,16 +658,21 @@ function AdminDashboard() {
                           <td>{student.course ? student.course.replace(/-/g, ' ') : '-'}</td>
                           <td>{student.assignedTeacher?.fullName || 'Unassigned'}</td>
                           <td>
-                            <button
-                              className="btn-primary"
-                              onClick={() => {
-                                setSelectedStudentForAssign(student);
-                                setAssignedSubAdminId(student.assignedTeacher ? String(student.assignedTeacher._id || student.assignedTeacher.id) : '');
-                                setShowAssignModal(true);
-                              }}
-                            >
-                              Assign
-                            </button>
+                            <div className="table-actions">
+                              <button className="mini-btn" onClick={() => handleOpenUser(student)} aria-label="View student details">
+                                <Eye size={14} />
+                              </button>
+                              <button
+                                className="btn-primary"
+                                onClick={() => {
+                                  setSelectedStudentForAssign(student);
+                                  setAssignedSubAdminId(student.assignedTeacher ? String(student.assignedTeacher._id || student.assignedTeacher.id) : '');
+                                  setShowAssignModal(true);
+                                }}
+                              >
+                                Assign
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))

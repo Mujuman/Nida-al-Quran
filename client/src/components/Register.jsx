@@ -380,46 +380,42 @@ function Register() {
                       <p>{t('register.form.additionalInfoDesc')}</p>
                     </div>
 
-                    {formData.age && parseInt(formData.age) < 18 && (
-                      <>
-                        <div className="guardian-section">
-                          <h3>{t('register.form.guardianTitle')}</h3>
-                          <p className="section-note">{t('register.form.guardianNote')}</p>
-                        </div>
+                    <div className="guardian-section">
+                      <h3>{t('register.form.guardianTitle')}</h3>
+                      <p className="section-note">{t('register.form.guardianNote')}</p>
+                    </div>
 
-                        <div className="form-group">
-                          <label htmlFor="guardian">
-                            <User size={18} />
-                            {t('register.form.guardian')} *
-                          </label>
-                          <input
-                            type="text"
-                            id="guardian"
-                            name="guardian"
-                            value={formData.guardian}
-                            onChange={handleInputChange}
-                            placeholder={t('register.form.guardianPlaceholder')}
-                            required={formData.age && parseInt(formData.age) < 18}
-                          />
-                        </div>
+                    <div className="form-group">
+                      <label htmlFor="guardian">
+                        <User size={18} />
+                        {t('register.form.guardian')} {formData.age && parseInt(formData.age) < 18 ? '*' : ''}
+                      </label>
+                      <input
+                        type="text"
+                        id="guardian"
+                        name="guardian"
+                        value={formData.guardian}
+                        onChange={handleInputChange}
+                        placeholder={t('register.form.guardianPlaceholder')}
+                        required={Boolean(formData.age && parseInt(formData.age) < 18)}
+                      />
+                    </div>
 
-                        <div className="form-group">
-                          <label htmlFor="guardianPhone">
-                            <Phone size={18} />
-                            {t('register.form.guardianPhone')} *
-                          </label>
-                          <input
-                            type="tel"
-                            id="guardianPhone"
-                            name="guardianPhone"
-                            value={formData.guardianPhone}
-                            onChange={handleInputChange}
-                            placeholder={t('register.form.guardianPhonePlaceholder')}
-                            required={formData.age && parseInt(formData.age) < 18}
-                          />
-                        </div>
-                      </>
-                    )}
+                    <div className="form-group">
+                      <label htmlFor="guardianPhone">
+                        <Phone size={18} />
+                        {t('register.form.guardianPhone')} {formData.age && parseInt(formData.age) < 18 ? '*' : ''}
+                      </label>
+                      <input
+                        type="tel"
+                        id="guardianPhone"
+                        name="guardianPhone"
+                        value={formData.guardianPhone}
+                        onChange={handleInputChange}
+                        placeholder={t('register.form.guardianPhonePlaceholder')}
+                        required={Boolean(formData.age && parseInt(formData.age) < 18)}
+                      />
+                    </div>
 
                     <div className="form-group">
                       <label htmlFor="message">
