@@ -186,7 +186,7 @@ function AdminDashboard() {
           setSubAdmins(Array.isArray(saResponse) ? saResponse : []);
         }
       }
-      if (activeTab === 'contacts' && isMainAdmin) {
+      if (activeTab === 'contacts') {
         const contactsResponse = await apiService.getAllContacts();
         setContacts(Array.isArray(contactsResponse) ? contactsResponse : []);
       }
