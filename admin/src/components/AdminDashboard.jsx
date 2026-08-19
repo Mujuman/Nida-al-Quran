@@ -7,11 +7,20 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
+import { getLanguage, getTranslation } from '../i18n';
 
 function AdminDashboard() {
   const navigate = useNavigate();
   const adminInfo = apiService.getAdminInfo();
   const isMainAdmin = adminInfo?.role === 'main_admin';
+  const [language, setLanguage] = useState(getLanguage);
+  const t = (key) => getTranslation(language, key);
+
+  const toggleLanguage = () => {
+    const nextLanguage = language === 'en' ? 'am' : 'en';
+    localStorage.setItem('adminLanguage', nextLanguage);
+    setLanguage(nextLanguage);
+  };
 
   const [stats, setStats] = useState({
     totalUsers: 0, pendingRegistrations: 0, approvedRegistrations: 0,
@@ -300,10 +309,10 @@ function AdminDashboard() {
   };
 
   const statsCards = [
-    { label: 'Total Students', value: stats.totalUsers || 0, icon: Users, color: 'blue' },
-    { label: 'Pending', value: stats.pendingRegistrations || 0, icon: Clock, color: 'gold' },
-    { label: 'Approved', value: stats.approvedRegistrations || 0, icon: CheckCircle, color: 'green' },
-    { label: 'Messages', value: stats.totalContacts || 0, icon: Mail, color: 'purple' },
+    { label: t('totalStudents'), value: stats.totalUsers || 0, icon: Users, color: 'blue' },
+    { label: t('pending'), value: stats.pendingRegistrations || 0, icon: Clock, color: 'gold' },
+    { label: t('approved'), value: stats.approvedRegistrations || 0, icon: CheckCircle, color: 'green' },
+    { label: t('messagesCount'), value: stats.totalContacts || 0, icon: Mail, color: 'purple' },
   ];
   const recentStudents = [...users]
     .sort((firstStudent, secondStudent) => (
@@ -374,7 +383,10 @@ function AdminDashboard() {
             </div>
             <button className="btn-logout" onClick={handleLogout}>
               <LogOut size={16} />
-              Logout
+              {t('logout')}
+            </button>
+            <button className="language-toggle" onClick={toggleLanguage} aria-label="Change language">
+              {t('language')}
             </button>
           </div>
         </div>
@@ -394,16 +406,16 @@ function AdminDashboard() {
         />
 
         <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
-          <div className="sidebar-header">Management</div>
+          <div className="sidebar-header">{t('management')}</div>
           <nav className="sidebar-nav">
             {[
-              { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-              { id: 'users', label: 'Students', icon: Users },
-              ...(isMainAdmin ? [{ id: 'contacts', label: 'Messages', icon: Mail }] : []),
-              { id: 'attendance', label: 'Attendance', icon: Calendar },
+              { id: 'dashboard', label: t('dashboard'), icon: BarChart3 },
+              { id: 'users', label: t('students'), icon: Users },
+              ...(isMainAdmin ? [{ id: 'contacts', label: t('messages'), icon: Mail }] : []),
+              { id: 'attendance', label: t('attendance'), icon: Calendar },
               ...(isMainAdmin ? [
-                { id: 'assign-students', label: 'Assign Students', icon: UserCheck },
-                { id: 'subadmins', label: 'Sub Admins', icon: UserPlus },
+                { id: 'assign-students', label: t('assignStudents'), icon: UserCheck },
+                { id: 'subadmins', label: t('subAdmins'), icon: UserPlus },
               ] : []),
             ].map(({ id, label, icon: Icon }) => (
               <button
@@ -423,8 +435,8 @@ function AdminDashboard() {
             <div className="content-panel">
               <div className="panel-header">
                 <div>
-                  <p className="eyebrow">Overview</p>
-                  <h2>Dashboard</h2>
+                  <p className="eyebrow">{t('overview')}</p>
+                  <h2>{t('dashboard')}</h2>
                 </div>
               </div>
 
@@ -443,14 +455,14 @@ function AdminDashboard() {
               <div className="recent-students-section">
                 <div className="panel-header">
                   <div>
-                    <p className="eyebrow">Latest activity</p>
-                    <h3>Recent Registered Students</h3>
+                    <p className="eyebrow">{t('latestActivity')}</p>
+                    <h3>{t('recentStudents')}</h3>
                   </div>
                   <button className="btn-secondary" onClick={() => switchTab('users')}>
-                    View All Students
+                    {t('viewAllStudents')}
                   </button>
                 </div>
-                {searchBar('Search recent students')}
+                {searchBar(t('searchStudents'))}
 
                 <div className="table-card">
                   <table>
@@ -496,11 +508,11 @@ function AdminDashboard() {
             <div className="content-panel">
               <div className="panel-header">
                 <div>
-                  <p className="eyebrow">Students</p>
-                  <h2>Student Management</h2>
+                  <p className="eyebrow">{t('students')}</p>
+                  <h2>{t('studentManagement')}</h2>
                 </div>
               </div>
-              {searchBar('Search students by name, email, or status')}
+              {searchBar(t('searchStudents'))}
               <div className="table-card">
                 <table>
                   <thead>
@@ -538,11 +550,11 @@ function AdminDashboard() {
             <div className="content-panel">
               <div className="panel-header">
                 <div>
-                  <p className="eyebrow">Messages</p>
-                  <h2>Contact Messages</h2>
+                  <p className="eyebrow">{t('messages')}</p>
+                  <h2>{t('contactMessages')}</h2>
                 </div>
               </div>
-              {searchBar('Search messages by name, email, or text')}
+              {searchBar(t('searchMessages'))}
               <div className="table-card contact-messages-table">
                 <table>
                   <thead>
@@ -576,16 +588,16 @@ function AdminDashboard() {
             <div className="content-panel">
               <div className="panel-header">
                 <div>
-                  <p className="eyebrow">Attendance</p>
-                  <h2>Attendance Management</h2>
+                  <p className="eyebrow">{t('attendance')}</p>
+                  <h2>{t('attendanceManagement')}</h2>
                 </div>
                 {!isMainAdmin && (
                   <button className="btn-primary" onClick={() => setShowMarkAttendanceModal(true)}>
-                    + Mark Attendance
+                    + {t('markAttendance')}
                   </button>
                 )}
               </div>
-              {searchBar('Search attendance records')}
+              {searchBar(t('searchAttendance'))}
               <div className="table-card attendance-table">
                 <table>
                   <thead>
@@ -666,7 +678,7 @@ function AdminDashboard() {
                   <h2>Assign Students to Sub-admins</h2>
                 </div>
               </div>
-              {searchBar('Search students to assign')}
+              {searchBar(t('searchAssign'))}
               <div className="table-card">
                 <table>
                   <thead>
