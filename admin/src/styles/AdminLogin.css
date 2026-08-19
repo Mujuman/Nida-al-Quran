@@ -1,8 +1,18 @@
 /* Admin Login styles */
+/* Admin Login styles */
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
 .admin-login-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
+  width: 100%;
   justify-content: center;
   background: linear-gradient(135deg, #0f1f47 0%, #1e3a8a 50%, #0a0a0a 100%);
   position: relative;
