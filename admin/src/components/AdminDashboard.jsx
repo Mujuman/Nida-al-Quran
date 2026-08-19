@@ -753,7 +753,12 @@ function AdminDashboard() {
                   {selectedUser.assignedTeacher && (
                     <div className="detail-item">
                       <span>Assigned Teacher</span>
-                      <strong>{selectedUser.assignedTeacher}</strong>
+                      <strong>
+                        {selectedUser.assignedTeacher.fullName
+                          || selectedUser.assignedTeacher.username
+                          || selectedUser.assignedTeacher.email
+                          || '-'}
+                      </strong>
                     </div>
                   )}
                   <div className="detail-item">
