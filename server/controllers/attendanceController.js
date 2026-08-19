@@ -7,7 +7,10 @@ const Admin = require('../models/Admin');
 // Sub-admins can only mark for their assigned students
 // ──────────────────────────────────────────────────────────────
 exports.markAttendance = async (req, res) => {
-  const { studentId, course, date, status, notes } = req.body;
+  const {
+    studentId, course, date, status, notes, startTime, endTime, learningPlace,
+    teacherSuggestion, absenceReason, permissionStatus, permissionNote,
+  } = req.body;
 
   try {
     if (req.admin.role === 'main_admin') {
@@ -43,6 +46,13 @@ exports.markAttendance = async (req, res) => {
     if (attendance) {
       attendance.status = status;
       attendance.notes = notes;
+      attendance.startTime = startTime;
+      attendance.endTime = endTime;
+      attendance.learningPlace = learningPlace;
+      attendance.teacherSuggestion = teacherSuggestion;
+      attendance.absenceReason = absenceReason;
+      attendance.permissionStatus = permissionStatus;
+      attendance.permissionNote = permissionNote;
       attendance.recordedBy = req.admin.id;
       attendance.markedAt = new Date();
     } else {
@@ -52,6 +62,13 @@ exports.markAttendance = async (req, res) => {
         date: new Date(date),
         status,
         notes,
+        startTime,
+        endTime,
+        learningPlace,
+        teacherSuggestion,
+        absenceReason,
+        permissionStatus,
+        permissionNote,
         recordedBy: req.admin.id,
       });
     }

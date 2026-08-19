@@ -15,6 +15,17 @@ const AttendanceSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    startTime: String,
+    endTime: String,
+    learningPlace: String,
+    teacherSuggestion: String,
+    absenceReason: String,
+    permissionStatus: {
+      type: String,
+      enum: ['not-required', 'pending', 'granted', 'denied'],
+      default: 'not-required',
+    },
+    permissionNote: String,
     status: {
       type: String,
       enum: ['present', 'absent', 'late', 'excused'],

@@ -54,6 +54,13 @@ function AdminDashboard() {
     status: 'present',
     course: '',
     notes: '',
+    startTime: '',
+    endTime: '',
+    learningPlace: '',
+    teacherSuggestion: '',
+    absenceReason: '',
+    permissionStatus: 'not-required',
+    permissionNote: '',
   });
 
   const showMessage = (text, type = 'success') => {
@@ -271,6 +278,13 @@ function AdminDashboard() {
         status: 'present',
         course: '',
         notes: '',
+        startTime: '',
+        endTime: '',
+        learningPlace: '',
+        teacherSuggestion: '',
+        absenceReason: '',
+        permissionStatus: 'not-required',
+        permissionNote: '',
       });
       fetchDashboardData();
     } catch (err) {
@@ -305,7 +319,8 @@ function AdminDashboard() {
   ]));
   const filteredAttendance = attendance.filter((item) => matchesSearch([
     item.student?.fullName, item.studentName, item.course, item.recordedBy?.fullName,
-    item.status, item.date && new Date(item.date).toLocaleDateString(),
+    item.status, item.learningPlace, item.teacherSuggestion, item.absenceReason,
+    item.date && new Date(item.date).toLocaleDateString(),
   ]));
   const filteredSubAdmins = subAdmins.filter((admin) => matchesSearch([
     admin.fullName, admin.email, admin.username, admin.role,
@@ -572,6 +587,8 @@ function AdminDashboard() {
                       <th>Student</th>
                       <th>Course</th>
                       <th>Date</th>
+                      <th>Time</th>
+                      <th>Place</th>
                       <th>Recorded By</th>
                       <th>Status</th>
                     </tr>
@@ -582,6 +599,8 @@ function AdminDashboard() {
                         <td>{item.student?.fullName || item.studentName || 'Unknown'}</td>
                         <td>{item.course || '-'}</td>
                         <td>{item.date ? new Date(item.date).toLocaleDateString() : '-'}</td>
+                        <td>{item.startTime || item.endTime ? `${item.startTime || '-'} - ${item.endTime || '-'}` : '-'}</td>
+                        <td>{item.learningPlace || '-'}</td>
                         <td>{item.recordedBy?.fullName || item.recordedBy || 'System'}</td>
                         <td>
                           <span className={`status-badge ${item.status || 'present'}`}>
@@ -1036,6 +1055,43 @@ function AdminDashboard() {
                     value={attendanceMarking.course}
                     onChange={(e) => setAttendanceMarking({ ...attendanceMarking, course: e.target.value })}
                   />
+                </label>
+                <label>
+                  Started time
+                  <input type="time" value={attendanceMarking.startTime} onChange={(e) => setAttendanceMarking({ ...attendanceMarking, startTime: e.target.value })} />
+                </label>
+                <label>
+                  Ended time
+                  <input type="time" value={attendanceMarking.endTime} onChange={(e) => setAttendanceMarking({ ...attendanceMarking, endTime: e.target.value })} />
+                </label>
+                <label>
+                  Learning place
+                  <input value={attendanceMarking.learningPlace} onChange={(e) => setAttendanceMarking({ ...attendanceMarking, learningPlace: e.target.value })} placeholder="Online, classroom, mosque..." />
+                </label>
+                <label>
+                  Permission
+                  <select value={attendanceMarking.permissionStatus} onChange={(e) => setAttendanceMarking({ ...attendanceMarking, permissionStatus: e.target.value })}>
+                    <option value="not-required">Not required</option>
+                    <option value="pending">Pending</option>
+                    <option value="granted">Granted</option>
+                    <option value="denied">Denied</option>
+                  </select>
+                </label>
+                {(attendanceMarking.status === 'absent' || attendanceMarking.status === 'excused') && (
+                  <>
+                    <label className="span-2">
+                      Absence reason
+                      <input value={attendanceMarking.absenceReason} onChange={(e) => setAttendanceMarking({ ...attendanceMarking, absenceReason: e.target.value })} required={attendanceMarking.status === 'absent'} />
+                    </label>
+                    <label className="span-2">
+                      Permission details
+                      <textarea value={attendanceMarking.permissionNote} onChange={(e) => setAttendanceMarking({ ...attendanceMarking, permissionNote: e.target.value })} style={{ minHeight: '70px', padding: '0.8rem 0.9rem', border: '1px solid rgba(15, 31, 71, 0.2)', borderRadius: '12px', fontFamily: 'inherit' }} />
+                    </label>
+                  </>
+                )}
+                <label className="span-2">
+                  Teacher suggestion
+                  <textarea value={attendanceMarking.teacherSuggestion} onChange={(e) => setAttendanceMarking({ ...attendanceMarking, teacherSuggestion: e.target.value })} style={{ minHeight: '70px', padding: '0.8rem 0.9rem', border: '1px solid rgba(15, 31, 71, 0.2)', borderRadius: '12px', fontFamily: 'inherit' }} />
                 </label>
                 <label className="span-2">
                   Notes
