@@ -294,7 +294,7 @@ function AdminDashboard() {
     user.fullName, user.email, user.registrationStatus,
   ]));
   const filteredContacts = contacts.filter((contact) => matchesSearch([
-    contact.name, contact.email, contact.message,
+    contact.fullName, contact.name, contact.email, contact.message,
   ]));
   const filteredAttendance = attendance.filter((item) => matchesSearch([
     item.student?.fullName, item.studentName, item.course, item.recordedBy?.fullName,
@@ -528,7 +528,7 @@ function AdminDashboard() {
                   <tbody>
                     {filteredContacts.map((contact) => (
                       <tr key={contact._id || contact.id}>
-                        <td>{contact.name || 'Unknown'}</td>
+                        <td>{contact.fullName || contact.name || 'Unknown'}</td>
                         <td>{contact.email || '-'}</td>
                         <td>{contact.message?.slice(0, 60) || '-'}</td>
                         <td>
