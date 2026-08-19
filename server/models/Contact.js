@@ -34,6 +34,20 @@ const ContactSchema = new mongoose.Schema(
     reply: {
       type: String,
     },
+    replyHistory: [{
+      message: {
+        type: String,
+        required: true,
+      },
+      repliedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Admin',
+      },
+      repliedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    }],
     repliedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Admin',

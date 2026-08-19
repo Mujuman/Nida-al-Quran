@@ -111,7 +111,11 @@ function AdminDashboard() {
     try {
       const response = await apiService.replyContact(selectedContact._id || selectedContact.id, replyText.trim());
       showMessage(response?.msg || 'Reply sent successfully.', 'success');
-      setSelectedContact((prev) => ({ ...prev, reply: replyText.trim(), status: 'replied' }));
+      if (response?.contact) {
+        setSelectedContact(response.contact);
+      } else {
+        setSelectedContact((prev) => ({ ...prev, reply: replyText.trim(), status: 'replied' }));
+      }
       setReplyText('');
       fetchDashboardData();
     } catch (err) {
@@ -833,6 +837,29 @@ function AdminDashboard() {
               <span>Message</span>
               <p>{selectedContact.message || '-'}</p>
             </div>
+
+            {(selectedContact.replyHistory?.length > 0 || selectedContact.reply) && (
+              <div className="reply-history">
+                <h4 className="section-title">Reply History</h4>
+                {selectedContact.replyHistory?.length > 0 ? selectedContact.replyHistory.map((reply, index) => (
+                  <div className="reply-history-item" key={reply._id || `${reply.repliedAt}-${index}`}>
+                    <div className="reply-history-meta">
+                      <strong>{reply.repliedBy?.fullName || reply.repliedBy?.email || 'Admin'}</strong>
+                      <span>{reply.repliedAt ? new Date(reply.repliedAt).toLocaleString() : '-'}</span>
+                    </div>
+                    <p>{reply.message}</p>
+                  </div>
+                )) : (
+                  <div className="reply-history-item">
+                    <div className="reply-history-meta">
+                      <strong>{selectedContact.repliedBy?.fullName || selectedContact.repliedBy?.email || 'Admin'}</strong>
+                      <span>{selectedContact.repliedAt ? new Date(selectedContact.repliedAt).toLocaleString() : '-'}</span>
+                    </div>
+                    <p>{selectedContact.reply}</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             <textarea
               value={replyText}

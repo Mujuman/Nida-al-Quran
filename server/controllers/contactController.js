@@ -46,7 +46,9 @@ exports.getAllContacts = async (req, res) => {
 // Get Contact by ID
 exports.getContactById = async (req, res) => {
   try {
-    const contact = await Contact.findById(req.params.id).populate('repliedBy', 'fullName email');
+    const contact = await Contact.findById(req.params.id)
+      .populate('repliedBy', 'fullName email')
+      .populate('replyHistory.repliedBy', 'fullName email');
     if (!contact) {
       return res.status(404).json({ msg: 'Contact not found' });
     }
@@ -67,12 +69,20 @@ exports.replyContact = async (req, res) => {
       return res.status(404).json({ msg: 'Contact not found' });
     }
 
+    contact.replyHistory.push({
+      message: reply,
+      repliedBy: req.admin.id,
+      repliedAt: new Date(),
+    });
     contact.reply = reply;
     contact.status = 'replied';
     contact.repliedBy = req.admin.id;
     contact.repliedAt = new Date();
 
     await contact.save();
+    const populatedContact = await Contact.findById(contact._id)
+      .populate('repliedBy', 'fullName email')
+      .populate('replyHistory.repliedBy', 'fullName email');
 
     // Send the reply email asynchronously
     const sendEmail = require('../utils/sendEmail');
@@ -90,7 +100,7 @@ exports.replyContact = async (req, res) => {
 
     res.json({
       msg: 'Reply sent successfully',
-      contact,
+      contact: populatedContact,
       emailSent: emailResult.success,
       previewUrl: emailResult.previewUrl
     });
