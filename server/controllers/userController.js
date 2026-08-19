@@ -7,7 +7,7 @@ const { sendRegistrationNotification } = require('../utils/adminNotifications');
 exports.registerUser = async (req, res) => {
   const {
     fullName, email, password, phone, age, gender, course, level, schedule,
-    guardian, guardianPhone, guardianName, message,
+    guardian, guardianPhone, guardianName, learningMedia, message,
   } = req.body;
   
   try {
@@ -37,6 +37,7 @@ exports.registerUser = async (req, res) => {
       schedule,
       guardian: guardian || guardianName,
       guardianPhone: guardianPhone || req.body.guardian_phone,
+      learningMedia,
       message,
       isVerified: false,
       registrationStatus: 'pending',
@@ -135,7 +136,7 @@ exports.updateUser = async (req, res) => {
     }
 
     // Update fields
-    const { fullName, phone, age, gender, course, level, schedule, guardian, guardianPhone, message } = req.body;
+    const { fullName, phone, age, gender, course, level, schedule, guardian, guardianPhone, learningMedia, message } = req.body;
     
     if (fullName) user.fullName = fullName;
     if (phone) user.phone = phone;
@@ -146,6 +147,7 @@ exports.updateUser = async (req, res) => {
     if (schedule) user.schedule = schedule;
     if (guardian) user.guardian = guardian;
     if (guardianPhone) user.guardianPhone = guardianPhone;
+    if (learningMedia) user.learningMedia = learningMedia;
     if (message) user.message = message;
 
     await user.save();

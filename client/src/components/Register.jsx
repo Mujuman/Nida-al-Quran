@@ -18,6 +18,7 @@ function Register() {
     schedule: '',
     guardian: '',
     guardianPhone: '',
+    learningMedia: '',
     message: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -55,6 +56,7 @@ function Register() {
         schedule: formData.schedule,
         guardian: formData.guardian,
         guardianPhone: formData.guardianPhone,
+        learningMedia: formData.learningMedia,
         message: formData.message,
       };
 
@@ -79,6 +81,7 @@ function Register() {
             schedule: '',
             guardian: '',
             guardianPhone: '',
+            learningMedia: '',
             message: ''
           });
         }, 5000);
@@ -388,7 +391,7 @@ function Register() {
                     <div className="form-group">
                       <label htmlFor="guardian">
                         <User size={18} />
-                        {t('register.form.guardian')} {formData.age && parseInt(formData.age) < 18 ? '*' : ''}
+                        {t('register.form.guardian')} *
                       </label>
                       <input
                         type="text"
@@ -397,14 +400,14 @@ function Register() {
                         value={formData.guardian}
                         onChange={handleInputChange}
                         placeholder={t('register.form.guardianPlaceholder')}
-                        required={Boolean(formData.age && parseInt(formData.age) < 18)}
+                        required
                       />
                     </div>
 
                     <div className="form-group">
                       <label htmlFor="guardianPhone">
                         <Phone size={18} />
-                        {t('register.form.guardianPhone')} {formData.age && parseInt(formData.age) < 18 ? '*' : ''}
+                        {t('register.form.guardianPhone')} *
                       </label>
                       <input
                         type="tel"
@@ -413,8 +416,28 @@ function Register() {
                         value={formData.guardianPhone}
                         onChange={handleInputChange}
                         placeholder={t('register.form.guardianPhonePlaceholder')}
-                        required={Boolean(formData.age && parseInt(formData.age) < 18)}
+                        required
                       />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="learningMedia">
+                        <BookOpen size={18} />
+                        Live learning platform *
+                      </label>
+                      <select
+                        id="learningMedia"
+                        name="learningMedia"
+                        value={formData.learningMedia}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select a platform</option>
+                        <option value="telegram">Telegram</option>
+                        <option value="google-meet">Google Meet</option>
+                        <option value="skype">Skype</option>
+                        <option value="zoom">Zoom</option>
+                      </select>
                     </div>
 
                     <div className="form-group">

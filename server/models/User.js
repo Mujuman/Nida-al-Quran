@@ -39,6 +39,10 @@ const UserSchema = new mongoose.Schema(
     guardianPhone: {
       type: String,
     },
+    learningMedia: {
+      type: String,
+      enum: ['telegram', 'google-meet', 'skype', 'zoom'],
+    },
     message: {
       type: String,
     },

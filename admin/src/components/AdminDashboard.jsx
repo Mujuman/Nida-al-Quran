@@ -726,6 +726,7 @@ function AdminDashboard() {
                   <div className="detail-item"><span>Course</span><strong>{selectedUser.course ? selectedUser.course.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '-'}</strong></div>
                   <div className="detail-item"><span>Level</span><strong>{selectedUser.level ? selectedUser.level.charAt(0).toUpperCase() + selectedUser.level.slice(1) : '-'}</strong></div>
                   <div className="detail-item"><span>Schedule</span><strong>{selectedUser.schedule ? selectedUser.schedule.charAt(0).toUpperCase() + selectedUser.schedule.slice(1) : '-'}</strong></div>
+                  <div className="detail-item"><span>Live Learning Platform</span><strong>{selectedUser.learningMedia ? selectedUser.learningMedia.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '-'}</strong></div>
                 </div>
               </div>
 
