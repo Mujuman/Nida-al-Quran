@@ -5,7 +5,10 @@ const { sendRegistrationNotification } = require('../utils/adminNotifications');
 
 // Register user with full details
 exports.registerUser = async (req, res) => {
-  const { fullName, email, password, phone, age, gender, course, level, schedule, guardian, guardianPhone, message } = req.body;
+  const {
+    fullName, email, password, phone, age, gender, course, level, schedule,
+    guardian, guardianPhone, guardianName, message,
+  } = req.body;
   
   try {
     // Check if user already exists
@@ -32,8 +35,8 @@ exports.registerUser = async (req, res) => {
       course,
       level,
       schedule,
-      guardian,
-      guardianPhone,
+      guardian: guardian || guardianName,
+      guardianPhone: guardianPhone || req.body.guardian_phone,
       message,
       isVerified: false,
       registrationStatus: 'pending',

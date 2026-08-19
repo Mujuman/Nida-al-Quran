@@ -733,8 +733,8 @@ function AdminDashboard() {
               <div className="detail-section">
                 <h4 className="section-title">Guardian Information</h4>
                 <div className="detail-grid">
-                  <div className="detail-item"><span>Guardian Name</span><strong>{selectedUser.guardian || '-'}</strong></div>
-                  <div className="detail-item"><span>Guardian Phone</span><strong>{selectedUser.guardianPhone || '-'}</strong></div>
+                  <div className="detail-item"><span>Guardian Name</span><strong>{selectedUser.guardian || selectedUser.guardianName || '-'}</strong></div>
+                  <div className="detail-item"><span>Guardian Phone</span><strong>{selectedUser.guardianPhone || selectedUser.guardian_phone || '-'}</strong></div>
                 </div>
               </div>
 
