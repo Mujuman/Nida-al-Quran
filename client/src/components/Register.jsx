@@ -290,27 +290,34 @@ function Register() {
                       <p>{t('register.form.courseSelectionDesc')}</p>
                     </div>
 
-                    <div className="form-group">
-                      <label htmlFor="course">
-                        <BookOpen size={18} />
-                        {t('register.form.course')} *
-                      </label>
-                      <select
-                        id="course"
-                        name="course"
-                        value={formData.course}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="">{t('register.form.courseSelect')}</option>
-                        <option value="quran-recitation">{t('register.courses.0')}</option>
-                        <option value="quran-memorization">{t('register.courses.1')}</option>
-                        <option value="islamic-studies">{t('register.courses.2')}</option>
-                        <option value="arabic-language">{t('register.courses.3')}</option>
-                        <option value="children-program">{t('register.courses.4')}</option>
-                        <option value="adult-classes">{t('register.courses.5')}</option>
-                        <option value="online-learning">{t('register.courses.6')}</option>
-                      </select>
+                    <div className="courses-section">
+                      <h3 style={{ marginBottom: '20px', fontSize: '18px' }}>All Courses</h3>
+                      <div className="courses-list">
+                        {[
+                          { id: 'qaida', name: 'ቃኢዳ በተጅዊድ', label: 'Qaida with Tajweed' },
+                          { id: 'nazir', name: 'ቁርአን ነዘር', label: 'Quran Nazir' },
+                          { id: 'hifz', name: 'ሂፍዝ ከሙራጀአ ጋር', label: 'Hifz with Murajaah' },
+                          { id: 'islamic-studies', name: 'መሰረታዊ የዲን ትምህርቶች', label: 'Fundamental Islamic Studies' }
+                        ].map((course) => (
+                          <label key={course.id} className="course-option">
+                            <input
+                              type="radio"
+                              name="course"
+                              value={course.id}
+                              checked={formData.course === course.id}
+                              onChange={handleInputChange}
+                              required
+                            />
+                            <div className="course-item">
+                              <span className="course-arrow">➪</span>
+                              <div className="course-content">
+                                <span className="course-name">{course.name}</span>
+                                <span className="course-label">{course.label}</span>
+                              </div>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
                     </div>
 
                     <div className="form-row">
