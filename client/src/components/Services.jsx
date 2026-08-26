@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, GraduationCap, Languages, Users, Globe, Award } from 'lucide-react';
+import { BookOpen, Eye, BookMarked, Scroll } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import '../styles/Services.css';
 
@@ -10,14 +10,12 @@ function Services() {
 
   const icons = [
     <BookOpen size={48} />,
-    <GraduationCap size={48} />,
-    <Languages size={48} />,
-    <Users size={48} />,
-    <Award size={48} />,
-    <Globe size={48} />
+    <Eye size={48} />,
+    <BookMarked size={48} />,
+    <Scroll size={48} />
   ];
 
-  const colors = ['#1E3A8A', '#D4AF37', '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B'];
+  const colors = ['#1E3A8A', '#D4AF37', '#3B82F6', '#10B981'];
 
   return (
     <div className="services-page">
