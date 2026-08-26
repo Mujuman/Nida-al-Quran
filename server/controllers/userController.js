@@ -162,11 +162,8 @@ exports.updateUser = async (req, res) => {
 // Get statistics for dashboard
 exports.getStatistics = async (req, res) => {
   try {
-    // Count approved/graduated students
-    const graduatedStudents = await User.countDocuments({ 
-      registrationStatus: 'approved',
-      isVerified: true 
-    });
+    // Count all registered students
+    const totalStudents = await User.countDocuments();
 
     // Count active teachers (sub_admin)
     const professionalTeachers = await Admin.countDocuments({ 
@@ -190,7 +187,7 @@ exports.getStatistics = async (req, res) => {
     }
 
     res.json({
-      students: graduatedStudents,
+      students: totalStudents,
       teachers: professionalTeachers,
       experience: yearsOfExperience,
       courses: courseCount || 15 // Fallback to 15 if no distinct courses found
