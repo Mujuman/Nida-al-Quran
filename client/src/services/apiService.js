@@ -31,6 +31,14 @@ export const apiService = {
     return response.json();
   },
 
+  getStatistics: async () => {
+    const response = await fetch(`${API_URL}/api/users/stats`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return response.json();
+  },
+
   submitContact: async (contactData) => {
     const response = await fetch(`${API_URL}/api/contacts`, {
       method: 'POST',

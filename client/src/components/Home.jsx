@@ -1,12 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, Users, Award, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { apiService } from '../services/apiService';
 import '../styles/Home.css';
 
 function Home() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [stats, setStats] = useState(null);
+  const [loadingStats, setLoadingStats] = useState(true);
+
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      try {
+        setLoadingStats(true);
+        const data = await apiService.getStatistics();
+        if (data && typeof data === 'object' && !data.msg) {
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error fetching statistics:', error);
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    fetchStatistics();
+  }, []);
 
   const navigateTo = (page) => {
     const pageRoutes = {
@@ -20,8 +41,7 @@ function Home() {
   };
 
   const features = t('home.features', { returnObjects: true });
-
-  const stats = t('home.stats', { returnObjects: true });
+  const statsLabels = t('home.stats', { returnObjects: true });
 
   return (
     <div className="home-page">
@@ -89,20 +109,28 @@ function Home() {
         <div className="container">
           <div className="stats-grid">
             <div className="stat-card">
-              <h2 className="stat-number">500+</h2>
-              <p className="stat-label">{stats?.students}</p>
+              <h2 className="stat-number">
+                {!loadingStats && stats ? `${stats.students}+` : '...'}
+              </h2>
+              <p className="stat-label">{statsLabels?.students}</p>
             </div>
             <div className="stat-card">
-              <h2 className="stat-number">25+</h2>
-              <p className="stat-label">{stats?.teachers}</p>
+              <h2 className="stat-number">
+                {!loadingStats && stats ? `${stats.teachers}+` : '...'}
+              </h2>
+              <p className="stat-label">{statsLabels?.teachers}</p>
             </div>
             <div className="stat-card">
-              <h2 className="stat-number">10+</h2>
-              <p className="stat-label">{stats?.experience}</p>
+              <h2 className="stat-number">
+                {!loadingStats && stats ? `${stats.experience}+` : '...'}
+              </h2>
+              <p className="stat-label">{statsLabels?.experience}</p>
             </div>
             <div className="stat-card">
-              <h2 className="stat-number">15+</h2>
-              <p className="stat-label">{stats?.courses}</p>
+              <h2 className="stat-number">
+                {!loadingStats && stats ? `${stats.courses}+` : '...'}
+              </h2>
+              <p className="stat-label">{statsLabels?.courses}</p>
             </div>
           </div>
         </div>

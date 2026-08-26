@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { sendRegistrationNotification } = require('../utils/adminNotifications');
@@ -155,6 +156,48 @@ exports.updateUser = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// Get statistics for dashboard
+exports.getStatistics = async (req, res) => {
+  try {
+    // Count approved/graduated students
+    const graduatedStudents = await User.countDocuments({ 
+      registrationStatus: 'approved',
+      isVerified: true 
+    });
+
+    // Count active teachers (sub_admin)
+    const professionalTeachers = await Admin.countDocuments({ 
+      role: 'sub_admin',
+      isActive: true 
+    });
+
+    // Count unique courses from users
+    const uniqueCourses = await User.distinct('course');
+    const courseCount = uniqueCourses.filter(course => course).length;
+
+    // Calculate years of experience (from creation of first admin/center start)
+    const firstAdmin = await Admin.findOne().sort({ createdAt: 1 });
+    let yearsOfExperience = 10; // Default fallback
+    if (firstAdmin) {
+      const startDate = new Date(firstAdmin.createdAt);
+      const currentDate = new Date();
+      yearsOfExperience = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24 * 365));
+      // Ensure minimum 10 years as per the organization's actual history
+      yearsOfExperience = Math.max(yearsOfExperience, 10);
+    }
+
+    res.json({
+      students: graduatedStudents,
+      teachers: professionalTeachers,
+      experience: yearsOfExperience,
+      courses: courseCount || 15 // Fallback to 15 if no distinct courses found
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
   }
 };
 
