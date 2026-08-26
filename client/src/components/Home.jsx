@@ -112,7 +112,7 @@ function Home() {
               <h2 className="stat-number">
                 {!loadingStats && stats ? `${stats.students}+` : '...'}
               </h2>
-              <p className="stat-label">{statsLabels?.students}</p>
+              <p className="stat-label">Students</p>
             </div>
             <div className="stat-card">
               <h2 className="stat-number">
