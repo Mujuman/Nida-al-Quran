@@ -431,26 +431,135 @@ exports.getMyStudents = async (req, res) => {
 };
 
 // ============================================================
-// Get All Attendance (Main Admin sees all, Sub-Admin sees assigned)
+// Delete Rejected Students (Main Admin only)
 // ============================================================
-exports.getAllAttendanceRecords = async (req, res) => {
+exports.deleteRejectedStudents = async (req, res) => {
   try {
-    let records;
-    if (req.admin.role === 'main_admin') {
-      records = await Attendance.find()
-        .populate('studentId', 'fullName email course')
-        .sort({ date: -1 });
-    } else {
-      const adminDoc = await Admin.findById(req.admin.id);
-      const assignedIds = adminDoc ? adminDoc.assignedStudents : [];
-      records = await Attendance.find({ student: { $in: assignedIds } })
-        .populate('student', 'fullName email course')
-        .sort({ date: -1 });
+    // Get all rejected students
+    const rejectedStudents = await User.find({ registrationStatus: 'rejected' });
+
+    if (rejectedStudents.length === 0) {
+      return res.json({ msg: 'No rejected students to delete', deletedCount: 0 });
     }
-    res.json(records);
+
+    // Delete all rejected students
+    const studentIds = rejectedStudents.map(student => student._id);
+    
+    // Remove from teachers' assignedStudents lists
+    await Admin.updateMany(
+      { assignedStudents: { $in: studentIds } },
+      { $pull: { assignedStudents: { $in: studentIds } } }
+    );
+
+    // Delete all attendance records for these students
+    await Attendance.deleteMany({ student: { $in: studentIds } });
+
+    // Delete the students
+    const result = await User.deleteMany({ registrationStatus: 'rejected' });
+
+    res.json({ 
+      msg: 'Rejected students deleted successfully', 
+      deletedCount: result.deletedCount 
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
+// Delete Single Rejected Student (Main Admin only)
+// ============================================================
+exports.deleteRejectedStudent = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ msg: 'Student not found' });
+    }
+
+    if (user.registrationStatus !== 'rejected') {
+      return res.status(400).json({ msg: 'Can only delete rejected students' });
+    }
+
+    // Remove from teachers' assignedStudents
+    if (user.assignedTeacher) {
+      await Admin.findByIdAndUpdate(user.assignedTeacher, {
+        $pull: { assignedStudents: req.params.userId },
+      });
+    }
+
+    // Delete attendance records
+    await Attendance.deleteMany({ student: req.params.userId });
+
+    // Delete the student
+    await user.deleteOne();
+    res.json({ msg: 'Rejected student deleted successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
+// Activate/Deactivate Sub-Admin (Main Admin only)
+// ============================================================
+exports.toggleSubAdminStatus = async (req, res) => {
+  try {
+    const { isActive } = req.body;
+    const admin = await Admin.findById(req.params.adminId);
+
+    if (!admin) {
+      return res.status(404).json({ msg: 'Sub-admin not found' });
+    }
+    if (admin.role === 'main_admin') {
+      return res.status(403).json({ msg: 'Cannot modify a main admin' });
+    }
+
+    admin.isActive = isActive;
+    await admin.save();
+
+    const updated = await Admin.findById(req.params.adminId)
+      .select('-password')
+      .populate('assignedStudents', 'fullName email course');
+    
+    res.json({ 
+      msg: `Sub-admin ${isActive ? 'activated' : 'deactivated'} successfully`,
+      admin: updated 
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
+// Reset Sub-Admin Password (Main Admin only)
+// ============================================================
+exports.resetSubAdminPassword = async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+    
+    if (!newPassword) {
+      return res.status(400).json({ msg: 'New password is required' });
+    }
+
+    const admin = await Admin.findById(req.params.adminId);
+
+    if (!admin) {
+      return res.status(404).json({ msg: 'Sub-admin not found' });
+    }
+    if (admin.role === 'main_admin') {
+      return res.status(403).json({ msg: 'Cannot modify a main admin' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    admin.password = await bcrypt.hash(newPassword, salt);
+    await admin.save();
+
+    res.json({ msg: 'Sub-admin password reset successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
   }
 };
 

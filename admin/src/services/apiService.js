@@ -112,6 +112,50 @@ export const apiService = {
     return response.json();
   },
 
+  toggleSubAdminStatus: async (adminId, isActive) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/sub-admins/${adminId}/toggle-status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ isActive }),
+    });
+    return response.json();
+  },
+
+  resetSubAdminPassword: async (adminId, newPassword) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/sub-admins/${adminId}/reset-password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ newPassword }),
+    });
+    return response.json();
+  },
+
+  deleteRejectedStudent: async (userId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/users/${userId}/rejected`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  deleteAllRejectedStudents: async () => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/rejected-students/all`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
   getAllContacts: async (filters = {}) => {
     const token = localStorage.getItem('adminToken');
     const query = new URLSearchParams(filters).toString();

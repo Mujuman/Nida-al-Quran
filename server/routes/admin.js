@@ -14,6 +14,10 @@ const {
   createSubAdmin,
   updateSubAdmin,
   deleteSubAdmin,
+  deleteRejectedStudent,
+  deleteRejectedStudents,
+  toggleSubAdminStatus,
+  resetSubAdminPassword,
   assignStudentToTeacher,
   getMyStudents,
   getAllAttendanceRecords,
@@ -38,9 +42,16 @@ router.put('/users/:userId/status', adminAuth, updateUserStatus);
 router.delete('/users/:userId', adminAuth, requireMainAdmin, deleteStudent);
 router.post('/users/:userId/assign', adminAuth, requireMainAdmin, assignStudentToTeacher);
 
+// Rejected Students Management (Main Admin)
+router.delete('/users/:userId/rejected', adminAuth, requireMainAdmin, deleteRejectedStudent);
+router.delete('/rejected-students/all', adminAuth, requireMainAdmin, deleteRejectedStudents);
+
+// Sub-Admins Management (Main Admin)
 router.get('/sub-admins', adminAuth, requireMainAdmin, getAllSubAdmins);
 router.post('/sub-admins/create', adminAuth, requireMainAdmin, createSubAdmin);
 router.put('/sub-admins/:adminId', adminAuth, requireMainAdmin, updateSubAdmin);
 router.delete('/sub-admins/:adminId', adminAuth, requireMainAdmin, deleteSubAdmin);
+router.patch('/sub-admins/:adminId/toggle-status', adminAuth, requireMainAdmin, toggleSubAdminStatus);
+router.put('/sub-admins/:adminId/reset-password', adminAuth, requireMainAdmin, resetSubAdminPassword);
 
 module.exports = router;
