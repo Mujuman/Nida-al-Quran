@@ -153,8 +153,8 @@ function Register() {
                 </div>
                 <div className="contact-support">
                   <h4>{t('register.form.questions')}</h4>
-                  <p>📞 +251 911 234 567</p>
-                  <p>✉️ info@nidaulquran.com</p>
+                  <p>📞 +251942431160</p>
+                  <p>✉️ teyuteyba@gmail.com</p>
                 </div>
               </div>
             </div>
