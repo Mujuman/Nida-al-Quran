@@ -10,7 +10,7 @@
   "home": {
     "welcome": "Welcome to Nida Al-Quran",
     "subtitle": "Learn Quran from Expert Teachers",
-    "description": "Join our Islamic learning center and begin your spiritual journey with Quran studies, Arabic language, and Islamic studies.",
+    "description": "Join our Islamic learning center and begin your spiritual journey with Qaida with Tajweed, Quran Recitation (Nazira),Quran Hifz with Muraja'a (Revision), and Basic Islamic Knowledge.",
     "registerBtn": "Register Now",
     "learnMoreBtn": "Learn More",
     "qualityEducation": "Quality Education",
@@ -304,13 +304,10 @@
       ]
     },
     "courses": [
-      "Quran Studies (Tajweed)",
-      "Quran Memorization (Hifz)",
-      "Islamic Studies",
-      "Arabic Language",
-      "Children Program",
-      "Adult Classes",
-      "Online Learning"
+      "Qaida with Tajweed",
+      "Quran Recitation (Nazira)",
+      "Quran Hifz with Muraja'a (Revision)",
+      "Basic Islamic Knowledge"
     ],
     "levels": [
       "Beginner",
