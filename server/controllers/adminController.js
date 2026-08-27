@@ -431,6 +431,30 @@ exports.getMyStudents = async (req, res) => {
 };
 
 // ============================================================
+// Get All Attendance (Main Admin sees all, Sub-Admin sees assigned)
+// ============================================================
+exports.getAllAttendanceRecords = async (req, res) => {
+  try {
+    let records;
+    if (req.admin.role === 'main_admin') {
+      records = await Attendance.find()
+        .populate('student', 'fullName email course')
+        .sort({ date: -1 });
+    } else {
+      const adminDoc = await Admin.findById(req.admin.id);
+      const assignedIds = adminDoc ? adminDoc.assignedStudents : [];
+      records = await Attendance.find({ student: { $in: assignedIds } })
+        .populate('student', 'fullName email course')
+        .sort({ date: -1 });
+    }
+    res.json(records);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// ============================================================
 // Delete Rejected Students (Main Admin only)
 // ============================================================
 exports.deleteRejectedStudents = async (req, res) => {
