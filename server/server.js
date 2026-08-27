@@ -11,7 +11,7 @@ const attendanceRoutes = require('./routes/attendance');
 
 const app = express();
 
-// CORS configuration
+// CORS configuration - Updated to fix CORS preflight issues
 const corsOptions = {
   origin: [
     'https://nida-al-quran.vercel.app',
