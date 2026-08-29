@@ -214,7 +214,7 @@
 }
 
 @media (max-width: 640px) {
-  .hero-section, .hero-content { min-height: 0; }
+  .hero-section, .hero-content { min-height: auto; }
   .hero-section::before { inset: 55% 0 0; clip-path: none; }
   .hero-content { display: block; }
   .hero-text { padding: 4.5rem 0 3rem; }
