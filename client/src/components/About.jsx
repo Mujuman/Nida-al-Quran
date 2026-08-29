@@ -25,6 +25,7 @@ function About() {
         <div className="container">
           <div className="mission-vision-grid">
             <div className="mission-card slide-in-left">
+              <div className="about-card-topline"><span>01</span><span>FOUNDATION</span></div>
               <div className="card-icon">
                 <Target size={48} />
               </div>
@@ -35,6 +36,7 @@ function About() {
             </div>
 
             <div className="vision-card slide-in-right">
+              <div className="about-card-topline"><span>02</span><span>DIRECTION</span></div>
               <div className="card-icon">
                 <Eye size={48} />
               </div>

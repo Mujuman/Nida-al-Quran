@@ -107,16 +107,24 @@
 }
 
 .mission-card,
-.vision-card { padding: 2.5rem; border-top: 4px solid var(--forest); }
-.vision-card { border-top-color: var(--ochre); }
+.vision-card { position: relative; min-height: 455px; overflow: hidden; padding: 2rem 3.4rem 3rem; border: 0; border-top: 3px solid var(--forest); background: #f1f5ee; }
+.mission-card::after,
+.vision-card::after { content: ''; position: absolute; right: -72px; bottom: -100px; width: 250px; height: 250px; border: 1px solid rgba(23, 71, 60, 0.18); border-radius: 50%; box-shadow: 0 0 0 24px rgba(23, 71, 60, 0.035), 0 0 0 48px rgba(23, 71, 60, 0.025); pointer-events: none; }
+.vision-card { border-top-color: var(--ochre); background: #f6f0e3; }
+.vision-card::after { right: auto; left: -72px; border-color: rgba(198, 154, 75, 0.25); box-shadow: 0 0 0 24px rgba(198, 154, 75, 0.05), 0 0 0 48px rgba(198, 154, 75, 0.035); }
+.about-card-topline { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); color: #809188; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.16em; }
+.about-card-topline span:first-child { color: var(--ochre); font-family: Georgia, serif; font-size: 1.35rem; font-weight: 400; letter-spacing: 0; }
 .card-icon,
 .value-icon { display: grid; width: 55px; height: 55px; place-items: center; margin-bottom: 1.5rem; border-radius: 50%; background: var(--forest); color: #e8d5a8; }
+.mission-card .card-icon, .vision-card .card-icon { position: relative; z-index: 1; width: 78px; height: 78px; margin: 2.3rem 0 2rem; }
+.mission-card .card-icon svg, .vision-card .card-icon svg { width: 35px; height: 35px; }
 .vision-card .card-icon { background: var(--ochre); color: var(--ink); }
 .mission-card h2,
-.vision-card h2 { margin-bottom: 1rem; font-family: Georgia, serif; font-size: 2rem; font-weight: 400; }
+.vision-card h2 { position: relative; z-index: 1; margin-bottom: 1.2rem; font-family: Georgia, serif; font-size: clamp(2.4rem, 4vw, 3.8rem); font-weight: 400; letter-spacing: -0.04em; line-height: 1; }
 .mission-card p,
 .vision-card p,
 .about-text p { color: var(--muted); line-height: 1.85; }
+.mission-card p, .vision-card p { position: relative; z-index: 1; max-width: 560px; font-size: 1rem; }
 
 .about-content-section { background: var(--sage); }
 .about-story-visual { position: relative; height: 260px; margin-bottom: 4rem; overflow: hidden; }
