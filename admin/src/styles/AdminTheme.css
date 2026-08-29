@@ -128,9 +128,9 @@
 .course-assignment-fieldset legend { padding: 0 0.4rem; color: var(--admin-forest); font-family: 'Playfair Display', Georgia, serif; font-size: 1.15rem; }
 .course-assignment-fieldset p { margin: 0 0 0.85rem; color: var(--admin-muted); font-size: 0.78rem; }
 .course-assignment-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
-.course-assignment-option { position: relative; display: flex; align-items: center; gap: 0.75rem; min-height: 68px; padding: 0.75rem 0.9rem; border: 1px solid var(--admin-line); background: var(--admin-paper); cursor: pointer; transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease; }
+.course-assignment-fieldset .course-assignment-option { position: relative; display: flex; flex-direction: row; align-items: center; gap: 0.75rem; min-height: 68px; padding: 0.75rem 0.9rem; border: 1px solid var(--admin-line); background: var(--admin-paper); cursor: pointer; transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease; }
 .course-assignment-option:hover { border-color: var(--admin-ochre); background: #fffdf7; transform: translateY(-2px); }
-.course-assignment-option input { appearance: none; width: 22px; height: 22px; flex: 0 0 22px; margin: 0; border: 2px solid #9aaa9f; border-radius: 50%; background: transparent; cursor: pointer; }
+.course-assignment-fieldset .course-assignment-option input { appearance: none; width: 22px; height: 22px; flex: 0 0 22px; margin: 0; padding: 0; border: 2px solid #9aaa9f; border-radius: 50%; background: transparent; cursor: pointer; }
 .course-assignment-option input:checked { border-color: var(--admin-forest); background: var(--admin-forest); box-shadow: inset 0 0 0 4px var(--admin-paper); }
 .course-assignment-option:has(input:checked) { border-color: var(--admin-forest); background: #edf4ec; box-shadow: inset 3px 0 var(--admin-ochre); }
 .course-assignment-option span { display: grid; gap: 0.15rem; min-width: 0; }
