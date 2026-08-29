@@ -71,6 +71,7 @@ const connectDB = async () => {
   connectionPromise = connectToMongo();
   try {
     await connectionPromise;
+    connectionPromise = undefined;
   } catch (err) {
     connectionPromise = undefined;
     throw err;
