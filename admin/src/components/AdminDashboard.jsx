@@ -51,6 +51,13 @@ function AdminDashboard() {
     phone: '',
     assignedCourses: [],
   });
+  const [editSubAdminForm, setEditSubAdminForm] = useState({
+    fullName: '',
+    phone: '',
+    assignedCourses: [],
+    isActive: true,
+    password: '',
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [attendanceDate, setAttendanceDate] = useState(new Date().toISOString().split('T')[0]);
@@ -166,6 +173,73 @@ function AdminDashboard() {
     } catch (err) {
       console.error('Error creating sub-admin:', err);
       showMessage(err?.message || 'Could not create sub-admin.', 'error');
+    }
+  };
+
+  const handleOpenEditSubAdmin = (admin) => {
+    setSelectedSubAdmin(admin);
+    setEditSubAdminForm({
+      fullName: admin.fullName || '',
+      phone: admin.phone || '',
+      assignedCourses: Array.isArray(admin.assignedCourses) ? [...admin.assignedCourses] : [],
+      isActive: admin.isActive !== false,
+      password: '',
+    });
+    setShowEditSubAdminModal(true);
+  };
+
+  const handleUpdateSubAdmin = async (event) => {
+    event.preventDefault();
+    if (!selectedSubAdmin) return;
+
+    try {
+      const payload = {
+        fullName: editSubAdminForm.fullName,
+        phone: editSubAdminForm.phone,
+        assignedCourses: editSubAdminForm.assignedCourses,
+        isActive: editSubAdminForm.isActive,
+      };
+
+      if (editSubAdminForm.password.trim()) {
+        payload.password = editSubAdminForm.password.trim();
+      }
+
+      const response = await apiService.updateSubAdmin(selectedSubAdmin._id || selectedSubAdmin.id, payload);
+      showMessage(response?.msg || 'Teacher updated successfully.', 'success');
+      setShowEditSubAdminModal(false);
+      setSelectedSubAdmin(null);
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error updating sub-admin:', err);
+      showMessage(err?.message || 'Could not update teacher account.', 'error');
+    }
+  };
+
+  const handleDeleteSubAdmin = async (admin) => {
+    const adminId = admin._id || admin.id;
+    const confirmed = window.confirm(`Delete teacher ${admin.fullName || admin.username}? This will unassign their students.`);
+    if (!confirmed) return;
+
+    try {
+      const response = await apiService.deleteSubAdmin(adminId);
+      showMessage(response?.msg || 'Teacher deleted successfully.', 'success');
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error deleting sub-admin:', err);
+      showMessage(err?.message || 'Could not delete teacher account.', 'error');
+    }
+  };
+
+  const handleToggleSubAdminStatus = async (admin) => {
+    const adminId = admin._id || admin.id;
+    const nextState = !admin.isActive;
+    try {
+      const response = await apiService.toggleSubAdminStatus(adminId, nextState);
+      showMessage(response?.msg || `Teacher ${nextState ? 'activated' : 'deactivated'} successfully.`, 'success');
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error toggling sub-admin status:', err);
+      showMessage(err?.message || 'Could not change teacher account status.', 'error');
     }
   };
 
@@ -824,6 +898,24 @@ function AdminDashboard() {
                         <td>{admin.username || '-'}</td>
                         <td>{admin.role || 'sub_admin'}</td>
                         <td>{(admin.assignedCourses || []).join(', ') || 'No courses assigned'}</td>
+                        <td>
+                          <div className="table-actions">
+                            <button className="mini-btn" onClick={() => handleOpenEditSubAdmin(admin)} aria-label="Edit teacher">
+                              <Edit2 size={14} />
+                            </button>
+                            <button
+                              className="mini-btn"
+                              onClick={() => handleToggleSubAdminStatus(admin)}
+                              title={admin.isActive === false ? 'Activate teacher' : 'Deactivate teacher'}
+                              aria-label={admin.isActive === false ? 'Activate teacher' : 'Deactivate teacher'}
+                            >
+                              {admin.isActive === false ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                            </button>
+                            <button className="mini-btn delete-btn" onClick={() => handleDeleteSubAdmin(admin)} aria-label="Delete teacher">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -1123,6 +1215,67 @@ function AdminDashboard() {
               <label>Display order<input type="number" min="0" value={courseForm.sortOrder} onChange={(event) => setCourseForm({ ...courseForm, sortOrder: event.target.value })} /></label>
               <label className="course-active-toggle"><input type="checkbox" checked={courseForm.isActive} onChange={(event) => setCourseForm({ ...courseForm, isActive: event.target.checked })} /> Active on public pages</label>
               <div className="modal-actions"><button type="button" className="btn-secondary" onClick={() => setShowCourseModal(false)}>Cancel</button><button type="submit" className="btn-primary">{editingCourse ? 'Save Changes' : 'Create Course'}</button></div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showEditSubAdminModal && selectedSubAdmin && (
+        <div className="modal-backdrop" onClick={() => setShowEditSubAdminModal(false)}>
+          <div className="modal-card attendance-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">Update teacher</p>
+                <h3>Edit Teacher Account</h3>
+              </div>
+              <button className="mini-btn" onClick={() => setShowEditSubAdminModal(false)}>Close</button>
+            </div>
+
+            <form className="subadmin-form" onSubmit={handleUpdateSubAdmin}>
+              <div className="form-grid">
+                <label>
+                  Full name
+                  <input value={editSubAdminForm.fullName} onChange={(e) => setEditSubAdminForm({ ...editSubAdminForm, fullName: e.target.value })} required />
+                </label>
+                <label>
+                  Phone
+                  <input value={editSubAdminForm.phone} onChange={(e) => setEditSubAdminForm({ ...editSubAdminForm, phone: e.target.value })} />
+                </label>
+                <label className="span-2">
+                  New password
+                  <input type="password" value={editSubAdminForm.password} onChange={(e) => setEditSubAdminForm({ ...editSubAdminForm, password: e.target.value })} placeholder="Leave blank to keep current password" />
+                </label>
+                <label className="span-2" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  <input type="checkbox" checked={editSubAdminForm.isActive} onChange={(e) => setEditSubAdminForm({ ...editSubAdminForm, isActive: e.target.checked })} />
+                  <span>Active account</span>
+                </label>
+              </div>
+
+              <fieldset className="course-assignment-fieldset">
+                <legend>Assigned courses</legend>
+                <div className="course-assignment-list">
+                  {courses.filter((course) => course.isActive).map((course) => (
+                    <label className="course-assignment-option" key={course.id || course._id}>
+                      <input
+                        type="checkbox"
+                        checked={editSubAdminForm.assignedCourses.includes(course.slug)}
+                        onChange={(event) => setEditSubAdminForm({
+                          ...editSubAdminForm,
+                          assignedCourses: event.target.checked
+                            ? [...editSubAdminForm.assignedCourses, course.slug]
+                            : editSubAdminForm.assignedCourses.filter((slug) => slug !== course.slug),
+                        })}
+                      />
+                      <span><strong>{course.title?.en}</strong><small>{course.title?.am}</small></span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowEditSubAdminModal(false)}>Cancel</button>
+                <button type="submit" className="btn-primary">Save Changes</button>
+              </div>
             </form>
           </div>
         </div>
