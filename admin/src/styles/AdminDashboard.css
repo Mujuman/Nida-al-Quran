@@ -834,7 +834,11 @@
   }
 
   .admin-content {
-    padding: 1rem;
+    padding: 0 1rem 1rem;
+  }
+
+  .content-panel {
+    margin-top: 0;
   }
 
   .panel-header {
