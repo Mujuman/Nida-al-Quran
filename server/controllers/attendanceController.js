@@ -35,6 +35,9 @@ exports.markAttendance = async (req, res) => {
       if (!isAssigned) {
         return res.status(403).json({ msg: 'Access denied. Not your assigned student.' });
       }
+      if (!adminDoc.assignedCourses.includes(course)) {
+        return res.status(403).json({ msg: 'Access denied. This course is not assigned to you.' });
+      }
     }
 
     let attendance = await Attendance.findOne({

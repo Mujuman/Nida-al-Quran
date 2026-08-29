@@ -35,6 +35,11 @@ const AdminSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    // Course slugs this teacher is allowed to teach
+    assignedCourses: {
+      type: [String],
+      default: [],
+    },
     // Which main admin created this sub-admin
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

@@ -226,7 +226,11 @@ exports.getAllSubAdmins = async (req, res) => {
 // Create Sub-Admin (Main Admin only)
 // ============================================================
 exports.createSubAdmin = async (req, res) => {
-  const { username, email, password, fullName, phone } = req.body;
+  const { username, email, password, fullName, phone, assignedCourses = [] } = req.body;
+
+  if (!Array.isArray(assignedCourses) || assignedCourses.length === 0) {
+    return res.status(400).json({ msg: 'Please assign at least one course.' });
+  }
 
   try {
     let existing = await Admin.findOne({ email });
@@ -248,6 +252,7 @@ exports.createSubAdmin = async (req, res) => {
       password: hashed,
       fullName,
       phone,
+      assignedCourses,
       role: 'sub_admin',
       createdBy: req.admin.id,
       permissions: {
@@ -272,7 +277,7 @@ exports.createSubAdmin = async (req, res) => {
 // ============================================================
 exports.updateSubAdmin = async (req, res) => {
   try {
-    const { fullName, phone, isActive, password } = req.body;
+    const { fullName, phone, isActive, password, assignedCourses } = req.body;
     const admin = await Admin.findById(req.params.adminId);
 
     if (!admin) {
@@ -288,6 +293,9 @@ exports.updateSubAdmin = async (req, res) => {
     if (password) {
       const salt = await bcrypt.genSalt(10);
       admin.password = await bcrypt.hash(password, salt);
+    }
+    if (Array.isArray(assignedCourses) && assignedCourses.length > 0) {
+      admin.assignedCourses = assignedCourses;
     }
 
     await admin.save();

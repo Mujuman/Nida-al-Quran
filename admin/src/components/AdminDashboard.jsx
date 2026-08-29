@@ -49,6 +49,7 @@ function AdminDashboard() {
     password: '',
     fullName: '',
     phone: '',
+    assignedCourses: [],
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -151,11 +152,16 @@ function AdminDashboard() {
   const handleCreateSubAdmin = async (event) => {
     event.preventDefault();
 
+    if (newSubAdmin.assignedCourses.length === 0) {
+      showMessage('Please assign at least one course.', 'error');
+      return;
+    }
+
     try {
       const response = await apiService.createSubAdmin(newSubAdmin);
       showMessage(response?.msg || 'Sub-admin created successfully.', 'success');
       setShowCreateSubAdminModal(false);
-      setNewSubAdmin({ username: '', email: '', password: '', fullName: '', phone: '' });
+      setNewSubAdmin({ username: '', email: '', password: '', fullName: '', phone: '', assignedCourses: [] });
       fetchDashboardData();
     } catch (err) {
       console.error('Error creating sub-admin:', err);
@@ -233,7 +239,7 @@ function AdminDashboard() {
         const saResponse = await apiService.getSubAdmins();
         setSubAdmins(Array.isArray(saResponse) ? saResponse : []);
       }
-      if (activeTab === 'courses' && isMainAdmin) {
+      if ((activeTab === 'courses' || activeTab === 'subadmins') && isMainAdmin) {
         const coursesResponse = await apiService.getCourses();
         setCourses(Array.isArray(coursesResponse) ? coursesResponse : []);
       }
@@ -803,6 +809,7 @@ function AdminDashboard() {
                       <th>Email</th>
                       <th>Username</th>
                       <th>Role</th>
+                      <th>Assigned Courses</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -812,6 +819,7 @@ function AdminDashboard() {
                         <td>{admin.email || '-'}</td>
                         <td>{admin.username || '-'}</td>
                         <td>{admin.role || 'sub_admin'}</td>
+                        <td>{(admin.assignedCourses || []).join(', ') || 'No courses assigned'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1148,6 +1156,28 @@ function AdminDashboard() {
                   <input type="password" value={newSubAdmin.password} onChange={(e) => setNewSubAdmin({ ...newSubAdmin, password: e.target.value })} required />
                 </label>
               </div>
+
+              <fieldset className="course-assignment-fieldset">
+                <legend>Assign courses</legend>
+                <p>Select at least one course this teacher can teach.</p>
+                <div className="course-assignment-list">
+                  {courses.filter((course) => course.isActive).map((course) => (
+                    <label className="course-assignment-option" key={course.id}>
+                      <input
+                        type="checkbox"
+                        checked={newSubAdmin.assignedCourses.includes(course.slug)}
+                        onChange={(event) => setNewSubAdmin({
+                          ...newSubAdmin,
+                          assignedCourses: event.target.checked
+                            ? [...newSubAdmin.assignedCourses, course.slug]
+                            : newSubAdmin.assignedCourses.filter((slug) => slug !== course.slug),
+                        })}
+                      />
+                      <span><strong>{course.title?.en}</strong><small>{course.title?.am}</small></span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
 
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setShowCreateSubAdminModal(false)}>Cancel</button>
