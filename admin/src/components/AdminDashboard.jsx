@@ -550,65 +550,67 @@ function AdminDashboard() {
                 ))}
               </div>
 
-              <div className="dashboard-charts">
-                <section className="chart-card status-chart-card">
-                  <div className="chart-header">
-                    <div>
-                      <p className="eyebrow">Registration overview</p>
-                      <h3>Student status</h3>
+              {isMainAdmin && (
+                <div className="dashboard-charts">
+                  <section className="chart-card status-chart-card">
+                    <div className="chart-header">
+                      <div>
+                        <p className="eyebrow">Registration overview</p>
+                        <h3>Student status</h3>
+                      </div>
+                      <CheckCircle size={19} />
                     </div>
-                    <CheckCircle size={19} />
-                  </div>
-                  <div className="chart-body pie-chart-body">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={statusChartData} dataKey="value" nameKey="name" innerRadius="58%" outerRadius="78%" paddingAngle={3}>
-                          {statusChartData.map((entry, index) => <Cell key={entry.name} fill={chartColors[index]} />)}
-                        </Pie>
-                        <Tooltip />
-                        <Legend verticalAlign="bottom" height={28} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="chart-center-value"><strong>{users.length}</strong><span>students</span></div>
-                  </div>
-                </section>
+                    <div className="chart-body pie-chart-body">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={statusChartData} dataKey="value" nameKey="name" innerRadius="58%" outerRadius="78%" paddingAngle={3}>
+                            {statusChartData.map((entry, index) => <Cell key={entry.name} fill={chartColors[index]} />)}
+                          </Pie>
+                          <Tooltip />
+                          <Legend verticalAlign="bottom" height={28} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="chart-center-value"><strong>{users.length}</strong><span>students</span></div>
+                    </div>
+                  </section>
 
-                <section className="chart-card course-chart-card">
-                  <div className="chart-header">
-                    <div>
-                      <p className="eyebrow">Programme demand</p>
-                      <h3>Students by course</h3>
+                  <section className="chart-card course-chart-card">
+                    <div className="chart-header">
+                      <div>
+                        <p className="eyebrow">Programme demand</p>
+                        <h3>Students by course</h3>
+                      </div>
+                      <BookOpen size={19} />
                     </div>
-                    <BookOpen size={19} />
-                  </div>
-                  <div className="chart-body">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={courseChartData} margin={{ top: 10, right: 8, left: -18, bottom: 8 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#d8e1d8" vertical={false} />
-                        <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#66766e' }} interval={0} angle={-12} textAnchor="end" height={52} />
-                        <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#66766e' }} />
-                        <Tooltip cursor={{ fill: 'rgba(198, 154, 75, 0.1)' }} />
-                        <Bar dataKey="students" fill="#17473c" radius={[3, 3, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </section>
+                    <div className="chart-body">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={courseChartData} margin={{ top: 10, right: 8, left: -18, bottom: 8 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#d8e1d8" vertical={false} />
+                          <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#66766e' }} interval={0} angle={-12} textAnchor="end" height={52} />
+                          <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#66766e' }} />
+                          <Tooltip cursor={{ fill: 'rgba(198, 154, 75, 0.1)' }} />
+                          <Bar dataKey="students" fill="#17473c" radius={[3, 3, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </section>
 
-                <section className="chart-card attendance-chart-card">
-                  <div className="chart-header">
-                    <div>
-                      <p className="eyebrow">Monthly activity</p>
-                      <h3>Attendance recorded</h3>
+                  <section className="chart-card attendance-chart-card">
+                    <div className="chart-header">
+                      <div>
+                        <p className="eyebrow">Monthly activity</p>
+                        <h3>Attendance recorded</h3>
+                      </div>
+                      <Calendar size={19} />
                     </div>
-                    <Calendar size={19} />
-                  </div>
-                  <div className="attendance-summary">
-                    <strong>{stats.monthlyAttendance || 0}</strong>
-                    <span>records this month</span>
-                    <div className="attendance-meter"><span style={{ width: `${Math.min((stats.monthlyAttendance || 0) * 4, 100)}%` }} /></div>
-                  </div>
-                </section>
-              </div>
+                    <div className="attendance-summary">
+                      <strong>{stats.monthlyAttendance || 0}</strong>
+                      <span>records this month</span>
+                      <div className="attendance-meter"><span style={{ width: `${Math.min((stats.monthlyAttendance || 0) * 4, 100)}%` }} /></div>
+                    </div>
+                  </section>
+                </div>
+              )}
 
               <div className="recent-students-section">
                 <div className="panel-header">
