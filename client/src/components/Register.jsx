@@ -29,6 +29,8 @@ function Register() {
   const nextSteps = t('register.form.nextSteps', { returnObjects: true }) || [];
   const benefitCards = t('register.form.benefits', { returnObjects: true }) || [];
   const tipList = t('register.form.tipList', { returnObjects: true }) || [];
+  const courseServices = t('services.services', { returnObjects: true }) || [];
+  const courseIds = ['qaida', 'nazira', 'hifz', 'islamic-studies'];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -298,28 +300,23 @@ function Register() {
                     </div>
 
                     <div className="courses-section">
-                      <h3 style={{ marginBottom: '20px', fontSize: '18px' }}>All Courses</h3>
+                      <h3 style={{ marginBottom: '20px', fontSize: '18px' }}>{t('services.courseHeading')}</h3>
                       <div className="courses-list">
-                        {[
-                          { id: 'qaida', name: 'ቃኢዳ በተጅዊድ', label: 'Qaida with Tajweed' },
-                          { id: 'nazir', name: 'ቁርአን ነዘር', label: 'Quran Nazir' },
-                          { id: 'hifz', name: 'ሂፍዝ ከሙራጀአ ጋር', label: 'Hifz with Murajaah' },
-                          { id: 'islamic-studies', name: 'መሰረታዊ የዲን ትምህርቶች', label: 'Fundamental Islamic Studies' }
-                        ].map((course) => (
-                          <label key={course.id} className="course-option">
+                        {courseServices.slice(0, 4).map((course, index) => (
+                          <label key={courseIds[index]} className="course-option">
                             <input
                               type="radio"
                               name="course"
-                              value={course.id}
-                              checked={formData.course === course.id}
+                              value={courseIds[index]}
+                              checked={formData.course === courseIds[index]}
                               onChange={handleInputChange}
                               required
                             />
                             <div className="course-item">
                               <span className="course-arrow">➪</span>
                               <div className="course-content">
-                                <span className="course-name">{course.name}</span>
-                                <span className="course-label">{course.label}</span>
+                                <span className="course-name">{course.title}</span>
+                                <span className="course-label">{course.description}</span>
                               </div>
                             </div>
                           </label>

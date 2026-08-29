@@ -119,63 +119,43 @@
     "ctaText": "Choose the programme that feels right for you and take your first step with us.",
     "services": [
       {
-        "title": "Quran Studies (Tajweed)",
-        "description": "Learn the correct rules of Quranic recitation from certified teachers. Master Tajweed from basic to advanced levels with professional training.",
+        "title": "Qaida with Tajweed",
+        "description": "Build a strong foundation in Arabic letters, pronunciation, and the essential rules of Tajweed.",
         "features": [
+          "Arabic letters and sounds",
           "Basic Tajweed rules",
-          "Advanced Tajweed teaching",
-          "Quran memorization (Hifz)",
-          "Practical training sessions"
+          "Guided reading practice",
+          "Individual correction"
         ]
       },
       {
-        "title": "Islamic Studies",
-        "description": "Comprehensive Islamic education covering essential subjects for spiritual growth and understanding.",
+        "title": "Quran Recitation (Nazira)",
+        "description": "Improve your Quran reading with accurate pronunciation, fluency, and regular guided practice.",
         "features": [
-          "Aqeedah (Islamic belief)",
-          "Fiqh (Islamic law)",
-          "Sirah (Prophetic biography)",
-          "Akhlaq (Islamic morality)"
+          "Correct Quran recitation",
+          "One-to-one and group lessons",
+          "Reading fluency goals",
+          "Regular progress review"
         ]
       },
       {
-        "title": "Arabic Language",
-        "description": "Master the Arabic language to understand the Quran in its original language.",
+        "title": "Quran Hifz with Muraja'a (Revision)",
+        "description": "Memorize the Quran with a structured Hifz plan and consistent Muraja'a to strengthen retention.",
         "features": [
-          "Arabic grammar (Nahw)",
-          "Arabic morphology (Sarf)",
-          "Conversational Arabic",
-          "Quranic Arabic"
+          "Structured Hifz goals",
+          "Daily memorization practice",
+          "Regular Muraja'a sessions",
+          "Teacher progress guidance"
         ]
       },
       {
-        "title": "Children Programs",
-        "description": "Special programs designed for children to learn Islam in fun and engaging ways.",
+        "title": "Basic Islamic Knowledge",
+        "description": "Learn the essential knowledge needed to understand and practice Islam with confidence.",
         "features": [
-          "Quran for children",
-          "Islamic stories",
-          "Basic prayers and supplications",
-          "Islamic character education"
-        ]
-      },
-      {
-        "title": "Adult Classes",
-        "description": "Flexible programs for adults who want to strengthen their Islamic knowledge.",
-        "features": [
-          "Weekend classes",
-          "Evening sessions",
-          "One-on-one tutoring",
-          "Group discussions"
-        ]
-      },
-      {
-        "title": "Online Learning",
-        "description": "Access our courses from anywhere through our online learning platform.",
-        "features": [
-          "Live virtual classes",
-          "Recorded lessons",
-          "Interactive sessions",
-          "24/7 learning material access"
+          "Aqeedah and Islamic belief",
+          "Essential Fiqh",
+          "Prophetic biography",
+          "Islamic manners and character"
         ]
       }
     ]
@@ -357,9 +337,9 @@
     "coursesTitle": "Our Courses",
     "courses": [
       "Qaida with Tajweed",
-      "Quran Nazir",
-      "Hifz with Murajaah",
-      "Fundamental Islamic Studies"
+      "Quran Recitation (Nazira)",
+      "Quran Hifz with Muraja'a (Revision)",
+      "Basic Islamic Knowledge"
     ],
     "privacyPolicy": "Privacy Policy",
     "terms": "Terms of Service",
