@@ -222,14 +222,14 @@
 .register-aside > span { display: block; margin: 1.5rem 1.5rem 0; color: #e8d5a8; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.14em; }
 .register-aside h2 { margin: 0.8rem 1.5rem; font-family: Georgia, serif; font-size: 2rem; font-weight: 400; line-height: 1; }
 .register-aside p { margin: 0 1.5rem; color: rgba(247, 245, 239, 0.7); font-size: 0.84rem; line-height: 1.7; }
-.registration-container { max-width: 900px; margin: 0 auto; padding: clamp(1.2rem, 4vw, 3rem); }
+.registration-container { width: 100%; min-width: 0; max-width: 900px; margin: 0 auto; padding: clamp(1.2rem, 4vw, 3rem); }
 .progress-steps { display: flex; align-items: center; margin-bottom: 3rem; }
 .step { display: flex; flex: 1; align-items: center; gap: 0.65rem; color: #8a9a91; font-size: 0.75rem; font-weight: 700; }
 .step-number { display: grid; width: 34px; height: 34px; flex-shrink: 0; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--paper); }
 .step.active { color: var(--forest); }
 .step.active .step-number { border-color: var(--forest); background: var(--forest); color: var(--paper); }
 .step-line { height: 1px; flex: 0.5; margin: 0 0.7rem; background: var(--line); }
-.registration-form { padding: 0.5rem; }
+.registration-form { width: 100%; min-width: 0; padding: 0.5rem; }
 .step-header { margin-bottom: 2rem; }
 .step-header > svg { color: var(--forest); }
 .step-header h2 { margin: 0.75rem 0 0.4rem; font-family: Georgia, serif; font-size: 2rem; font-weight: 400; }
