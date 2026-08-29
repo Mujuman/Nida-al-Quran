@@ -207,6 +207,7 @@
   border-radius: 18px;
   padding: 1.25rem;
   box-shadow: 0 12px 30px rgba(15,31,71,0.06);
+  margin-top: 0;
 }
 
 .panel-header {
