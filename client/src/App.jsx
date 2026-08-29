@@ -9,6 +9,7 @@ import Contact from './components/Contact';
 import Register from './components/Register';
 import './App.css';
 import './styles/Global.css';
+import './styles/InternalPages.css';
 
 function App() {
   const navigate = useNavigate();
