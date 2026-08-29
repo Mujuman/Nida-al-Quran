@@ -393,7 +393,9 @@ function AdminDashboard() {
     { label: t('totalStudents'), value: stats.totalUsers || 0, icon: Users, color: 'blue' },
     { label: t('pending'), value: stats.pendingRegistrations || 0, icon: Clock, color: 'gold' },
     { label: t('approved'), value: stats.approvedRegistrations || 0, icon: CheckCircle, color: 'green' },
-    { label: t('messagesCount'), value: stats.totalContacts || 0, icon: Mail, color: 'purple' },
+    ...(isMainAdmin ? [
+      { label: t('messagesCount'), value: stats.totalContacts || 0, icon: Mail, color: 'purple' },
+    ] : []),
   ];
   const statusChartData = [
     { name: 'Pending', value: users.filter((user) => user.registrationStatus === 'pending').length },

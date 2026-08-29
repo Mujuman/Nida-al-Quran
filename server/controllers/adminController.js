@@ -181,6 +181,10 @@ exports.getDashboardStats = async (req, res) => {
       const assignedIds = adminDoc ? adminDoc.assignedStudents : [];
 
       const totalUsers = assignedIds.length;
+      const pendingRegistrations = await User.countDocuments({
+        _id: { $in: assignedIds },
+        registrationStatus: 'pending',
+      });
       const approvedRegistrations = await User.countDocuments({
         _id: { $in: assignedIds },
         registrationStatus: 'approved',
@@ -192,7 +196,7 @@ exports.getDashboardStats = async (req, res) => {
 
       res.json({
         totalUsers,
-        pendingRegistrations: 0,
+        pendingRegistrations,
         approvedRegistrations,
         totalContacts: 0,
         newContacts: 0,
