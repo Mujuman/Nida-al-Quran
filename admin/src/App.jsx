@@ -5,6 +5,7 @@ import AdminDashboard from './components/AdminDashboard';
 import { apiService } from './services/apiService';
 import './styles/AdminLogin.css';
 import './styles/AdminDashboard.css';
+import './styles/AdminTheme.css';
 
 function App() {
   const navigate = useNavigate();
