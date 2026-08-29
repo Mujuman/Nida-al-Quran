@@ -10,7 +10,7 @@
   "home": {
     "welcome": "Welcome to Nida Al-Quran",
     "subtitle": "Learn Quran from Expert Teachers",
-    "description": "Join our Islamic learning center and begin your spiritual journey with Qaida with Tajweed, Quran Recitation (Nazira),Quran Hifz with Muraja'a (Revision), and Basic Islamic Knowledge.",
+    "description": "Join our Islamic learning center and begin your spiritual journey with Qaida with Tajweed, Quran Recitation (Nazra),Quran Hifz with Muraja'a (Revision), and Basic Islamic Knowledge.",
     "registerBtn": "Register Now",
     "learnMoreBtn": "Learn More",
     "qualityEducation": "Quality Education",
@@ -129,7 +129,7 @@
         ]
       },
       {
-        "title": "Quran Recitation (Nazira)",
+        "title": "Quran Recitation (Nazra)",
         "description": "Improve your Quran reading with accurate pronunciation, fluency, and regular guided practice.",
         "features": [
           "Correct Quran recitation",
@@ -312,7 +312,7 @@
     },
     "courses": [
       "Qaida with Tajweed",
-      "Quran Recitation (Nazira)",
+      "Quran Recitation (Nazra)",
       "Quran Hifz with Muraja'a (Revision)",
       "Basic Islamic Knowledge"
     ],
@@ -337,7 +337,7 @@
     "coursesTitle": "Our Courses",
     "courses": [
       "Qaida with Tajweed",
-      "Quran Recitation (Nazira)",
+      "Quran Recitation (Nazra)",
       "Quran Hifz with Muraja'a (Revision)",
       "Basic Islamic Knowledge"
     ],
