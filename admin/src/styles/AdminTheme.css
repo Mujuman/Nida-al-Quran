@@ -45,9 +45,16 @@
 .nav-item.active { background: var(--admin-forest); border-left-color: var(--admin-ochre); color: var(--admin-paper); }
 
 .admin-content { padding: 2rem; background: var(--admin-paper); }
-.toast-alert { position: fixed; top: 90px; right: 1.5rem; z-index: 500; display: flex; align-items: center; gap: 0.6rem; max-width: min(420px, calc(100vw - 2rem)); padding: 0.85rem 1rem; border: 1px solid var(--admin-line); border-left: 4px solid var(--admin-forest); background: #fbfaf6; color: var(--admin-ink); box-shadow: 0 14px 28px rgba(20, 35, 31, 0.18); font-size: 0.86rem; }
-.toast-alert.toast-error { border-left-color: #b42318; color: #7f1d1d; }
-.toast-alert.toast-success { border-left-color: var(--admin-ochre); }
+.toast-alert { position: fixed; top: 92px; right: 1.5rem; z-index: 500; display: flex; align-items: center; gap: 0.7rem; width: fit-content; max-width: min(360px, calc(100vw - 2rem)); padding: 0.7rem 1rem 0.7rem 0.75rem; border: 1px solid var(--admin-line); border-radius: 3px; background: #fbfaf6; color: var(--admin-ink); box-shadow: 0 12px 26px rgba(20, 35, 31, 0.2); font-size: 0.82rem; font-weight: 600; animation: toast-in 220ms ease-out both; }
+.toast-alert > svg { width: 21px; height: 21px; padding: 0.25rem; border-radius: 50%; background: #fbe7e4; color: #b42318; }
+.toast-alert.toast-error { border-left: 3px solid #b42318; color: #7f1d1d; }
+.toast-alert.toast-success { border-left: 3px solid var(--admin-ochre); }
+.toast-alert.toast-success > svg { background: #f5edda; color: #8a621c; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(14px) translateY(-5px); }
+  to { opacity: 1; transform: translateX(0) translateY(0); }
+}
 .content-panel { padding: 1.75rem; border: 1px solid var(--admin-line); border-radius: 2px; background: #fbfaf6; box-shadow: 0 14px 32px rgba(20, 35, 31, 0.06); }
 .panel-header { border-bottom: 1px solid var(--admin-line); padding-bottom: 1.1rem; }
 .eyebrow { color: var(--admin-ochre); letter-spacing: 0.15em; }
@@ -195,4 +202,5 @@
   .course-assignment-list { grid-template-columns: 1fr; }
   .login-container { width: 100%; margin: 0; padding: 1rem; }
   .login-box { box-shadow: 8px 8px 0 rgba(198, 154, 75, 0.62); }
+  .toast-alert { top: 82px; right: 1rem; }
 }
