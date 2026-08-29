@@ -199,7 +199,11 @@
   }
 
   .admin-content {
-    padding-top: 0;
+    padding-top: 0 !important;
+  }
+
+  .content-panel {
+    margin-top: 0 !important;
   }
 
   .admin-sidebar {
@@ -224,8 +228,8 @@
 }
 
 @media (max-width: 760px) {
-  .admin-content { padding: 0 1rem 1rem; }
-  .content-panel { padding: 1rem; }
+  .admin-content { padding: 0 1rem 1rem !important; padding-top: 0 !important; }
+  .content-panel { padding: 1rem; margin-top: 0 !important; }
   .dashboard-charts { grid-template-columns: 1fr; }
   .status-chart-card { grid-row: auto; }
   .chart-body { height: 235px; }
@@ -258,8 +262,8 @@
   .btn-logout svg { margin: 0; }
   .language-toggle { min-width: 36px; padding: 0.45rem; }
   .admin-layout { min-height: auto; }
-  .admin-content { padding: 0.45rem 0.55rem 0.6rem; }
-  .content-panel { margin-top: 0; padding: 0.8rem; }
+  .admin-content { padding: 0 0.55rem 0.6rem !important; padding-top: 0 !important; }
+  .content-panel { margin-top: 0 !important; padding: 0.8rem; }
   .panel-header { margin-top: 0; padding-bottom: 0.75rem; }
   .panel-header h2 { font-size: 1.8rem; }
   .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
