@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Check, Target, Eye, Heart, Award, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { apiService } from '../services/apiService';
 import '../styles/About.css';
 
 function About() {
   const { t } = useTranslation();
+  const [stats, setStats] = useState(null);
+  const [loadingStats, setLoadingStats] = useState(true);
+
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      try {
+        const data = await apiService.getStatistics();
+        if (data && typeof data === 'object' && !data.msg) {
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error fetching About statistics:', error);
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    fetchStatistics();
+  }, []);
 
   const values = t('about.values', { returnObjects: true });
   const achievements = t('about.achievements', { returnObjects: true });
@@ -80,19 +100,19 @@ function About() {
             <div className="stats-card-about">
               <h3>{t('about.ourAchievements')}</h3>
               <div className="stat-item">
-                <div className="stat-number">500+</div>
+                <div className="stat-number">{!loadingStats && stats ? `${stats.students}+` : '...'}</div>
                 <div className="stat-label">{t('about.stat1')}</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">25+</div>
+                <div className="stat-number">{!loadingStats && stats ? `${stats.teachers}+` : '...'}</div>
                 <div className="stat-label">{t('about.stat2')}</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">15+</div>
+                <div className="stat-number">{!loadingStats && stats ? `${stats.courses}+` : '...'}</div>
                 <div className="stat-label">{t('about.stat3')}</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">10+</div>
+                <div className="stat-number">{!loadingStats && stats ? `${stats.experience}+` : '...'}</div>
                 <div className="stat-label">{t('about.stat4')}</div>
               </div>
             </div>
