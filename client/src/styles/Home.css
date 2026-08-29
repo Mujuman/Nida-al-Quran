@@ -9,7 +9,7 @@
 }
 
 .hero-section {
-  min-height: 690px;
+  min-height: auto;
   position: relative;
   overflow: hidden;
   background: var(--forest);
@@ -36,7 +36,7 @@
 }
 
 .hero-content {
-  min-height: 690px;
+  min-height: auto;
   position: relative;
   z-index: 1;
   display: grid;
