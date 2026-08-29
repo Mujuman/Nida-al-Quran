@@ -106,7 +106,7 @@ function AdminLogin() {
             <p>All admin roles use this portal</p>
             <div className="role-badges">
               <span className="role-badge main">Main Admin</span>
-              <span className="role-badge sub">Sub Admin</span>
+              <span className="role-badge sub">Teacher</span>
             </div>
           </div>
         </div>

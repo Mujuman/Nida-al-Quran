@@ -548,7 +548,7 @@ function AdminDashboard() {
               <div className="admin-info">
                 <span className="admin-name">{adminInfo?.fullName || 'Admin'}</span>
                 <span className={`admin-role-tag ${isMainAdmin ? 'main' : 'sub'}`}>
-                  {isMainAdmin ? 'Main Admin' : 'Sub Admin'}
+                  {isMainAdmin ? 'Main Admin' : 'Teacher'}
                 </span>
               </div>
             </div>
@@ -872,13 +872,13 @@ function AdminDashboard() {
               <div className="panel-header">
                 <div>
                   <p className="eyebrow">Admins</p>
-                  <h2>Sub-admin Management</h2>
+                  <h2>Teacher Management</h2>
                 </div>
                 <button className="btn-primary" onClick={() => setShowCreateSubAdminModal(true)}>
-                  + Create Sub Admin
+                  + Create Teacher
                 </button>
               </div>
-              {searchBar('Search sub-admins by name, email, or username')}
+              {searchBar('Search teachers by name, email, or username')}
               <div className="table-card">
                 <table>
                   <thead>
@@ -929,7 +929,7 @@ function AdminDashboard() {
               <div className="panel-header">
                 <div>
                   <p className="eyebrow">Assignment</p>
-                  <h2>Assign Students to Sub-admins</h2>
+                  <h2>Assign Students to Teachers</h2>
                 </div>
               </div>
               {searchBar(t('searchAssign'))}
@@ -1287,7 +1287,7 @@ function AdminDashboard() {
             <div className="modal-header">
               <div>
                 <p className="eyebrow">Create manager</p>
-                <h3>Create Sub Admin</h3>
+                <h3>Create Teacher</h3>
               </div>
               <button className="mini-btn" onClick={() => setShowCreateSubAdminModal(false)}>Close</button>
             </div>
@@ -1353,7 +1353,7 @@ function AdminDashboard() {
             <div className="modal-header">
               <div>
                 <p className="eyebrow">Assignment</p>
-                <h3>Assign to Sub-admin</h3>
+                <h3>Assign to Teacher</h3>
               </div>
               <button className="mini-btn" onClick={() => setShowAssignModal(false)}>Close</button>
             </div>
@@ -1375,7 +1375,7 @@ function AdminDashboard() {
 
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
-                Select Sub-admin
+                Select Teacher
               </label>
               <select
                 value={assignedSubAdminId}
