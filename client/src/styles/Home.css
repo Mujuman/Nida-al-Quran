@@ -225,6 +225,16 @@
     margin-top: 2.3rem;
     padding: 0.6rem 0.75rem;
     border-radius: 16px;
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(232, 213, 168, 0.55);
+  }
+  .hero-proof,
+  .hero-proof > span,
+  .hero-proof strong {
+    color: #ffffff !important;
+  }
+  .hero-proof strong {
+    color: #f0d79d !important;
   }
   .hero-proof > span {
     font-size: 0.68rem;
