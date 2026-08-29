@@ -84,6 +84,18 @@ function Home() {
         </div>
       </section>
 
+      <section className="quality-education-banner">
+        <div className="container banner-content">
+          <div className="banner-icon">
+            <CheckCircle2 size={32} />
+          </div>
+          <div className="banner-text">
+            <p className="banner-label">{t('home.qualityEducation')}</p>
+            <h2 className="banner-title">{t('home.expertsTeach')}</h2>
+          </div>
+        </div>
+      </section>
+
       <section className="features-section">
         <div className="container">
           <div className="features-header fade-in">
