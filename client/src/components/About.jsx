@@ -50,6 +50,10 @@ function About() {
       {/* About Content */}
       <section className="about-content-section">
         <div className="container">
+          <div className="about-story-visual">
+            <img src="https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1200&q=85" alt="Quran and prayer beads" />
+            <div className="story-overlay"><span>01</span><strong>{t('about.pageSubtitle')}</strong></div>
+          </div>
           <div className="about-grid">
             <div className="about-text">
               <h2>{t('about.aboutMore')}</h2>

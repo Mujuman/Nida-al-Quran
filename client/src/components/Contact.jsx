@@ -80,6 +80,10 @@ function Contact() {
         <div className="container">
           <div className="contact-grid">
             <div className="contact-info-side">
+              <div className="contact-image-panel">
+                <img src="https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1000&q=85" alt="Mosque interior" />
+                <span>{t('contact.pageSubtitle')}</span>
+              </div>
               <div className="contact-intro">
                 <h2>{t('contact.intro')}</h2>
                 <p>{t('contact.introDesc')}</p>

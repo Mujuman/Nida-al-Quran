@@ -159,6 +159,13 @@ function Register() {
               </div>
             </div>
           ) : (
+            <div className="registration-layout">
+            <aside className="register-aside">
+              <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=900&q=85" alt="Open Quran" />
+              <span>03 / BEGIN YOUR JOURNEY</span>
+              <h2>{t('register.pageSubtitle')}</h2>
+              <p>{t('home.description')}</p>
+            </aside>
             <div className="registration-container">
               <div className="progress-steps">
                 <div className={`step ${currentStep >= 1 ? 'active' : ''} ${currentStep > 1 ? 'completed' : ''}`}>
@@ -512,6 +519,7 @@ function Register() {
                   </div>
                 )}
               </form>
+            </div>
             </div>
           )}
         </div>
