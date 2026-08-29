@@ -8,12 +8,14 @@ const {
   createCourse,
   updateCourse,
   archiveCourse,
+  deleteCourse,
 } = require('../controllers/courseController');
 
 router.get('/', getPublicCourses);
 router.get('/admin', adminAuth, requireMainAdmin, getAdminCourses);
 router.post('/admin', adminAuth, requireMainAdmin, createCourse);
 router.put('/admin/:courseId', adminAuth, requireMainAdmin, updateCourse);
+router.delete('/admin/:courseId/permanent', adminAuth, requireMainAdmin, deleteCourse);
 router.delete('/admin/:courseId', adminAuth, requireMainAdmin, archiveCourse);
 
 module.exports = router;

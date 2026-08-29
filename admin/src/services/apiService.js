@@ -114,6 +114,15 @@ export const apiService = {
     return response.json();
   },
 
+  deleteCoursePermanently: async (courseId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/courses/admin/${courseId}/permanent`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
   createSubAdmin: async (data) => {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/admin/sub-admins/create`, {

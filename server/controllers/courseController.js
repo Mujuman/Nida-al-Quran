@@ -70,3 +70,14 @@ exports.archiveCourse = async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+
+exports.deleteCourse = async (req, res) => {
+  try {
+    const course = await Course.findByIdAndDelete(req.params.courseId);
+    if (!course) return res.status(404).json({ msg: 'Course not found' });
+    res.json({ msg: 'Course permanently deleted', id: course._id });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};

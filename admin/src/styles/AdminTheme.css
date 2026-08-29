@@ -111,6 +111,8 @@
 .course-admin-actions { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
 .course-admin-actions button { display: inline-flex; align-items: center; gap: 0.35rem; }
 .archive-btn { color: #984d45; }
+.permanent-delete-btn { color: #b42318; padding: 0.4rem !important; }
+.permanent-delete-btn:hover { border-color: #b42318; background: #fbe7e4; }
 .course-modal { max-height: calc(100dvh - 2rem); overflow-y: auto; }
 .course-form { display: grid; gap: 1rem; margin-top: 1.25rem; }
 .course-form label { display: grid; gap: 0.4rem; color: var(--admin-ink); font-size: 0.78rem; font-weight: 700; }

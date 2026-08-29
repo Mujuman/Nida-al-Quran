@@ -372,6 +372,17 @@ function AdminDashboard() {
     fetchDashboardData();
   };
 
+  const handleDeleteCoursePermanently = async (course) => {
+    if (!window.confirm(`Permanently delete ${course.title?.en || course.slug}? This cannot be undone.`)) return;
+    const response = await apiService.deleteCoursePermanently(course.id);
+    if (response?.msg && !response.id) {
+      showMessage(response.msg, 'error');
+      return;
+    }
+    showMessage('Course permanently deleted.');
+    fetchDashboardData();
+  };
+
   const statsCards = [
     { label: t('totalStudents'), value: stats.totalUsers || 0, icon: Users, color: 'blue' },
     { label: t('pending'), value: stats.pendingRegistrations || 0, icon: Clock, color: 'gold' },
@@ -883,7 +894,8 @@ function AdminDashboard() {
                     <p>{course.title?.am}</p>
                     <div className="course-admin-actions">
                       <button className="mini-btn" onClick={() => openCourseModal(course)}><Edit2 size={14} /> Edit</button>
-                      {course.isActive && <button className="mini-btn archive-btn" onClick={() => handleArchiveCourse(course)}><Trash2 size={14} /> Archive</button>}
+                      {course.isActive && <button className="mini-btn archive-btn" onClick={() => handleArchiveCourse(course)} title="Archive course"><Trash2 size={14} /> Archive</button>}
+                      <button className="mini-btn permanent-delete-btn" onClick={() => handleDeleteCoursePermanently(course)} title="Permanently delete course" aria-label={`Permanently delete ${course.title?.en || course.slug}`}><Trash2 size={14} /></button>
                     </div>
                   </article>
                 ))}
