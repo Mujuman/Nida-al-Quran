@@ -233,19 +233,26 @@
   .header-content { padding: 0 0.8rem; }
   .header-brand { font-size: 1rem; }
   .header-right { gap: 0.4rem; }
+  .admin-dashboard {
+    overflow-x: hidden;
+  }
+  .table-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 @media (max-width: 480px) {
   .admin-header { height: 64px; }
   :root { --admin-header-h: 64px; }
-  .header-content { padding: 0 0.6rem; }
+  .header-content { padding: 0 0.45rem; }
   .header-brand span { max-width: 145px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .header-right { gap: 0.25rem; }
+  .header-right { gap: 0.2rem; }
   .btn-logout { padding: 0.45rem; }
   .btn-logout { font-size: 0; }
   .btn-logout svg { margin: 0; }
   .language-toggle { min-width: 36px; padding: 0.45rem; }
-  .admin-content { padding: 0.65rem; }
+  .admin-content { padding: 0.55rem; }
   .content-panel { padding: 0.8rem; }
   .panel-header h2 { font-size: 1.8rem; }
   .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -253,6 +260,7 @@
   .stat-icon { width: 36px; height: 36px; }
   .stat-value { font-size: 1.5rem; }
   .table-card { margin-right: -0.1rem; margin-left: -0.1rem; }
+  .table-card table { min-width: 620px; }
   .table-card th, .table-card td { padding: 0.7rem; font-size: 0.78rem; }
   .modal-backdrop { align-items: flex-start; padding: 0.5rem; }
   .modal-card, .attendance-modal, .student-details-modal, .message-details-modal { width: 100%; max-height: calc(100dvh - 1rem); border-radius: 3px; }
@@ -262,4 +270,7 @@
   .course-assignment-option strong { font-size: 0.75rem; }
   .course-assignment-option small { font-size: 0.66rem; }
   .admin-search { width: 100%; }
+  .panel-header {
+    margin-top: 0.25rem;
+  }
 }
