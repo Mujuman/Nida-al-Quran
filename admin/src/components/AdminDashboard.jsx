@@ -1019,15 +1019,17 @@ function AdminDashboard() {
             </div>
 
             <div className="modal-actions">
-              <select
-                value={selectedUser.registrationStatus || 'pending'}
-                onChange={(e) => handleUserStatusUpdate(e.target.value)}
-                className="status-select"
-              >
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-              </select>
+              {isMainAdmin && (
+                <select
+                  value={selectedUser.registrationStatus || 'pending'}
+                  onChange={(e) => handleUserStatusUpdate(e.target.value)}
+                  className="status-select"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              )}
               <button className="btn-primary" onClick={() => setShowUserModal(false)}>Done</button>
             </div>
           </div>

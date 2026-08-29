@@ -38,7 +38,7 @@ router.get('/my-students', adminAuth, getMyStudents);
 router.get('/attendance/all', adminAuth, getAllAttendanceRecords);
 
 // ── Main Admin only ───────────────────────────────────────────
-router.put('/users/:userId/status', adminAuth, updateUserStatus);
+router.put('/users/:userId/status', adminAuth, requireMainAdmin, updateUserStatus);
 router.delete('/users/:userId', adminAuth, requireMainAdmin, deleteStudent);
 router.post('/users/:userId/assign', adminAuth, requireMainAdmin, assignStudentToTeacher);
 
