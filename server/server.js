@@ -65,8 +65,14 @@ app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 app.use(express.json());
 
-connectDB().catch((err) => {
-  console.error('Database connection failed during startup:', err.message);
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('Database connection failed:', err.message);
+    res.status(503).json({ msg: 'Database unavailable' });
+  }
 });
 
 // Health check endpoint

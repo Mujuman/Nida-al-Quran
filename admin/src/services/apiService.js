@@ -1,4 +1,4 @@
-const API_URL = (import.meta.env.VITE_API_URL || 'https://api-nida.vercel.app').replace(/\/+$/, '');
+const API_URL = (import.meta.env.VITE_API_URL || 'https://nida-al-quran-api.vercel.app').replace(/\/+$/, '');
 
 export const apiService = {
   adminLogin: async (credentials) => {

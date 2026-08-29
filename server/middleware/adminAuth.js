@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 
+const getJwtSecret = () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not configured');
+  }
+  return process.env.JWT_SECRET;
+};
+
 // Middleware to check if user is authenticated as admin (any role)
 const adminAuth = function (req, res, next) {
   let token = req.header('x-auth-token');
@@ -17,7 +24,7 @@ const adminAuth = function (req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret());
 
     if (!decoded.admin) {
       return res.status(403).json({ msg: 'Not authorized as admin' });

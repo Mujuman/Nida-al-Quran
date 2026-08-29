@@ -57,35 +57,48 @@ const createDefaultMainAdmin = async () => {
   }
 };
 
-const connectDB = async () => {
-  const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.MONGODB_URL;
+let connectionPromise;
 
-  if (!mongoUri) {
-    console.error('MongoDB connection string not set. Check Vercel environment variables or server/.env.');
+const connectDB = async () => {
+  if (mongoose.connection.readyState === 1) {
     return;
   }
 
-  try {
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000,
-    });
-
-    console.log(`MongoDB connected to ${mongoUri}`);
-
-    const collections = await mongoose.connection.db.listCollections({ name: 'users' }).toArray();
-    if (collections.length === 0) {
-      await mongoose.connection.createCollection('users');
-      console.log('Users collection created');
-    } else {
-      console.log('Users collection already exists');
-    }
-
-    await createDefaultMainAdmin();
-  } catch (err) {
-    console.error('MongoDB connection error:', err.message);
+  if (connectionPromise) {
+    return connectionPromise;
   }
+
+  connectionPromise = connectToMongo();
+  try {
+    await connectionPromise;
+  } catch (err) {
+    connectionPromise = undefined;
+    throw err;
+  }
+};
+
+const connectToMongo = async () => {
+  const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.MONGODB_URL;
+
+  if (!mongoUri) {
+    throw new Error('MongoDB connection string is not configured');
+  }
+
+  await mongoose.connect(mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 10000,
+  });
+
+  console.log('MongoDB connected');
+
+  const collections = await mongoose.connection.db.listCollections({ name: 'users' }).toArray();
+  if (collections.length === 0) {
+    await mongoose.connection.createCollection('users');
+    console.log('Users collection created');
+  }
+
+  await createDefaultMainAdmin();
 };
 
 module.exports = connectDB;
