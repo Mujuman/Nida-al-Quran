@@ -296,6 +296,9 @@
   .about-story-visual, .services-intro-visual { height: 235px; }
   .story-overlay, .services-intro-visual > div { padding: 1.5rem; }
   .features-list, .services-grid, .values-grid, .why-choose-grid, .courses-list, .benefits-grid, .summary-grid, .success-details { grid-template-columns: 1fr; }
+  .service-card { min-height: 0; }
+  .service-description, .service-features { min-height: 0; }
+  .service-features { margin-bottom: 1rem; }
   .value-card, .why-card { border-right: 0; }
   .value-card:nth-child(3), .why-card:nth-child(3) { border-bottom: 1px solid var(--line); }
   .form-row { display: grid; gap: 0; }
