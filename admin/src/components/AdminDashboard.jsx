@@ -5,6 +5,7 @@ import {
   UserCheck, AlertCircle, Shield, ShieldCheck, UserPlus, Edit2,
   BookOpen
 } from 'lucide-react';
+import { BarChart, Bar, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
 import { getLanguage, getTranslation } from '../i18n';
@@ -314,6 +315,20 @@ function AdminDashboard() {
     { label: t('approved'), value: stats.approvedRegistrations || 0, icon: CheckCircle, color: 'green' },
     { label: t('messagesCount'), value: stats.totalContacts || 0, icon: Mail, color: 'purple' },
   ];
+  const statusChartData = [
+    { name: 'Pending', value: users.filter((user) => user.registrationStatus === 'pending').length },
+    { name: 'Approved', value: users.filter((user) => user.registrationStatus === 'approved').length },
+    { name: 'Rejected', value: users.filter((user) => user.registrationStatus === 'rejected').length },
+  ];
+  const courseChartData = Object.entries(users.reduce((courseCounts, user) => {
+    const course = user.course || 'Not specified';
+    courseCounts[course] = (courseCounts[course] || 0) + 1;
+    return courseCounts;
+  }, {})).map(([name, students]) => ({
+    name: name.replace(/-/g, ' '),
+    students,
+  }));
+  const chartColors = ['#c69a4b', '#17473c', '#984d45'];
   const recentStudents = [...users]
     .sort((firstStudent, secondStudent) => (
       new Date(secondStudent.createdAt || 0) - new Date(firstStudent.createdAt || 0)
@@ -450,6 +465,66 @@ function AdminDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="dashboard-charts">
+                <section className="chart-card status-chart-card">
+                  <div className="chart-header">
+                    <div>
+                      <p className="eyebrow">Registration overview</p>
+                      <h3>Student status</h3>
+                    </div>
+                    <CheckCircle size={19} />
+                  </div>
+                  <div className="chart-body pie-chart-body">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={statusChartData} dataKey="value" nameKey="name" innerRadius="58%" outerRadius="78%" paddingAngle={3}>
+                          {statusChartData.map((entry, index) => <Cell key={entry.name} fill={chartColors[index]} />)}
+                        </Pie>
+                        <Tooltip />
+                        <Legend verticalAlign="bottom" height={28} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="chart-center-value"><strong>{users.length}</strong><span>students</span></div>
+                  </div>
+                </section>
+
+                <section className="chart-card course-chart-card">
+                  <div className="chart-header">
+                    <div>
+                      <p className="eyebrow">Programme demand</p>
+                      <h3>Students by course</h3>
+                    </div>
+                    <BookOpen size={19} />
+                  </div>
+                  <div className="chart-body">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={courseChartData} margin={{ top: 10, right: 8, left: -18, bottom: 8 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#d8e1d8" vertical={false} />
+                        <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#66766e' }} interval={0} angle={-12} textAnchor="end" height={52} />
+                        <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#66766e' }} />
+                        <Tooltip cursor={{ fill: 'rgba(198, 154, 75, 0.1)' }} />
+                        <Bar dataKey="students" fill="#17473c" radius={[3, 3, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </section>
+
+                <section className="chart-card attendance-chart-card">
+                  <div className="chart-header">
+                    <div>
+                      <p className="eyebrow">Monthly activity</p>
+                      <h3>Attendance recorded</h3>
+                    </div>
+                    <Calendar size={19} />
+                  </div>
+                  <div className="attendance-summary">
+                    <strong>{stats.monthlyAttendance || 0}</strong>
+                    <span>records this month</span>
+                    <div className="attendance-meter"><span style={{ width: `${Math.min((stats.monthlyAttendance || 0) * 4, 100)}%` }} /></div>
+                  </div>
+                </section>
               </div>
 
               <div className="recent-students-section">

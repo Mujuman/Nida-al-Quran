@@ -62,6 +62,46 @@
 .stat-label { color: var(--admin-muted); letter-spacing: 0.1em; }
 .stat-value { color: var(--admin-ink); font-family: 'Playfair Display', Georgia, serif; font-size: 2rem; font-weight: 600; }
 
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.chart-card {
+  min-width: 0;
+  border: 1px solid var(--admin-line);
+  border-radius: 2px;
+  background: var(--admin-paper);
+  padding: 1.25rem;
+}
+
+.status-chart-card { grid-row: span 2; }
+
+.chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--admin-line);
+  padding-bottom: 0.85rem;
+}
+
+.chart-header .eyebrow { margin: 0 0 0.25rem; }
+.chart-header h3 { margin: 0; color: var(--admin-ink); font-family: 'Playfair Display', Georgia, serif; font-size: 1.25rem; font-weight: 500; }
+.chart-header > svg { flex-shrink: 0; color: var(--admin-ochre); }
+.chart-body { position: relative; height: 245px; padding-top: 0.65rem; }
+.pie-chart-body { height: 295px; }
+.chart-center-value { position: absolute; top: 43%; left: 50%; display: grid; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
+.chart-center-value strong { color: var(--admin-forest); font-family: 'Playfair Display', Georgia, serif; font-size: 2rem; line-height: 1; }
+.chart-center-value span { color: var(--admin-muted); font-size: 0.7rem; }
+.attendance-summary { display: grid; align-content: center; min-height: 170px; }
+.attendance-summary strong { color: var(--admin-forest); font-family: 'Playfair Display', Georgia, serif; font-size: 3.6rem; line-height: 1; }
+.attendance-summary > span { margin-top: 0.5rem; color: var(--admin-muted); font-size: 0.85rem; }
+.attendance-meter { height: 7px; margin-top: 1.5rem; overflow: hidden; background: var(--admin-sage); }
+.attendance-meter span { display: block; height: 100%; background: var(--admin-ochre); transition: width 400ms ease; }
+
 .admin-search { border: 1px solid var(--admin-line); border-radius: 2px; background: var(--admin-paper); color: var(--admin-muted); }
 .admin-search:focus-within { border-color: var(--admin-forest); box-shadow: 0 0 0 3px rgba(23, 71, 60, 0.1); }
 .btn-secondary, .mini-btn { border: 1px solid var(--admin-line); border-radius: 2px; background: var(--admin-paper); color: var(--admin-forest); }
@@ -109,6 +149,10 @@
 @media (max-width: 760px) {
   .admin-content { padding: 1rem; }
   .content-panel { padding: 1rem; }
+  .dashboard-charts { grid-template-columns: 1fr; }
+  .status-chart-card { grid-row: auto; }
+  .chart-body { height: 235px; }
+  .pie-chart-body { height: 275px; }
   .login-container { width: 100%; margin: 0; padding: 1rem; }
   .login-box { box-shadow: 8px 8px 0 rgba(198, 154, 75, 0.62); }
 }
