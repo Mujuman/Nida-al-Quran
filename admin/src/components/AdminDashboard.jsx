@@ -488,7 +488,7 @@ function AdminDashboard() {
       </header>
 
       {message.text && (
-        <div className={`toast-alert toast-${message.type}`}>
+        <div className={`toast-alert toast-${message.type}`} role="alert" aria-live="assertive">
           {message.type === 'error' ? <AlertCircle size={16} /> : <CheckCircle size={16} />}
           <span>{message.text}</span>
         </div>

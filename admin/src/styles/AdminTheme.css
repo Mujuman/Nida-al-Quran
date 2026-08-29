@@ -45,6 +45,9 @@
 .nav-item.active { background: var(--admin-forest); border-left-color: var(--admin-ochre); color: var(--admin-paper); }
 
 .admin-content { padding: 2rem; background: var(--admin-paper); }
+.toast-alert { position: fixed; top: 90px; right: 1.5rem; z-index: 500; display: flex; align-items: center; gap: 0.6rem; max-width: min(420px, calc(100vw - 2rem)); padding: 0.85rem 1rem; border: 1px solid var(--admin-line); border-left: 4px solid var(--admin-forest); background: #fbfaf6; color: var(--admin-ink); box-shadow: 0 14px 28px rgba(20, 35, 31, 0.18); font-size: 0.86rem; }
+.toast-alert.toast-error { border-left-color: #b42318; color: #7f1d1d; }
+.toast-alert.toast-success { border-left-color: var(--admin-ochre); }
 .content-panel { padding: 1.75rem; border: 1px solid var(--admin-line); border-radius: 2px; background: #fbfaf6; box-shadow: 0 14px 32px rgba(20, 35, 31, 0.06); }
 .panel-header { border-bottom: 1px solid var(--admin-line); padding-bottom: 1.1rem; }
 .eyebrow { color: var(--admin-ochre); letter-spacing: 0.15em; }
