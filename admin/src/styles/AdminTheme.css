@@ -252,15 +252,18 @@
   .btn-logout { font-size: 0; }
   .btn-logout svg { margin: 0; }
   .language-toggle { min-width: 36px; padding: 0.45rem; }
-  .admin-content { padding: 0.55rem; }
-  .content-panel { padding: 0.8rem; }
+  .admin-layout { min-height: auto; }
+  .admin-content { padding: 0.55rem; padding-top: 0.35rem; }
+  .content-panel { margin-top: 0; padding: 0.8rem; }
+  .panel-header { margin-top: 0; padding-bottom: 0.75rem; }
   .panel-header h2 { font-size: 1.8rem; }
   .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat-card { min-height: 88px; padding: 0.75rem; gap: 0.55rem; }
   .stat-icon { width: 36px; height: 36px; }
   .stat-value { font-size: 1.5rem; }
-  .table-card { margin-right: -0.1rem; margin-left: -0.1rem; }
-  .table-card table { min-width: 620px; }
+  .admin-search { width: 100%; margin-bottom: 0.75rem; }
+  .table-card { overflow-x: auto; margin-right: -0.1rem; margin-left: -0.1rem; -webkit-overflow-scrolling: touch; }
+  .table-card table { min-width: 520px; }
   .table-card th, .table-card td { padding: 0.7rem; font-size: 0.78rem; }
   .modal-backdrop { align-items: flex-start; padding: 0.5rem; }
   .modal-card, .attendance-modal, .student-details-modal, .message-details-modal { width: 100%; max-height: calc(100dvh - 1rem); border-radius: 3px; }
@@ -269,8 +272,4 @@
   .course-assignment-fieldset .course-assignment-option { min-height: 58px; padding: 0.55rem 0.7rem; }
   .course-assignment-option strong { font-size: 0.75rem; }
   .course-assignment-option small { font-size: 0.66rem; }
-  .admin-search { width: 100%; }
-  .panel-header {
-    margin-top: 0.25rem;
-  }
 }
