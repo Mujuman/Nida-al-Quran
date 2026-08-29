@@ -51,6 +51,11 @@
     "vision": "Our Vision",
     "visionText": "To be a leading center for Quran studies, nurturing a generation of students who understand, practice, and promote the beautiful teachings of Islam with wisdom and compassion. To cultivate Islamic leaders who bring positive change to society.",
     "aboutMore": "About Us More",
+    "achievementLabels": {
+      "students": "graduated students",
+      "teachers": "certified teachers",
+      "experience": "years of service experience"
+    },
     "description1": "Nida Al-Quran has been providing quality Islamic education for over 10 years. Located in Addis Ababa, we have successfully taught thousands of students the Quran, Arabic language, and Islamic studies.",
     "description2": "Our instructors are highly experienced and certified in their fields. By combining modern teaching methods with traditional Islamic education, we ensure that students develop a deep understanding and appreciation for Islamic teachings.",
     "whatWeOffer": "What We Offer",

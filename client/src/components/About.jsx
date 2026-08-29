@@ -28,6 +28,13 @@ function About() {
 
   const values = t('about.values', { returnObjects: true });
   const achievements = t('about.achievements', { returnObjects: true });
+  const achievementLabels = t('about.achievementLabels', { returnObjects: true });
+
+  const liveAchievements = [
+    stats && achievementLabels?.students ? `${stats.students}+ ${achievementLabels.students}` : '...',
+    stats && achievementLabels?.teachers ? `${stats.teachers}+ ${achievementLabels.teachers}` : '...',
+    stats && achievementLabels?.experience ? `${stats.experience}+ ${achievementLabels.experience}` : '...',
+  ];
 
   return (
     <div className="about-page">
@@ -91,7 +98,7 @@ function About() {
                 {achievements && achievements.map((achievement, index) => (
                   <li key={index} className="fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                     <Check size={22} />
-                    <span>{achievement}</span>
+                    <span>{index < liveAchievements.length ? liveAchievements[index] : achievement}</span>
                   </li>
                 ))}
               </ul>
