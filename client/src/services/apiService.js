@@ -39,6 +39,13 @@ export const apiService = {
     return response.json();
   },
 
+  getCourses: async () => {
+    const response = await fetch(`${API_URL}/api/courses`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return response.json();
+  },
+
   submitContact: async (contactData) => {
     const response = await fetch(`${API_URL}/api/contacts`, {
       method: 'POST',

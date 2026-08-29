@@ -1,6 +1,66 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Admin = require('../models/Admin');
+const Course = require('../models/Course');
+
+const ensureDefaultCourses = async () => {
+  if (await Course.exists()) return;
+
+  await Course.insertMany([
+    {
+      slug: 'qaida',
+      title: { en: 'Qaida with Tajweed', am: 'ቃኢዳ በተጅዊድ' },
+      description: {
+        en: 'Build a strong foundation in Arabic letters, pronunciation, and the essential rules of Tajweed.',
+        am: 'በአረብኛ ፊደላት፣ አጠራር እና በመሠረታዊ የተጅዊድ ሕጎች ጠንካራ መሠረት ይገንቡ።',
+      },
+      features: {
+        en: ['Arabic letters and sounds', 'Basic Tajweed rules', 'Guided reading practice', 'Individual correction'],
+        am: ['የአረብኛ ፊደላት እና ድምጾች', 'የመሠረታዊ ተጅዊድ ሕጎች', 'የንባብ ልምምድ', 'የግል እርማት'],
+      },
+      sortOrder: 1,
+    },
+    {
+      slug: 'nazira',
+      title: { en: 'Quran Recitation (Nazira)', am: 'ቁርአን ነዘር' },
+      description: {
+        en: 'Improve your Quran reading with accurate pronunciation, fluency, and regular guided practice.',
+        am: 'በትክክለኛ አጠራር፣ በአቀላጥፎ ንባብ እና በመደበኛ ልምምድ የቁርኣን ንባብዎን ያሻሽሉ።',
+      },
+      features: {
+        en: ['Correct Quran recitation', 'One-to-one and group lessons', 'Reading fluency goals', 'Regular progress review'],
+        am: ['ትክክለኛ የቁርኣን ንባብ', 'የግል እና የቡድን ትምህርት', 'የንባብ አቀላጥፎ ግቦች', 'መደበኛ የእድገት ግምገማ'],
+      },
+      sortOrder: 2,
+    },
+    {
+      slug: 'hifz',
+      title: { en: "Quran Hifz with Muraja'a (Revision)", am: 'ሂፍዝ ከሙራጀአ ጋር' },
+      description: {
+        en: 'Memorize the Quran with a structured Hifz plan and consistent Muraja’a to strengthen retention.',
+        am: 'በተደራጀ የሂፍዝ እቅድ እና በቋሚ ሙራጀአ ቁርኣንን ይሸምዱ።',
+      },
+      features: {
+        en: ['Structured Hifz goals', 'Daily memorization practice', 'Regular Muraja’a sessions', 'Teacher progress guidance'],
+        am: ['የተደራጁ የሂፍዝ ግቦች', 'ዕለታዊ የማስታወስ ልምምድ', 'መደበኛ የሙራጀአ ጊዜዎች', 'የመምህር የእድገት መመሪያ'],
+      },
+      sortOrder: 3,
+    },
+    {
+      slug: 'islamic-studies',
+      title: { en: 'Basic Islamic Knowledge', am: 'መሰረታዊ የዲን ትምህርቶች' },
+      description: {
+        en: 'Learn the essential knowledge needed to understand and practice Islam with confidence.',
+        am: 'እስልምናን በእምነት ለመረዳት እና ለመተግበር አስፈላጊውን እውቀት ይማሩ።',
+      },
+      features: {
+        en: ['Aqeedah and Islamic belief', 'Essential Fiqh', 'Prophetic biography', 'Islamic manners and character'],
+        am: ['አቂዳህ እና የእስልምና እምነት', 'መሠረታዊ ፊቅህ', 'የነቢዩ ሕይወት ታሪክ', 'የእስልምና ሥነ ምግባር'],
+      },
+      sortOrder: 4,
+    },
+  ]);
+};
 
 const createDefaultMainAdmin = async () => {
   if (mongoose.connection.readyState !== 1) {
@@ -100,6 +160,7 @@ const connectToMongo = async () => {
   }
 
   await createDefaultMainAdmin();
+  await ensureDefaultCourses();
 };
 
 module.exports = connectDB;

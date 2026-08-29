@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BookOpen, Eye, BookMarked, Scroll } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { apiService } from '../services/apiService';
 import '../styles/Services.css';
 
 function Services() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  
-  const services = t('services.services', { returnObjects: true });
+  const [services, setServices] = useState([]);
+  const [loadingServices, setLoadingServices] = useState(true);
   const whyChoose = t('services.whyChoose', { returnObjects: true });
+
+  useEffect(() => {
+    apiService.getCourses()
+      .then((data) => setServices(Array.isArray(data) ? data : []))
+      .catch((error) => console.error('Error fetching courses:', error))
+      .finally(() => setLoadingServices(false));
+  }, []);
+
+  const localizedCourse = (course) => ({
+    title: course.title?.[i18n.language] || course.title?.en || '',
+    description: course.description?.[i18n.language] || course.description?.en || '',
+    features: course.features?.[i18n.language] || course.features?.en || [],
+  });
 
   const icons = [
     <BookOpen size={48} />,
@@ -39,9 +53,11 @@ function Services() {
             <div><span>02 / {t('services.courseHeading')}</span><h2>{t('services.pageSubtitle')}</h2></div>
           </div>
           <div className="services-grid">
-            {services && services.map((service, index) => (
+            {loadingServices ? <p className="course-loading">Loading courses...</p> : services.map((course, index) => {
+              const service = localizedCourse(course);
+              return (
               <div 
-                key={index} 
+                key={course.id || course.slug}
                 className="service-card fade-in"
                 style={{ 
                   animationDelay: `${index * 0.1}s`,
@@ -58,7 +74,8 @@ function Services() {
                 </ul>
                 <button className="btn-service" onClick={() => navigate('/register')}>{t('home.learnMoreBtn')} &rarr;</button>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

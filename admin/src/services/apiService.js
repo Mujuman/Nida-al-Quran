@@ -77,6 +77,43 @@ export const apiService = {
     return response.json();
   },
 
+  getCourses: async () => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/courses/admin`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  createCourse: async (course) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/courses/admin`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(course),
+    });
+    return response.json();
+  },
+
+  updateCourse: async (courseId, course) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/courses/admin/${courseId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(course),
+    });
+    return response.json();
+  },
+
+  archiveCourse: async (courseId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/courses/admin/${courseId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
   createSubAdmin: async (data) => {
     const token = localStorage.getItem('adminToken');
     const response = await fetch(`${API_URL}/api/admin/sub-admins/create`, {

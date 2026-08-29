@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Admin = require('../models/Admin');
+const Course = require('../models/Course');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { sendRegistrationNotification } = require('../utils/adminNotifications');
@@ -171,9 +172,8 @@ exports.getStatistics = async (req, res) => {
       isActive: true 
     });
 
-    // Count unique courses from users
-    const uniqueCourses = await User.distinct('course');
-    const courseCount = uniqueCourses.filter(course => course).length;
+    // Count active courses available in the catalogue
+    const courseCount = await Course.countDocuments({ isActive: true });
 
     // Calculate years of experience (from creation of first admin/center start)
     const firstAdmin = await Admin.findOne().sort({ createdAt: 1 });
@@ -190,7 +190,7 @@ exports.getStatistics = async (req, res) => {
       students: totalStudents,
       teachers: professionalTeachers,
       experience: yearsOfExperience,
-      courses: courseCount || 15 // Fallback to 15 if no distinct courses found
+      courses: courseCount
     });
   } catch (err) {
     console.error(err.message);

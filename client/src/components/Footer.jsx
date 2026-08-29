@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BookOpen, Mail, Phone, MapPin, Share2, Video, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { apiService } from '../services/apiService';
 import '../styles/Footer.css';
 
 function Footer({ navigateTo }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [courses, setCourses] = useState([]);
   const currentYear = new Date().getFullYear();
-  const courses = t('footer.courses', { returnObjects: true }) || [];
+
+  useEffect(() => {
+    apiService.getCourses()
+      .then((data) => setCourses(Array.isArray(data) ? data : []))
+      .catch((error) => console.error('Error fetching footer courses:', error));
+  }, []);
 
   return (
     <footer className="footer">
@@ -49,7 +56,7 @@ function Footer({ navigateTo }) {
               <h4>{t('footer.coursesTitle')}</h4>
               <ul className="footer-links">
                 {courses.map((course, index) => (
-                  <li key={index}><a href="#">{course}</a></li>
+                  <li key={course.id || course.slug}><a href="#">{course.title?.[i18n.language] || course.title?.en}</a></li>
                 ))}
               </ul>
             </div>

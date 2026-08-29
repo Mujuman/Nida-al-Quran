@@ -102,6 +102,27 @@
 .attendance-meter { height: 7px; margin-top: 1.5rem; overflow: hidden; background: var(--admin-sage); }
 .attendance-meter span { display: block; height: 100%; background: var(--admin-ochre); transition: width 400ms ease; }
 
+.course-admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; margin-top: 1.25rem; }
+.admin-course-card { min-height: 190px; padding: 1.25rem; border: 1px solid var(--admin-line); border-top: 3px solid var(--admin-forest); background: var(--admin-sage); }
+.admin-course-card.archived { opacity: 0.6; border-top-color: var(--admin-muted); }
+.course-admin-topline { display: flex; justify-content: space-between; gap: 0.5rem; color: var(--admin-muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.admin-course-card h3 { margin: 2rem 0 0.35rem; color: var(--admin-ink); font-family: 'Playfair Display', Georgia, serif; font-size: 1.35rem; font-weight: 500; }
+.admin-course-card p { margin: 0; color: var(--admin-muted); font-size: 0.85rem; }
+.course-admin-actions { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
+.course-admin-actions button { display: inline-flex; align-items: center; gap: 0.35rem; }
+.archive-btn { color: #984d45; }
+.course-modal { max-height: calc(100dvh - 2rem); overflow-y: auto; }
+.course-form { display: grid; gap: 1rem; margin-top: 1.25rem; }
+.course-form label { display: grid; gap: 0.4rem; color: var(--admin-ink); font-size: 0.78rem; font-weight: 700; }
+.course-form input, .course-form textarea { width: 100%; box-sizing: border-box; padding: 0.75rem; border: 1px solid var(--admin-line); border-radius: 2px; background: var(--admin-paper); color: var(--admin-ink); font: inherit; }
+.course-form textarea { min-height: 86px; resize: vertical; }
+.course-form input:focus, .course-form textarea:focus { outline: 0; border-color: var(--admin-forest); box-shadow: 0 0 0 3px rgba(23, 71, 60, 0.1); }
+.course-form .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.field-hint { color: var(--admin-muted); font-size: 0.68rem; font-weight: 400; }
+.course-active-toggle { display: flex !important; grid-template-columns: auto 1fr !important; align-items: center; width: fit-content; }
+.course-active-toggle input { width: auto; }
+.course-loading { padding: 2rem 0; color: var(--admin-muted); }
+
 .admin-search { border: 1px solid var(--admin-line); border-radius: 2px; background: var(--admin-paper); color: var(--admin-muted); }
 .admin-search:focus-within { border-color: var(--admin-forest); box-shadow: 0 0 0 3px rgba(23, 71, 60, 0.1); }
 .btn-secondary, .mini-btn { border: 1px solid var(--admin-line); border-radius: 2px; background: var(--admin-paper); color: var(--admin-forest); }
@@ -153,6 +174,7 @@
   .status-chart-card { grid-row: auto; }
   .chart-body { height: 235px; }
   .pie-chart-body { height: 275px; }
+  .course-form .form-grid { grid-template-columns: 1fr; }
   .login-container { width: 100%; margin: 0; padding: 1rem; }
   .login-box { box-shadow: 8px 8px 0 rgba(198, 154, 75, 0.62); }
 }

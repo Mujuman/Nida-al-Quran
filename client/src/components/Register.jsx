@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/apiService';
 import '../styles/Register.css';
 
 function Register() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [courseServices, setCourseServices] = useState([]);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -29,8 +30,12 @@ function Register() {
   const nextSteps = t('register.form.nextSteps', { returnObjects: true }) || [];
   const benefitCards = t('register.form.benefits', { returnObjects: true }) || [];
   const tipList = t('register.form.tipList', { returnObjects: true }) || [];
-  const courseServices = t('services.services', { returnObjects: true }) || [];
-  const courseIds = ['qaida', 'nazira', 'hifz', 'islamic-studies'];
+
+  useEffect(() => {
+    apiService.getCourses()
+      .then((data) => setCourseServices(Array.isArray(data) ? data : []))
+      .catch((error) => console.error('Error fetching registration courses:', error));
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -302,21 +307,21 @@ function Register() {
                     <div className="courses-section">
                       <h3 style={{ marginBottom: '20px', fontSize: '18px' }}>{t('services.courseHeading')}</h3>
                       <div className="courses-list">
-                        {courseServices.slice(0, 4).map((course, index) => (
-                          <label key={courseIds[index]} className="course-option">
+                        {courseServices.map((course, index) => (
+                          <label key={course.id || course.slug} className="course-option">
                             <input
                               type="radio"
                               name="course"
-                              value={courseIds[index]}
-                              checked={formData.course === courseIds[index]}
+                              value={course.slug}
+                              checked={formData.course === course.slug}
                               onChange={handleInputChange}
                               required
                             />
                             <div className="course-item">
                               <span className="course-arrow">➪</span>
                               <div className="course-content">
-                                <span className="course-name">{course.title}</span>
-                                <span className="course-label">{course.description}</span>
+                                <span className="course-name">{course.title?.[i18n.language] || course.title?.en}</span>
+                                <span className="course-label">{course.description?.[i18n.language] || course.description?.en}</span>
                               </div>
                             </div>
                           </label>

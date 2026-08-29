@@ -31,6 +31,7 @@ function AdminDashboard() {
   const [contacts, setContacts] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [subAdmins, setSubAdmins] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -58,6 +59,12 @@ function AdminDashboard() {
   const [selectedStudentForAssign, setSelectedStudentForAssign] = useState(null);
   const [assignedSubAdminId, setAssignedSubAdminId] = useState('');
   const [showMarkAttendanceModal, setShowMarkAttendanceModal] = useState(false);
+  const [showCourseModal, setShowCourseModal] = useState(false);
+  const [editingCourse, setEditingCourse] = useState(null);
+  const [courseForm, setCourseForm] = useState({
+    slug: '', title: { en: '', am: '' }, description: { en: '', am: '' },
+    features: { en: '', am: '' }, sortOrder: 0, isActive: true,
+  });
   const [attendanceMarking, setAttendanceMarking] = useState({
     studentId: '',
     date: new Date().toISOString().split('T')[0],
@@ -226,6 +233,10 @@ function AdminDashboard() {
         const saResponse = await apiService.getSubAdmins();
         setSubAdmins(Array.isArray(saResponse) ? saResponse : []);
       }
+      if (activeTab === 'courses' && isMainAdmin) {
+        const coursesResponse = await apiService.getCourses();
+        setCourses(Array.isArray(coursesResponse) ? coursesResponse : []);
+      }
     } catch (err) {
       console.error('Error fetching data:', err);
       showMessage(`Error loading data: ${err.message}`, 'error');
@@ -307,6 +318,58 @@ function AdminDashboard() {
       console.error('Error marking attendance:', err);
       showMessage(err?.message || 'Unable to mark attendance.', 'error');
     }
+  };
+
+  const openCourseModal = (course = null) => {
+    setEditingCourse(course);
+    setCourseForm(course ? {
+      slug: course.slug,
+      title: course.title,
+      description: course.description,
+      features: {
+        en: course.features?.en?.join('\n') || '',
+        am: course.features?.am?.join('\n') || '',
+      },
+      sortOrder: course.sortOrder || 0,
+      isActive: course.isActive,
+    } : {
+      slug: '', title: { en: '', am: '' }, description: { en: '', am: '' },
+      features: { en: '', am: '' }, sortOrder: courses.length, isActive: true,
+    });
+    setShowCourseModal(true);
+  };
+
+  const handleCourseSubmit = async (event) => {
+    event.preventDefault();
+    const payload = {
+      ...courseForm,
+      features: {
+        en: courseForm.features.en.split('\n').map((item) => item.trim()).filter(Boolean),
+        am: courseForm.features.am.split('\n').map((item) => item.trim()).filter(Boolean),
+      },
+      sortOrder: Number(courseForm.sortOrder) || 0,
+    };
+    const response = editingCourse
+      ? await apiService.updateCourse(editingCourse.id, payload)
+      : await apiService.createCourse(payload);
+    if (response?.msg && !response.id) {
+      showMessage(response.msg, 'error');
+      return;
+    }
+    showMessage(editingCourse ? 'Course updated successfully.' : 'Course created successfully.');
+    setShowCourseModal(false);
+    fetchDashboardData();
+  };
+
+  const handleArchiveCourse = async (course) => {
+    if (!window.confirm(`Archive ${course.title?.en || course.slug}?`)) return;
+    const response = await apiService.archiveCourse(course.id);
+    if (response?.msg && !response.id) {
+      showMessage(response.msg, 'error');
+      return;
+    }
+    showMessage('Course archived successfully.');
+    fetchDashboardData();
   };
 
   const statsCards = [
@@ -431,6 +494,7 @@ function AdminDashboard() {
               ...(isMainAdmin ? [
                 { id: 'assign-students', label: t('assignStudents'), icon: UserCheck },
                 { id: 'subadmins', label: t('subAdmins'), icon: UserPlus },
+                { id: 'courses', label: t('courses'), icon: BookOpen },
               ] : []),
             ].map(({ id, label, icon: Icon }) => (
               <button
@@ -804,6 +868,29 @@ function AdminDashboard() {
               </div>
             </div>
           )}
+
+          {activeTab === 'courses' && isMainAdmin && (
+            <div className="content-panel">
+              <div className="panel-header">
+                <div><p className="eyebrow">Programme catalogue</p><h2>Course Management</h2></div>
+                <button className="btn-primary" onClick={() => openCourseModal()}>+ Add Course</button>
+              </div>
+              <div className="course-admin-grid">
+                {courses.map((course) => (
+                  <article className={`admin-course-card ${course.isActive ? '' : 'archived'}`} key={course.id}>
+                    <div className="course-admin-topline"><span>{course.slug}</span><span>{course.isActive ? 'Active' : 'Archived'}</span></div>
+                    <h3>{course.title?.en}</h3>
+                    <p>{course.title?.am}</p>
+                    <div className="course-admin-actions">
+                      <button className="mini-btn" onClick={() => openCourseModal(course)}><Edit2 size={14} /> Edit</button>
+                      {course.isActive && <button className="mini-btn archive-btn" onClick={() => handleArchiveCourse(course)}><Trash2 size={14} /> Archive</button>}
+                    </div>
+                  </article>
+                ))}
+                {courses.length === 0 && <p className="empty-table-message">No courses found.</p>}
+              </div>
+            </div>
+          )}
         </main>
       </div>
 
@@ -986,6 +1073,31 @@ function AdminDashboard() {
               <button className="btn-secondary" onClick={handleMarkContactAsSpam}>Mark as spam</button>
               <button className="btn-primary" onClick={handleReplySubmit}>Send reply</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showCourseModal && (
+        <div className="modal-backdrop" onClick={() => setShowCourseModal(false)}>
+          <div className="modal-card course-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="modal-header">
+              <div><p className="eyebrow">Programme catalogue</p><h3>{editingCourse ? 'Edit Course' : 'Add Course'}</h3></div>
+              <button className="mini-btn" type="button" onClick={() => setShowCourseModal(false)}>Close</button>
+            </div>
+            <form className="course-form" onSubmit={handleCourseSubmit}>
+              <label>Slug<input value={courseForm.slug} onChange={(event) => setCourseForm({ ...courseForm, slug: event.target.value })} placeholder="qaida" required disabled={Boolean(editingCourse)} /></label>
+              <div className="form-grid">
+                <label>English title<input value={courseForm.title.en} onChange={(event) => setCourseForm({ ...courseForm, title: { ...courseForm.title, en: event.target.value } })} required /></label>
+                <label>Amharic title<input value={courseForm.title.am} onChange={(event) => setCourseForm({ ...courseForm, title: { ...courseForm.title, am: event.target.value } })} required /></label>
+                <label>English description<textarea value={courseForm.description.en} onChange={(event) => setCourseForm({ ...courseForm, description: { ...courseForm.description, en: event.target.value } })} required /></label>
+                <label>Amharic description<textarea value={courseForm.description.am} onChange={(event) => setCourseForm({ ...courseForm, description: { ...courseForm.description, am: event.target.value } })} required /></label>
+                <label>English features <span className="field-hint">One feature per line</span><textarea value={courseForm.features.en} onChange={(event) => setCourseForm({ ...courseForm, features: { ...courseForm.features, en: event.target.value } })} /></label>
+                <label>Amharic features <span className="field-hint">One feature per line</span><textarea value={courseForm.features.am} onChange={(event) => setCourseForm({ ...courseForm, features: { ...courseForm.features, am: event.target.value } })} /></label>
+              </div>
+              <label>Display order<input type="number" min="0" value={courseForm.sortOrder} onChange={(event) => setCourseForm({ ...courseForm, sortOrder: event.target.value })} /></label>
+              <label className="course-active-toggle"><input type="checkbox" checked={courseForm.isActive} onChange={(event) => setCourseForm({ ...courseForm, isActive: event.target.checked })} /> Active on public pages</label>
+              <div className="modal-actions"><button type="button" className="btn-secondary" onClick={() => setShowCourseModal(false)}>Cancel</button><button type="submit" className="btn-primary">{editingCourse ? 'Save Changes' : 'Create Course'}</button></div>
+            </form>
           </div>
         </div>
       )}
