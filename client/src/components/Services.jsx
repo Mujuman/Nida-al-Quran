@@ -9,6 +9,7 @@ function Services() {
   const navigate = useNavigate();
   
   const services = t('services.services', { returnObjects: true });
+  const whyChoose = t('services.whyChoose', { returnObjects: true });
 
   const icons = [
     <BookOpen size={48} />,
@@ -35,7 +36,7 @@ function Services() {
         <div className="container">
           <div className="services-intro-visual">
             <img src="https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=1400&q=85" alt="Student reading the Quran" />
-            <div><span>02 / PROGRAMMES</span><h2>{t('services.pageSubtitle')}</h2></div>
+            <div><span>02 / {t('services.courseHeading')}</span><h2>{t('services.pageSubtitle')}</h2></div>
           </div>
           <div className="services-grid">
             {services && services.map((service, index) => (
@@ -65,28 +66,15 @@ function Services() {
       {/* Why Choose Us */}
       <section className="why-choose-section">
         <div className="container">
-          <h2 className="section-title">{t('services.pageTitle')}</h2>
+          <h2 className="section-title">{t('services.whyChooseTitle')}</h2>
           <div className="why-choose-grid">
-            <div className="why-card">
-              <div className="why-number">01</div>
-              <h3>{t('services.pageTitle')}</h3>
-              <p>{t('about.description2')}</p>
-            </div>
-            <div className="why-card">
-              <div className="why-number">02</div>
-              <h3>ዘመናዊ ዘዴዎች</h3>
-              <p>ባህላዊ እውቀትን ከዘመናዊ የማስተማሪያ ቴክኒኮች ጋር እናዋህዳለን።</p>
-            </div>
-            <div className="why-card">
-              <div className="why-number">03</div>
-              <h3>ተለዋዋጭ መርሐ ግብር</h3>
-              <p>የሚመቸዎትን ጊዜ መምረጥ ይችላሉ - ጠዋት፣ ከሰዓት በኋላ ወይም ምሽት።</p>
-            </div>
-            <div className="why-card">
-              <div className="why-number">04</div>
-              <h3>ተመጣጣኝ ዋጋ</h3>
-              <p>ለሁሉም የሚደርስ የዋጋ አሰጣጥ በጥራት ላይ ሳንነካ እናቀርባለን።</p>
-            </div>
+            {whyChoose && whyChoose.map((item, index) => (
+              <div className="why-card" key={index}>
+                <div className="why-number">0{index + 1}</div>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -94,9 +82,9 @@ function Services() {
       {/* CTA Section */}
       <section className="services-cta">
         <div className="container">
-          <h2>ዛሬ ጉዞዎን ይጀምሩ</h2>
-          <p>የሚመቸዎትን ኮርስ ይምረጡ እና ከእኛ ጋር ይመዝገቡ</p>
-          <button className="btn btn-primary btn-large" onClick={() => navigate('/register')}>አሁኑኑ ይመዝገቡ &rarr;</button>
+          <h2>{t('services.ctaTitle')}</h2>
+          <p>{t('services.ctaText')}</p>
+          <button className="btn btn-primary btn-large" onClick={() => navigate('/register')}>{t('home.registerBtn')} &rarr;</button>
         </div>
       </section>
     </div>

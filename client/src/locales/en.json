@@ -90,6 +90,28 @@
   "services": {
     "pageTitle": "Our Services",
     "pageSubtitle": "Comprehensive Islamic Education Programs",
+    "courseHeading": "All Courses",
+    "whyChooseTitle": "Why learn with us",
+    "whyChoose": [
+      {
+        "title": "Qualified instructors",
+        "description": "Our instructors combine deep Quranic knowledge with patient, personal guidance."
+      },
+      {
+        "title": "Modern methods",
+        "description": "Traditional learning is supported by clear, engaging teaching techniques."
+      },
+      {
+        "title": "Flexible schedules",
+        "description": "Choose a learning time that fits your family, work, and daily rhythm."
+      },
+      {
+        "title": "Accessible learning",
+        "description": "Thoughtful programmes and fair options help more students begin."
+      }
+    ],
+    "ctaTitle": "Begin your Quran journey",
+    "ctaText": "Choose the programme that feels right for you and take your first step with us.",
     "services": [
       {
         "title": "Quran Studies (Tajweed)",
