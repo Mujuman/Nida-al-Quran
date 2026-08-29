@@ -192,6 +192,32 @@
 .role-badge { border-radius: 2px; }
 .role-badge.sub { background: rgba(216, 231, 219, 0.12); color: #d8e7db; border-color: rgba(216, 231, 219, 0.28); }
 
+@media (max-width: 980px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    min-height: auto;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--admin-line);
+  }
+
+  .sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem 0.75rem;
+  }
+
+  .nav-item {
+    margin: 0;
+  }
+}
+
 @media (max-width: 760px) {
   .admin-content { padding: 1rem; }
   .content-panel { padding: 1rem; }
@@ -204,14 +230,17 @@
   .login-container { width: 100%; margin: 0; padding: 1rem; }
   .login-box { box-shadow: 8px 8px 0 rgba(198, 154, 75, 0.62); }
   .toast-alert { top: 82px; right: 1rem; }
+  .header-content { padding: 0 0.8rem; }
+  .header-brand { font-size: 1rem; }
+  .header-right { gap: 0.4rem; }
 }
 
 @media (max-width: 480px) {
   .admin-header { height: 64px; }
   :root { --admin-header-h: 64px; }
-  .header-content { padding: 0 0.75rem; }
+  .header-content { padding: 0 0.6rem; }
   .header-brand span { max-width: 145px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .header-right { gap: 0.35rem; }
+  .header-right { gap: 0.25rem; }
   .btn-logout { padding: 0.45rem; }
   .btn-logout { font-size: 0; }
   .btn-logout svg { margin: 0; }
@@ -232,4 +261,5 @@
   .course-assignment-fieldset .course-assignment-option { min-height: 58px; padding: 0.55rem 0.7rem; }
   .course-assignment-option strong { font-size: 0.75rem; }
   .course-assignment-option small { font-size: 0.66rem; }
+  .admin-search { width: 100%; }
 }
