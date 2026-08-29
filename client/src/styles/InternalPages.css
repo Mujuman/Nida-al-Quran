@@ -294,6 +294,7 @@
   .about-header, .services-header, .contact-header, .register-header, .mission-vision-section, .about-content-section, .values-section, .services-section, .why-choose-section, .contact-content-section, .register-content-section, .why-register-section { padding-right: 1.25rem; padding-left: 1.25rem; }
   .about-page .container, .services-page .container, .contact-page .container, .register-page .container { width: 100%; max-width: none; padding-right: 0; padding-left: 0; }
   .contact-grid, .contact-form-side, .registration-layout { width: 100%; min-width: 0; }
+  .about-page .slide-in-left, .about-page .slide-in-right, .services-page .slide-in-left, .services-page .slide-in-right, .contact-page .slide-in-left, .contact-page .slide-in-right, .register-page .slide-in-left, .register-page .slide-in-right { animation: none; transform: none; }
   .page-title { font-size: clamp(3rem, 14vw, 4.2rem); }
   .about-story-visual, .services-intro-visual { height: 235px; }
   .story-overlay, .services-intro-visual > div { padding: 1.5rem; }
