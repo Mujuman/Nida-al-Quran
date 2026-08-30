@@ -52,55 +52,51 @@ function Home() {
     <div className="home-page">
       <section className="hero-section">
         <div className="hero-pattern" />
-        <div className="hero-split-wrapper">
-          <div className="hero-left-panel slide-in-left">
-            <div className="hero-text-content">
-              <div className="eyebrow"><Sparkles size={15} /> {t('home.sectionSubtitle')}</div>
-              <h1 className="hero-title">{t('home.welcome')}</h1>
-              <p className="hero-subtitle">{t('home.subtitle')}</p>
-              <p className="hero-description">{t('home.description')}</p>
-              <div className="hero-buttons">
-                <button className="btn btn-primary" onClick={() => navigateTo('register')}>
-                  {t('home.registerBtn')} <ArrowUpRight size={18} />
-                </button>
+        <div className="hero-content container">
+          <div className="hero-text slide-in-left">
+            <div className="eyebrow"><Sparkles size={15} /> {t('home.sectionSubtitle')}</div>
+            <h1 className="hero-title">{t('home.welcome')}</h1>
+            <p className="hero-subtitle">{t('home.subtitle')}</p>
+            <p className="hero-description">{t('home.description')}</p>
+            <div className="hero-buttons">
+              <button className="btn btn-primary" onClick={() => navigateTo('register')}>
+                {t('home.registerBtn')} <ArrowUpRight size={18} />
+              </button>
 
-                {isLoggedIn ? (
-                  <button className="btn btn-secondary btn-student-portal" onClick={() => navigateTo('student-dashboard')}>
-                    <UserCheck size={18} /> {t('nav.studentDashboard', 'My Dashboard')}
-                  </button>
-                ) : (
-                  <button className="btn btn-secondary btn-student-portal" onClick={() => navigateTo('student-login')}>
-                    <LogIn size={18} /> {t('nav.studentLogin', 'Student Login')}
-                  </button>
-                )}
-
-                <button className="text-button" onClick={() => navigateTo('about')}>
-                  {t('home.learnMoreBtn')} <ArrowUpRight size={17} />
+              {isLoggedIn ? (
+                <button className="btn btn-secondary btn-student-portal" onClick={() => navigateTo('student-dashboard')}>
+                  <UserCheck size={18} /> {t('nav.studentDashboard', 'My Dashboard')}
                 </button>
-              </div>
-              <div className="hero-proof">
-                <div className="proof-mark"><CheckCircle2 size={18} /></div>
-                <div className="proof-text">
-                  <span>{t('home.qualityEducation')}</span>
-                  <strong>{t('home.expertsTeach')}</strong>
-                </div>
+              ) : (
+                <button className="btn btn-secondary btn-student-portal" onClick={() => navigateTo('student-login')}>
+                  <LogIn size={18} /> {t('nav.studentLogin', 'Student Login')}
+                </button>
+              )}
+
+              <button className="text-button" onClick={() => navigateTo('about')}>
+                {t('home.learnMoreBtn')} <ArrowUpRight size={17} />
+              </button>
+            </div>
+            <div className="hero-proof">
+              <div className="proof-mark"><CheckCircle2 size={18} /></div>
+              <div className="proof-text">
+                <span>{t('home.qualityEducation')}</span>
+                <strong>{t('home.expertsTeach')}</strong>
               </div>
             </div>
           </div>
 
-          <div className="hero-right-panel slide-in-right">
-            <div className="image-frame-wrapper">
-              <div className="image-frame">
-                <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1100&q=85" alt="Open Quran on a reading stand" />
-                <div className="image-caption">
-                  <BookOpen size={19} />
-                  <span>{t('home.qualityEducation')}</span>
-                  <span className="caption-dot" />
-                  <span>{t('home.expertsTeach')}</span>
-                </div>
+          <div className="hero-image slide-in-right">
+            <div className="image-frame">
+              <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1100&q=85" alt="Open Quran on a reading stand" />
+              <div className="image-caption">
+                <BookOpen size={19} />
+                <span>{t('home.qualityEducation')}</span>
+                <span className="caption-dot" />
+                <span>{t('home.expertsTeach')}</span>
               </div>
-              <div className="hero-stamp">NQ<br /><span>EST. 2014</span></div>
             </div>
+            <div className="hero-stamp">NQ<br /><span>EST. 2014</span></div>
           </div>
         </div>
       </section>

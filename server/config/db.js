@@ -141,25 +141,17 @@ const connectDB = async () => {
 const connectToMongo = async () => {
   const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.MONGODB_URL;
 
-  try {
-    if (mongoUri) {
-      await mongoose.connect(mongoUri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 3000,
-      });
-      console.log('MongoDB connected (Remote Atlas)');
-    } else {
-      throw new Error('No remote MONGO_URI');
-    }
-  } catch (remoteErr) {
-    console.log('Remote MongoDB unavailable, connecting to local MongoDB...');
-    await mongoose.connect('mongodb://127.0.0.1:27017/nida', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB connected (Local Fallback)');
+  if (!mongoUri) {
+    throw new Error('MongoDB connection string is not configured');
   }
+
+  await mongoose.connect(mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 10000,
+  });
+
+  console.log('MongoDB connected');
 
   const collections = await mongoose.connection.db.listCollections({ name: 'users' }).toArray();
   if (collections.length === 0) {

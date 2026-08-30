@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { sendRegistrationNotification, sendVerificationEmail } = require('../utils/adminNotifications');
 
-// Register user with full details (Saves user with isVerified: false until verified)
+// Register user with full details
 exports.registerUser = async (req, res) => {
   const {
     fullName, email, password, phone, age, gender, course, level, schedule,
@@ -33,7 +33,7 @@ exports.registerUser = async (req, res) => {
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-    // Create new user in DB
+    // Create new user
     user = new User({
       fullName,
       email,
@@ -74,8 +74,8 @@ exports.registerUser = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('Registration error:', err.message);
-    res.status(500).json({ msg: 'Server error during registration', error: err.message });
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
   }
 };
 
@@ -87,22 +87,10 @@ exports.verifyEmail = async (req, res) => {
   }
 
   try {
-    let user = await User.findOne({
+    const user = await User.findOne({
       verificationToken: token,
       verificationTokenExpires: { $gt: Date.now() },
     });
-
-    if (!user) {
-      // Try verifying JWT format token if any
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'nida_email_verify_secret');
-        if (decoded?.email) {
-          user = await User.findOne({ email: decoded.email });
-        }
-      } catch (e) {
-        // Ignored
-      }
-    }
 
     if (!user) {
       return res.status(400).json({ msg: 'Invalid or expired verification link. Please check your link or register again.' });
