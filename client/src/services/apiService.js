@@ -10,6 +10,14 @@ export const apiService = {
     return response.json();
   },
 
+  verifyEmail: async (token) => {
+    const response = await fetch(`${API_URL}/api/users/verify-email?token=${encodeURIComponent(token)}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return response.json();
+  },
+
   loginUser: async (credentials) => {
     const response = await fetch(`${API_URL}/api/users/login`, {
       method: 'POST',

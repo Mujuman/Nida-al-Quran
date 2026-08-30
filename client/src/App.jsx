@@ -9,6 +9,7 @@ import Contact from './components/Contact';
 import Register from './components/Register';
 import StudentLogin from './components/StudentLogin';
 import StudentDashboard from './components/StudentDashboard';
+import VerifyEmail from './components/VerifyEmail';
 import './App.css';
 import './styles/Global.css';
 import './styles/InternalPages.css';
@@ -25,6 +26,7 @@ function App() {
       'register': '/register',
       'student-login': '/student/login',
       'student-dashboard': '/student/dashboard',
+      'verify-email': '/verify-email',
     };
     navigate(pageRoutes[page] || '/');
     window.scrollTo(0, 0);
@@ -41,6 +43,7 @@ function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-email" element={<VerifyEmail navigateTo={navigateTo} />} />
           <Route path="/student/login" element={<StudentLogin navigateTo={navigateTo} />} />
           <Route path="/student/dashboard" element={<StudentDashboard navigateTo={navigateTo} />} />
         </Routes>

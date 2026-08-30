@@ -1,10 +1,11 @@
+const crypto = require('crypto');
 const User = require('../models/User');
 const Admin = require('../models/Admin');
 const Course = require('../models/Course');
 const Attendance = require('../models/Attendance');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { sendRegistrationNotification } = require('../utils/adminNotifications');
+const { sendRegistrationNotification, sendVerificationEmail } = require('../utils/adminNotifications');
 
 // Register user with full details
 exports.registerUser = async (req, res) => {
@@ -17,15 +18,20 @@ exports.registerUser = async (req, res) => {
     // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ msg: 'User already exists' });
+      return res.status(400).json({ msg: 'User already exists with this email address' });
     }
 
-    // Hash password if provided
-    let hashedPassword = null;
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      hashedPassword = await bcrypt.hash(password, salt);
+    if (!password || password.length < 6) {
+      return res.status(400).json({ msg: 'Password is required and must be at least 6 characters' });
     }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Generate email verification token (24 hours expiry)
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     // Create new user
     user = new User({
@@ -43,25 +49,70 @@ exports.registerUser = async (req, res) => {
       learningMedia,
       message,
       isVerified: false,
+      verificationToken,
+      verificationTokenExpires,
       registrationStatus: 'pending',
     });
 
     await user.save();
-    await sendRegistrationNotification(user);
+
+    // Send verification email to student
+    const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, '');
+    const verifyUrl = `${clientUrl}/verify-email?token=${verificationToken}`;
+    await sendVerificationEmail(user, verifyUrl);
 
     res.json({ 
       success: true,
-      msg: 'Registration submitted successfully. Your account is pending approval by the main administrator before you can log in.',
+      requiresVerification: true,
+      msg: 'Registration submitted successfully! A verification link has been sent to your email address. Please check your Gmail/inbox and click the link to verify your email.',
       user: {
         id: user.id,
         email: user.email,
         fullName: user.fullName,
         registrationStatus: user.registrationStatus,
+        isVerified: false,
       }
     });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// Verify user email via token
+exports.verifyEmail = async (req, res) => {
+  const { token } = req.query;
+  if (!token) {
+    return res.status(400).json({ msg: 'Verification token is required.' });
+  }
+
+  try {
+    const user = await User.findOne({
+      verificationToken: token,
+      verificationTokenExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ msg: 'Invalid or expired verification link. Please check your link or register again.' });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpires = undefined;
+    await user.save();
+
+    // Send notification to main admins now that student's email is verified
+    sendRegistrationNotification(user).catch((err) => console.error('Admin notification error:', err));
+
+    res.json({
+      success: true,
+      msg: 'Your email address has been verified successfully! Your application has now been submitted to the main administration for approval.',
+      email: user.email,
+      fullName: user.fullName,
+    });
+  } catch (err) {
+    console.error('Verify email error:', err);
+    res.status(500).json({ msg: 'Server error during email verification.', error: err.message });
   }
 };
 

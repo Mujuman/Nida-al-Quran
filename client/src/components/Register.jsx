@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle, AlertCircle } from 'lucide-react';
+import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle, AlertCircle, Lock, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/apiService';
 import '../styles/Register.css';
@@ -7,10 +7,13 @@ import '../styles/Register.css';
 function Register() {
   const { t, i18n } = useTranslation();
   const [courseServices, setCourseServices] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    password: 'default123',
+    password: '',
+    confirmPassword: '',
     phone: '',
     age: '',
     gender: '',
@@ -50,6 +53,18 @@ function Register() {
     setIsLoading(true);
     setError('');
 
+    if (!formData.password || formData.password.length < 6) {
+      setError('Password is required and must be at least 6 characters long.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match. Please re-enter your password.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const registrationData = {
         fullName: formData.fullName,
@@ -69,31 +84,9 @@ function Register() {
 
       const response = await apiService.registerUser(registrationData);
 
-      if (response.success || response.user || response.token) {
-        if (response.token) {
-          apiService.saveToken(response.token);
-        }
+      if (response.success || response.user) {
+        setRegisteredEmail(formData.email);
         setIsSubmitted(true);
-
-        setTimeout(() => {
-          setIsSubmitted(false);
-          setCurrentStep(1);
-          setFormData({
-            fullName: '',
-            email: '',
-            password: 'default123',
-            phone: '',
-            age: '',
-            gender: '',
-            course: '',
-            level: '',
-            schedule: '',
-            guardian: '',
-            guardianPhone: '',
-            learningMedia: '',
-            message: ''
-          });
-        }, 5000);
       } else {
         setError(response.msg || t('register.form.errorTryAgain'));
       }
@@ -106,11 +99,27 @@ function Register() {
   };
 
   const nextStep = () => {
+    setError('');
+    if (currentStep === 1) {
+      if (!formData.fullName || !formData.email || !formData.phone || !formData.age || !formData.gender) {
+        setError('Please fill in all required personal information fields.');
+        return;
+      }
+      if (!formData.password || formData.password.length < 6) {
+        setError('Please create a password (minimum 6 characters).');
+        return;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match. Please check again.');
+        return;
+      }
+    }
     setCurrentStep(prev => prev + 1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const prevStep = () => {
+    setError('');
     setCurrentStep(prev => prev - 1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -149,19 +158,22 @@ function Register() {
               <div className="success-animation">
                 <CheckCircle size={80} className="success-check" />
               </div>
-              <h2>{t('register.form.successTitle')}</h2>
-              <p>{t('register.form.successText')}</p>
+              <h2>Check Your Email to Complete Registration ✉️</h2>
+              <p style={{ fontSize: '1.1rem', color: '#1e3a8a', fontWeight: 600 }}>
+                We have sent a verification link to <strong>{registeredEmail || 'your email inbox'}</strong>.
+              </p>
               <div className="success-details">
                 <div className="success-info">
-                  <h3>{t('register.form.nextStepsTitle')}</h3>
+                  <h3>Next Steps:</h3>
                   <ul>
-                    {nextSteps.map((step, index) => (
-                      <li key={index}>{step}</li>
-                    ))}
+                    <li>1. Open your Gmail / Email Inbox for <strong>{registeredEmail}</strong></li>
+                    <li>2. Click the <strong>"Verify Email Address"</strong> link in the message.</li>
+                    <li>3. After email verification, your registration will be sent to the main admin for approval.</li>
+                    <li>4. Once approved, you will receive an approval email and can log in with your password!</li>
                   </ul>
                 </div>
                 <div className="contact-support">
-                  <h4>{t('register.form.questions')}</h4>
+                  <h4>Need Assistance?</h4>
                   <p>📞 +251942431160</p>
                   <p>✉️ teyuteyba@gmail.com</p>
                 </div>
@@ -247,6 +259,56 @@ function Register() {
                           value={formData.phone}
                           onChange={handleInputChange}
                           placeholder={t('register.form.phonePlaceholder')}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label htmlFor="password">
+                          <Lock size={18} />
+                          {t('register.form.password', 'Create Password')} *
+                        </label>
+                        <div className="password-input-wrapper" style={{ position: 'relative' }}>
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            id="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            placeholder="Min 6 characters"
+                            minLength={6}
+                            required
+                          />
+                          <button
+                            type="button"
+                            className="btn-toggle-pw"
+                            onClick={() => setShowPassword(!showPassword)}
+                            aria-label="Toggle password visibility"
+                            style={{
+                              position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
+                              background: 'none', border: 'none', cursor: 'pointer', color: '#64748b'
+                            }}
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="confirmPassword">
+                          <Lock size={18} />
+                          {t('register.form.confirmPassword', 'Confirm Password')} *
+                        </label>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          value={formData.confirmPassword}
+                          onChange={handleInputChange}
+                          placeholder="Re-enter password"
+                          minLength={6}
                           required
                         />
                       </div>

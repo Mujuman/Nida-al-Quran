@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Contact = require('../models/Contact');
 const Attendance = require('../models/Attendance');
-const { sendAssignmentNotification } = require('../utils/adminNotifications');
+const { sendAssignmentNotification, sendApprovalNotification } = require('../utils/adminNotifications');
 
 // ============================================================
 // Admin Login (any role)
@@ -133,11 +133,18 @@ exports.updateUserStatus = async (req, res) => {
       }
     }
 
+    const previousStatus = user.registrationStatus;
     if (registrationStatus) user.registrationStatus = registrationStatus;
     if (isVerified !== undefined) user.isVerified = isVerified;
     if (isTeachingActive !== undefined) user.isTeachingActive = isTeachingActive;
 
     await user.save();
+
+    // If main admin approved student, send approval email to student
+    if (registrationStatus === 'approved' && previousStatus !== 'approved') {
+      sendApprovalNotification(user).catch((err) => console.error('Error sending approval email:', err));
+    }
+
     res.json(user);
   } catch (err) {
     console.error(err.message);

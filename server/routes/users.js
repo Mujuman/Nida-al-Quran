@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { 
   registerUser, 
+  verifyEmail,
   loginUser, 
   getAllUsers, 
   getUserById, 
@@ -16,6 +17,7 @@ const {
 const auth = require('../middleware/auth');
 
 router.post('/register', registerUser);
+router.get('/verify-email', verifyEmail);
 router.post('/login', loginUser);
 router.get('/stats', getStatistics);
 
