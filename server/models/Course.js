@@ -21,6 +21,7 @@ const CourseSchema = new mongoose.Schema(
       en: { type: [String], default: [] },
       am: { type: [String], default: [] },
     },
+    image: { type: String, default: '' },
     isActive: { type: Boolean, default: true },
     sortOrder: { type: Number, default: 0 },
   },

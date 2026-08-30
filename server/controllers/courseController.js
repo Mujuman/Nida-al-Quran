@@ -6,6 +6,7 @@ const normalizeCourse = (course) => ({
   title: course.title,
   description: course.description,
   features: course.features,
+  image: course.image || '',
   isActive: course.isActive,
   sortOrder: course.sortOrder,
 });

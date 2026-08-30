@@ -71,7 +71,7 @@ function AdminDashboard() {
   const [editingCourse, setEditingCourse] = useState(null);
   const [courseForm, setCourseForm] = useState({
     slug: '', title: { en: '', am: '' }, description: { en: '', am: '' },
-    features: { en: '', am: '' }, sortOrder: 0, isActive: true,
+    features: { en: '', am: '' }, image: '', sortOrder: 0, isActive: true,
   });
   const [attendanceMarking, setAttendanceMarking] = useState({
     studentId: '',
@@ -425,11 +425,12 @@ function AdminDashboard() {
         en: course.features?.en?.join('\n') || '',
         am: course.features?.am?.join('\n') || '',
       },
+      image: course.image || '',
       sortOrder: course.sortOrder || 0,
       isActive: course.isActive,
     } : {
       slug: '', title: { en: '', am: '' }, description: { en: '', am: '' },
-      features: { en: '', am: '' }, sortOrder: courses.length, isActive: true,
+      features: { en: '', am: '' }, image: '', sortOrder: courses.length, isActive: true,
     });
     setShowCourseModal(true);
   };
@@ -1020,14 +1021,25 @@ function AdminDashboard() {
               </div>
               <div className="course-admin-grid">
                 {courses.map((course) => (
-                  <article className={`admin-course-card ${course.isActive ? '' : 'archived'}`} key={course.id}>
-                    <div className="course-admin-topline"><span>{course.slug}</span><span>{course.isActive ? 'Active' : 'Archived'}</span></div>
-                    <h3>{course.title?.en}</h3>
-                    <p>{course.title?.am}</p>
-                    <div className="course-admin-actions">
-                      <button className="mini-btn" onClick={() => openCourseModal(course)}><Edit2 size={14} /> Edit</button>
-                      {course.isActive && <button className="mini-btn archive-btn" onClick={() => handleArchiveCourse(course)} title="Archive course"><Trash2 size={14} /> Archive</button>}
-                      <button className="mini-btn permanent-delete-btn" onClick={() => handleDeleteCoursePermanently(course)} title="Permanently delete course" aria-label={`Permanently delete ${course.title?.en || course.slug}`}><Trash2 size={14} /></button>
+                  <article className={`admin-course-card ${course.isActive ? '' : 'archived'}`} key={course.id || course.slug}>
+                    {course.image ? (
+                      <div className="admin-course-image-container">
+                        <img src={course.image} alt={course.title?.en || course.slug} className="admin-course-img" />
+                      </div>
+                    ) : (
+                      <div className="admin-course-image-container placeholder">
+                        <BookOpen size={36} className="placeholder-icon" />
+                      </div>
+                    )}
+                    <div className="course-admin-card-body">
+                      <div className="course-admin-topline"><span>{course.slug}</span><span>{course.isActive ? 'Active' : 'Archived'}</span></div>
+                      <h3>{course.title?.en}</h3>
+                      <p>{course.title?.am}</p>
+                      <div className="course-admin-actions">
+                        <button className="mini-btn" onClick={() => openCourseModal(course)}><Edit2 size={14} /> Edit</button>
+                        {course.isActive && <button className="mini-btn archive-btn" onClick={() => handleArchiveCourse(course)} title="Archive course"><Trash2 size={14} /> Archive</button>}
+                        <button className="mini-btn permanent-delete-btn" onClick={() => handleDeleteCoursePermanently(course)} title="Permanently delete course" aria-label={`Permanently delete ${course.title?.en || course.slug}`}><Trash2 size={14} /></button>
+                      </div>
                     </div>
                   </article>
                 ))}
@@ -1241,6 +1253,20 @@ function AdminDashboard() {
                 <label>Amharic description<textarea value={courseForm.description.am} onChange={(event) => setCourseForm({ ...courseForm, description: { ...courseForm.description, am: event.target.value } })} required /></label>
                 <label>English features <span className="field-hint">One feature per line</span><textarea value={courseForm.features.en} onChange={(event) => setCourseForm({ ...courseForm, features: { ...courseForm.features, en: event.target.value } })} /></label>
                 <label>Amharic features <span className="field-hint">One feature per line</span><textarea value={courseForm.features.am} onChange={(event) => setCourseForm({ ...courseForm, features: { ...courseForm.features, am: event.target.value } })} /></label>
+                <label className="span-2">
+                  Course Image URL
+                  <input
+                    type="url"
+                    value={courseForm.image || ''}
+                    onChange={(event) => setCourseForm({ ...courseForm, image: event.target.value })}
+                    placeholder="https://images.unsplash.com/photo-..."
+                  />
+                  {courseForm.image && (
+                    <div style={{ marginTop: '0.4rem' }}>
+                      <img src={courseForm.image} alt="Preview" style={{ width: '100%', maxHeight: '110px', borderRadius: '8px', objectFit: 'cover' }} />
+                    </div>
+                  )}
+                </label>
               </div>
               <label>Display order<input type="number" min="0" value={courseForm.sortOrder} onChange={(event) => setCourseForm({ ...courseForm, sortOrder: event.target.value })} /></label>
               <label className="course-active-toggle"><input type="checkbox" checked={courseForm.isActive} onChange={(event) => setCourseForm({ ...courseForm, isActive: event.target.checked })} /> Active on public pages</label>

@@ -115,12 +115,49 @@
 .attendance-meter span { display: block; height: 100%; background: var(--admin-ochre); transition: width 400ms ease; }
 
 .course-admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; margin-top: 1.25rem; }
-.admin-course-card { min-height: 190px; padding: 1.25rem; border: 1px solid var(--admin-line); border-top: 3px solid var(--admin-forest); background: var(--admin-sage); }
-.admin-course-card.archived { opacity: 0.6; border-top-color: var(--admin-muted); }
+.admin-course-card { min-height: 190px; padding: 0; border: 1px solid var(--admin-line); border-top: 3px solid var(--admin-forest); background: var(--admin-sage); overflow: hidden; border-radius: 4px; display: flex; flex-direction: column; }
+.admin-course-card.archived { opacity: 0.65; border-top-color: var(--admin-muted); }
+
+.admin-course-image-container {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  position: relative;
+  background: var(--admin-paper, #e9ecef);
+  border-bottom: 1px solid var(--admin-line, #e2e6f0);
+}
+
+.admin-course-image-container.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(20,35,31,0.08), rgba(20,35,31,0.18));
+  color: var(--admin-forest, #14231f);
+}
+
+.admin-course-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.admin-course-card:hover .admin-course-img {
+  transform: scale(1.05);
+}
+
+.course-admin-card-body {
+  padding: 1.1rem 1.25rem 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .course-admin-topline { display: flex; justify-content: space-between; gap: 0.5rem; color: var(--admin-muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; }
-.admin-course-card h3 { margin: 2rem 0 0.35rem; color: var(--admin-ink); font-family: 'Playfair Display', Georgia, serif; font-size: 1.35rem; font-weight: 500; }
-.admin-course-card p { margin: 0; color: var(--admin-muted); font-size: 0.85rem; }
-.course-admin-actions { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
+.admin-course-card h3 { margin: 0.6rem 0 0.35rem; color: var(--admin-ink); font-family: 'Playfair Display', Georgia, serif; font-size: 1.35rem; font-weight: 500; }
+.admin-course-card p { margin: 0; color: var(--admin-muted); font-size: 0.85rem; flex: 1; }
+.course-admin-actions { display: flex; gap: 0.5rem; margin-top: 1.2rem; }
 .course-admin-actions button { display: inline-flex; align-items: center; gap: 0.35rem; }
 .archive-btn { color: #984d45; }
 .permanent-delete-btn { color: #b42318; padding: 0.4rem !important; }

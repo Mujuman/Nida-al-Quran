@@ -17,12 +17,21 @@ const Course = require('./models/Course');
 
 const seedCourses = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/nida', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    console.log('✓ Connected to MongoDB');
+    try {
+      await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 3000,
+      });
+      console.log('✓ Connected to Remote MongoDB Atlas');
+    } catch (err) {
+      console.log('Remote MongoDB failed, connecting to local MongoDB...');
+      await mongoose.connect('mongodb://127.0.0.1:27017/nida', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      console.log('✓ Connected to Local MongoDB');
+    }
 
     // Clear existing courses
     await Course.deleteMany({});
@@ -54,6 +63,7 @@ const seedCourses = async () => {
           ],
         },
         sortOrder: 1,
+        image: 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=800&q=80',
         isActive: true,
       },
       {
@@ -81,6 +91,7 @@ const seedCourses = async () => {
           ],
         },
         sortOrder: 2,
+        image: 'https://images.unsplash.com/photo-1584286595398-a59f21d313f5?auto=format&fit=crop&w=800&q=80',
         isActive: true,
       },
       {
@@ -108,6 +119,7 @@ const seedCourses = async () => {
           ],
         },
         sortOrder: 3,
+        image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=800&q=80',
         isActive: true,
       },
       {
@@ -135,6 +147,7 @@ const seedCourses = async () => {
           ],
         },
         sortOrder: 4,
+        image: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=800&q=80',
         isActive: true,
       },
     ];
