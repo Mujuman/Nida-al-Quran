@@ -5,6 +5,8 @@
     "services": "አገልግሎቶች",
     "contact": "ያግኙን",
     "register": "ይመዝገቡ",
+    "studentLogin": "የተማሪ መግቢያ",
+    "studentDashboard": "የእኔ ዳሽቦርድ",
     "brand": "ኒዳእ አል ቁርኣን"
   },
   "home": {
@@ -342,5 +344,57 @@
     "followUs": "ይከተሉን",
     "copyright": "© 2024 ኒዳእ አል ቁርኣን። ሁሉም መብቶች የተጠበቁ ናቸው።",
     "description": "ወደ ጥራት ያለው የእስልምና ትምህርት እና የቁርዓን ጥናት መግቢያ በርዎ።"
+  },
+  "student": {
+    "loginTitle": "የተማሪ መግቢያ",
+    "loginSubtitle": "ወደ ኒዳእ አል-ቁርዓን ተማሪ ዳሽቦርድ ይግቡ",
+    "emailLabel": "ኢሜይል አድራሻ",
+    "passwordLabel": "የይለፍ ቃል",
+    "loginBtn": "ወደ ዳሽቦርድ ግባ",
+    "noAccount": "እስካሁን የተማሪ መለያ የለዎትም?",
+    "registerNow": "እዚህ ይመዝገቡ",
+    "dashboardTitle": "የተማሪ ዳሽቦርድ",
+    "welcomeBack": "እንኳን ደህና መጡ",
+    "logout": "ውጣ",
+    "tabs": {
+      "overview": "የአፈጻጸም አጠቃላይ እይታ",
+      "courses": "የተመዘገቡባቸው ኮርሶች",
+      "attendance": "የመገኘት መዝገብ",
+      "teacher": "የተመደበ መምህር",
+      "profile": "የእኔ መገለጫ"
+    },
+    "overview": {
+      "attendanceRate": "የመገኘት መጠን",
+      "enrolledCourses": "የተመዘገቡ ኮርሶች",
+      "status": "የመለያ ሁኔታ",
+      "teacherNote": "የመምህሩ አስተያየት",
+      "memorizationLevel": "የአሁኑ ደረጃ",
+      "schedule": "የትምህርት ጊዜ"
+    },
+    "attendance": {
+      "date": "ቀን",
+      "course": "ኮርስ",
+      "status": "ሁኔታ",
+      "time": "ሰዓት",
+      "location": "የመማሪያ ቦታ",
+      "notes": "የመምህር አስተያየት / ማስታወሻ",
+      "present": "ተገኝቷል",
+      "absent": "ቀርትቷል",
+      "late": "ዘግይቷል",
+      "excused": "በፈቃድ"
+    },
+    "teacher": {
+      "assignedTitle": "የተመደበልዎ መምህር",
+      "noTeacher": "የመምህር ምደባዎ በአስተዳደሩ በመከናወን ላይ ይገኛል።",
+      "email": "ኢሜይል",
+      "phone": "ስልክ ቁጥር",
+      "courses": "የሚያስተምሯቸው ኮርሶች"
+    },
+    "profile": {
+      "title": "የመገለጫ ዝርዝሮች",
+      "updateSuccess": "መገለጫዎ በተሳካ ሁኔታ ተዘምኗል!",
+      "saveBtn": "ለውጦችን አስቀምጥ",
+      "newPassword": "አዲስ የይለፍ ቃል (ካልፈለጉ ባዶ ይተውት)"
+    }
   }
 }

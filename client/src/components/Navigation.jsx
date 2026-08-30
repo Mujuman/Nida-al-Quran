@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Menu, X, BookOpen } from 'lucide-react';
+import { Menu, X, BookOpen, UserCheck, LogIn } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import { apiService } from '../services/apiService';
 import '../styles/Navigation.css';
 
 function Navigation({ navigateTo }) {
@@ -17,6 +18,8 @@ function Navigation({ navigateTo }) {
     setIsMenuOpen(false);
   };
 
+  const isLoggedIn = apiService.isAuthenticated();
+
   const isActive = (page) => {
     const pathMap = {
       'home': '/',
@@ -24,6 +27,8 @@ function Navigation({ navigateTo }) {
       'services': '/services',
       'contact': '/contact',
       'register': '/register',
+      'student-login': '/student/login',
+      'student-dashboard': '/student/dashboard',
     };
     return location.pathname === pathMap[page];
   };
@@ -61,6 +66,17 @@ function Navigation({ navigateTo }) {
           >
             {t('nav.contact')}
           </a>
+
+          {isLoggedIn ? (
+            <button className="btn-nav-login logged-in" onClick={() => handleNavClick('student-dashboard')}>
+              <UserCheck size={18} /> {t('nav.studentDashboard', 'My Dashboard')}
+            </button>
+          ) : (
+            <button className="btn-nav-login" onClick={() => handleNavClick('student-login')}>
+              <LogIn size={18} /> {t('nav.studentLogin', 'Student Login')}
+            </button>
+          )}
+
           <button className="btn-nav-register" onClick={() => handleNavClick('register')}>
             {t('nav.register')}
           </button>
@@ -76,6 +92,7 @@ function Navigation({ navigateTo }) {
 }
 
 export default Navigation;
+
 
 
 

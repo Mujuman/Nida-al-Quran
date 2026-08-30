@@ -1,4 +1,4 @@
-const API_URL = (import.meta.env.VITE_API_URL || 'https://nida-al-quran-api.vercel.app').replace(/\/+$/, '');
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
 
 export const apiService = {
   registerUser: async (userData) => {
@@ -15,6 +15,78 @@ export const apiService = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
+    });
+    const data = await response.json();
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      if (data.user) {
+        localStorage.setItem('studentUser', JSON.stringify(data.user));
+      }
+    }
+    return data;
+  },
+
+  studentLogin: async (credentials) => {
+    return apiService.loginUser(credentials);
+  },
+
+  getMyProfile: async () => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/api/users/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.json();
+  },
+
+  updateMyProfile: async (profileData) => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/api/users/me`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+    });
+    return response.json();
+  },
+
+  getMyAttendance: async () => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/api/users/me/attendance`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.json();
+  },
+
+  getMyCourses: async () => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/api/users/me/courses`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.json();
+  },
+
+  getMyTeacher: async () => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/api/users/me/teacher`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.json();
   },
@@ -65,9 +137,16 @@ export const apiService = {
 
   clearToken: () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('studentUser');
+  },
+
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('studentUser');
   },
 
   isAuthenticated: () => {
     return !!localStorage.getItem('token');
   },
 };
+

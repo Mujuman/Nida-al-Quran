@@ -5,6 +5,8 @@
     "services": "Services",
     "contact": "Contact",
     "register": "Register",
+    "studentLogin": "Student Login",
+    "studentDashboard": "My Dashboard",
     "brand": "Nida Al-Quran"
   },
   "home": {
@@ -347,5 +349,57 @@
     "followUs": "Follow Us",
     "copyright": "© 2024 Nida Al-Quran. All rights reserved.",
     "description": "Your gateway to quality Islamic education and Quranic studies."
+  },
+  "student": {
+    "loginTitle": "Student Login",
+    "loginSubtitle": "Access your Nida Al-Quran Student Dashboard",
+    "emailLabel": "Email Address",
+    "passwordLabel": "Password",
+    "loginBtn": "Log In to Dashboard",
+    "noAccount": "Don't have a student account yet?",
+    "registerNow": "Register Here",
+    "dashboardTitle": "Student Dashboard",
+    "welcomeBack": "Welcome back",
+    "logout": "Log Out",
+    "tabs": {
+      "overview": "Performance Overview",
+      "courses": "Enrolled Courses",
+      "attendance": "Attendance Record",
+      "teacher": "Assigned Teacher",
+      "profile": "My Profile"
+    },
+    "overview": {
+      "attendanceRate": "Attendance Rate",
+      "enrolledCourses": "Enrolled Courses",
+      "status": "Account Status",
+      "teacherNote": "Latest Instructor Feedback",
+      "memorizationLevel": "Current Level",
+      "schedule": "Schedule"
+    },
+    "attendance": {
+      "date": "Date",
+      "course": "Course",
+      "status": "Status",
+      "time": "Time",
+      "location": "Learning Place",
+      "notes": "Teacher Suggestions / Notes",
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late",
+      "excused": "Excused"
+    },
+    "teacher": {
+      "assignedTitle": "Your Assigned Instructor",
+      "noTeacher": "Your instructor assignment is currently being processed by administration.",
+      "email": "Email",
+      "phone": "Phone Number",
+      "courses": "Courses Taught"
+    },
+    "profile": {
+      "title": "Profile Details",
+      "updateSuccess": "Profile updated successfully!",
+      "saveBtn": "Save Profile Changes",
+      "newPassword": "New Password (leave blank to keep current)"
+    }
   }
 }

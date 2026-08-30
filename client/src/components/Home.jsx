@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, Award, BookOpen, CheckCircle2, Clock, Sparkles, Users } from 'lucide-react';
+import { ArrowUpRight, Award, BookOpen, CheckCircle2, Clock, Sparkles, Users, LogIn, UserCheck, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/apiService';
@@ -36,10 +36,13 @@ function Home() {
       'services': '/services',
       'contact': '/contact',
       'register': '/register',
+      'student-login': '/student/login',
+      'student-dashboard': '/student/dashboard',
     };
     navigate(pageRoutes[page] || '/');
   };
 
+  const isLoggedIn = apiService.isAuthenticated();
   const features = t('home.features', { returnObjects: true });
   const statsLabels = t('home.stats', { returnObjects: true });
 
@@ -59,6 +62,17 @@ function Home() {
               <button className="btn btn-primary" onClick={() => navigateTo('register')}>
                 {t('home.registerBtn')} <ArrowUpRight size={18} />
               </button>
+
+              {isLoggedIn ? (
+                <button className="btn btn-secondary btn-student-portal" onClick={() => navigateTo('student-dashboard')}>
+                  <UserCheck size={18} /> {t('nav.studentDashboard', 'My Dashboard')}
+                </button>
+              ) : (
+                <button className="btn btn-secondary btn-student-portal" onClick={() => navigateTo('student-login')}>
+                  <LogIn size={18} /> {t('nav.studentLogin', 'Student Login')}
+                </button>
+              )}
+
               <button className="text-button" onClick={() => navigateTo('about')}>
                 {t('home.learnMoreBtn')} <ArrowUpRight size={17} />
               </button>
@@ -83,6 +97,33 @@ function Home() {
               </div>
             </div>
             <div className="hero-stamp">NQ<br /><span>EST. 2014</span></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Student Portal Callout Banner */}
+      <section className="student-portal-callout">
+        <div className="container">
+          <div className="portal-callout-card">
+            <div className="portal-callout-content">
+              <div className="portal-callout-badge">
+                <ShieldCheck size={20} />
+                <span>{t('student.loginTitle', 'Student Portal')}</span>
+              </div>
+              <h2>Access Your Student Dashboard</h2>
+              <p>Registered students can track overall performance, view attendance history, check enrolled courses, and connect directly with their assigned instructor.</p>
+            </div>
+            <div className="portal-callout-action">
+              {isLoggedIn ? (
+                <button className="btn btn-gold btn-large" onClick={() => navigateTo('student-dashboard')}>
+                  <UserCheck size={20} /> Open Student Dashboard
+                </button>
+              ) : (
+                <button className="btn btn-gold btn-large" onClick={() => navigateTo('student-login')}>
+                  <LogIn size={20} /> Student Login Portal <ArrowUpRight size={20} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </section>
@@ -135,4 +176,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Home;

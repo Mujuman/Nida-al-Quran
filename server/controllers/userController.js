@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Admin = require('../models/Admin');
 const Course = require('../models/Course');
+const Attendance = require('../models/Attendance');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { sendRegistrationNotification } = require('../utils/adminNotifications');
@@ -78,7 +79,7 @@ exports.loginUser = async (req, res) => {
     }
 
     if (!user.password) {
-      return res.status(400).json({ msg: 'Please register first' });
+      return res.status(400).json({ msg: 'Please register first or reset your password' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -96,8 +97,151 @@ exports.loginUser = async (req, res) => {
         id: user.id,
         email: user.email,
         fullName: user.fullName,
+        registrationStatus: user.registrationStatus,
       }
     });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// Get current logged-in user profile
+exports.getMyProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .select('-password')
+      .populate('assignedTeacher', 'fullName email phone username assignedCourses role');
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// Update current logged-in user profile
+exports.updateMyProfile = async (req, res) => {
+  try {
+    let user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    const {
+      fullName, phone, age, gender, guardian, guardianPhone, learningMedia, schedule, message, newPassword
+    } = req.body;
+
+    if (fullName) user.fullName = fullName;
+    if (phone) user.phone = phone;
+    if (age !== undefined && age !== '') user.age = age;
+    if (gender) user.gender = gender;
+    if (guardian) user.guardian = guardian;
+    if (guardianPhone) user.guardianPhone = guardianPhone;
+    if (learningMedia) user.learningMedia = learningMedia;
+    if (schedule) user.schedule = schedule;
+    if (message) user.message = message;
+
+    if (newPassword && newPassword.trim().length >= 6) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+    }
+
+    await user.save();
+    
+    const updatedUser = await User.findById(req.user.id)
+      .select('-password')
+      .populate('assignedTeacher', 'fullName email phone username assignedCourses role');
+
+    res.json({ msg: 'Profile updated successfully', user: updatedUser });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// Get student's own attendance records
+exports.getMyAttendance = async (req, res) => {
+  try {
+    const attendanceRecords = await Attendance.find({ student: req.user.id })
+      .populate('recordedBy', 'fullName email')
+      .sort({ date: -1 });
+
+    const total = attendanceRecords.length;
+    const present = attendanceRecords.filter((a) => a.status === 'present').length;
+    const absent = attendanceRecords.filter((a) => a.status === 'absent').length;
+    const late = attendanceRecords.filter((a) => a.status === 'late').length;
+    const excused = attendanceRecords.filter((a) => a.status === 'excused').length;
+    const percentage = total > 0 ? (((present + late + excused) / total) * 100).toFixed(1) : 0;
+
+    res.json({
+      attendance: attendanceRecords,
+      stats: { total, present, absent, late, excused, percentage: parseFloat(percentage) }
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// Get student's enrolled courses
+exports.getMyCourses = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    let enrolledCourses = [];
+    if (user.course) {
+      const courseDoc = await Course.findOne({ 
+        $or: [
+          { slug: user.course },
+          { title: { $regex: new RegExp(user.course, 'i') } }
+        ]
+      });
+
+      enrolledCourses.push({
+        id: courseDoc ? courseDoc._id : 'enrolled-1',
+        title: courseDoc ? courseDoc.title : user.course,
+        slug: user.course,
+        level: user.level || 'beginner',
+        schedule: user.schedule || 'flexible',
+        learningMedia: user.learningMedia || 'google-meet',
+        status: user.registrationStatus || 'approved',
+        isTeachingActive: user.isTeachingActive,
+        description: courseDoc ? courseDoc.description : 'Quranic and Islamic education course at Nida Al-Quran Center.',
+        category: courseDoc ? courseDoc.category : 'quran',
+        duration: courseDoc ? courseDoc.duration : '3 months'
+      });
+    }
+
+    res.json(enrolledCourses);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// Get assigned teacher details for student
+exports.getMyTeacher = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate(
+      'assignedTeacher',
+      'fullName email phone username role assignedCourses permissions isActive'
+    );
+
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    if (!user.assignedTeacher) {
+      return res.json({ teacher: null, msg: 'No teacher assigned yet' });
+    }
+
+    res.json({ teacher: user.assignedTeacher });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error', error: err.message });
@@ -197,6 +341,7 @@ exports.getStatistics = async (req, res) => {
     res.status(500).json({ msg: 'Server error', error: err.message });
   }
 };
+
 
 
 
