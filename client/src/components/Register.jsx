@@ -288,8 +288,19 @@ function Register() {
                     </button>
                   </div>
 
-                  <div className="support-banner mt-4">
-                    <span>Need Help? Contact Support: 📞 +251 942 431 160 | ✉️ teyuteyba@gmail.com</span>
+                  <div className="contact-support mt-4 shadow-card">
+                    <h4>Need Assistance? 💬</h4>
+                    <p style={{ color: '#ffffff', fontSize: '0.92rem', marginBottom: '1.25rem', opacity: 0.9 }}>
+                      Have questions or need help verifying your account? Reach out to us:
+                    </p>
+                    <div className="support-buttons-grid">
+                      <a href="tel:+251942431160" className="support-action-btn phone-link">
+                        <Phone size={18} /> +251 942 431 160
+                      </a>
+                      <a href="mailto:teyuteyba@gmail.com" className="support-action-btn email-link">
+                        <Mail size={18} /> teyuteyba@gmail.com
+                      </a>
+                    </div>
                   </div>
                 </div>
               ) : (
