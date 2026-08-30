@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle, AlertCircle, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle, AlertCircle, Lock, Eye, EyeOff, HelpCircle, MailCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/apiService';
 import '../styles/Register.css';
@@ -154,28 +154,61 @@ function Register() {
           )}
 
           {isSubmitted ? (
-            <div className="success-registration">
-              <div className="success-animation">
-                <CheckCircle size={80} className="success-check" />
+            <div className="success-registration-card">
+              <div className="success-icon-badge">
+                <MailCheck size={54} />
               </div>
-              <h2>Check Your Email to Complete Registration ✉️</h2>
-              <p style={{ fontSize: '1.1rem', color: '#1e3a8a', fontWeight: 600 }}>
-                We have sent a verification link to <strong>{registeredEmail || 'your email inbox'}</strong>.
+              <h2 className="success-headline">Verify Your Email Address ✉️</h2>
+              <p className="success-subheadline">
+                We have sent a verification link to <strong className="email-highlight">{registeredEmail || 'your email inbox'}</strong>.
               </p>
-              <div className="success-details">
-                <div className="success-info">
-                  <h3>Next Steps:</h3>
-                  <ul>
-                    <li>1. Open your Gmail / Email Inbox for <strong>{registeredEmail}</strong></li>
-                    <li>2. Click the <strong>"Verify Email Address"</strong> link in the message.</li>
-                    <li>3. After email verification, your registration will be sent to the main admin for approval.</li>
-                    <li>4. Once approved, you will receive an approval email and can log in with your password!</li>
-                  </ul>
+
+              <div className="success-details-grid">
+                <div className="next-steps-card">
+                  <div className="card-header-mini">
+                    <CheckCircle size={20} className="icon-gold" />
+                    <h3>Next Steps to Activate Your Account:</h3>
+                  </div>
+                  <ol className="steps-list">
+                    <li>
+                      <span className="step-num">1</span>
+                      <span>Open your email inbox for <strong>{registeredEmail}</strong></span>
+                    </li>
+                    <li>
+                      <span className="step-num">2</span>
+                      <span>Click the <strong>"Verify Email Address"</strong> link in the message</span>
+                    </li>
+                    <li>
+                      <span className="step-num">3</span>
+                      <span>Your application is sent to the Main Admin for approval</span>
+                    </li>
+                    <li>
+                      <span className="step-num">4</span>
+                      <span>Receive an approval email & log in with your password!</span>
+                    </li>
+                  </ol>
                 </div>
-                <div className="contact-support">
-                  <h4>Need Assistance?</h4>
-                  <p>📞 +251942431160</p>
-                  <p>✉️ teyuteyba@gmail.com</p>
+
+                <div className="need-assistance-card">
+                  <div>
+                    <div className="assistance-header">
+                      <HelpCircle size={22} className="assistance-icon" />
+                      <h4>Need Assistance?</h4>
+                    </div>
+                    <p className="assistance-desc">
+                      If you haven't received the email or need support, reach out to us:
+                    </p>
+                  </div>
+                  <div className="assistance-actions">
+                    <a href="tel:+251942431160" className="assistance-btn phone-btn">
+                      <Phone size={18} />
+                      <span>+251 942 431 160</span>
+                    </a>
+                    <a href="mailto:teyuteyba@gmail.com" className="assistance-btn email-btn">
+                      <Mail size={18} />
+                      <span>teyuteyba@gmail.com</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
