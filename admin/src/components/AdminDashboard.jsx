@@ -230,6 +230,21 @@ function AdminDashboard() {
     }
   };
 
+  const handleDeleteRejectedStudent = async (student) => {
+    const studentId = student._id || student.id;
+    const confirmed = window.confirm(`Delete student ${student.fullName || student.name}? This action cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+      const response = await apiService.deleteUser(studentId);
+      showMessage(response?.msg || 'Student deleted successfully.', 'success');
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Error deleting student:', err);
+      showMessage(err?.message || 'Could not delete student.', 'error');
+    }
+  };
+
   const handleToggleSubAdminStatus = async (admin) => {
     const adminId = admin._id || admin.id;
     const nextState = !admin.isActive;
@@ -775,6 +790,16 @@ function AdminDashboard() {
                           <button className="mini-btn" onClick={() => handleOpenUser(user)}>
                             <Eye size={14} />
                           </button>
+                          {isMainAdmin && user.registrationStatus === 'rejected' && (
+                            <button 
+                              className="mini-btn delete-btn" 
+                              onClick={() => handleDeleteRejectedStudent(user)}
+                              title="Delete rejected student"
+                              aria-label="Delete student"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
