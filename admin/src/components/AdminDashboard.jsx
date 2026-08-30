@@ -571,12 +571,40 @@ function AdminDashboard() {
       )}
 
       <div className="admin-layout">
-        <div
-          className={`sidebar-overlay ${sidebarOpen ? 'show' : ''}`}
-          onClick={() => setSidebarOpen(false)}
-        />
+        {sidebarOpen && (
+          <div
+            className="sidebar-overlay show"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
-       
+        {sidebarOpen && (
+          <aside className="admin-sidebar open">
+            <div className="sidebar-header">{t('management')}</div>
+            <nav className="sidebar-nav">
+              {[
+                { id: 'dashboard', label: t('dashboard'), icon: BarChart3 },
+                { id: 'users', label: t('students'), icon: Users },
+                ...(isMainAdmin ? [{ id: 'contacts', label: t('messages'), icon: Mail }] : []),
+                { id: 'attendance', label: t('attendance'), icon: Calendar },
+                ...(isMainAdmin ? [
+                  { id: 'assign-students', label: t('assignStudents'), icon: UserCheck },
+                  { id: 'subadmins', label: t('subAdmins'), icon: UserPlus },
+                  { id: 'courses', label: t('courses'), icon: BookOpen },
+                ] : []),
+              ].map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  className={`nav-item ${activeTab === id ? 'active' : ''}`}
+                  onClick={() => switchTab(id)}
+                >
+                  <Icon size={18} />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </nav>
+          </aside>
+        )}
 
         <main className="admin-content">
           {activeTab === 'dashboard' && (
