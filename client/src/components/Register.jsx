@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle, AlertCircle, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Phone, Calendar, Users, BookOpen, Award, CheckCircle, AlertCircle, Lock, Eye, EyeOff, ShieldCheck, RefreshCw, Key, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/apiService';
 import '../styles/Register.css';
@@ -25,10 +26,19 @@ function Register() {
     learningMedia: '',
     message: ''
   });
+  const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // OTP Verification States
+  const [otpInput, setOtpInput] = useState('');
+  const [otpError, setOtpError] = useState('');
+  const [otpSuccess, setOtpSuccess] = useState('');
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isResendingOtp, setIsResendingOtp] = useState(false);
+  const [isVerifiedSuccess, setIsVerifiedSuccess] = useState(false);
 
   const nextSteps = t('register.form.nextSteps', { returnObjects: true }) || [];
   const benefitCards = t('register.form.benefits', { returnObjects: true }) || [];
@@ -84,9 +94,10 @@ function Register() {
 
       const response = await apiService.registerUser(registrationData);
 
-      if (response.success || response.user) {
+      if (response.success || response.requiresOtp || response.user) {
         setRegisteredEmail(formData.email);
         setIsSubmitted(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         setError(response.msg || t('register.form.errorTryAgain'));
       }
@@ -95,6 +106,53 @@ function Register() {
       setError(t('register.form.errorGeneral'));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    if (!otpInput || otpInput.length < 6) {
+      setOtpError('Please enter the full 6-digit verification code.');
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    setOtpError('');
+    setOtpSuccess('');
+
+    try {
+      const response = await apiService.verifyOtp(registeredEmail, otpInput);
+      if (response.success) {
+        setIsVerifiedSuccess(true);
+        setOtpSuccess(response.msg || 'Email verified successfully!');
+      } else {
+        setOtpError(response.msg || 'Invalid verification code. Please check and try again.');
+      }
+    } catch (err) {
+      console.error('Verify OTP error:', err);
+      setOtpError('Error verifying code. Please try again.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setIsResendingOtp(true);
+    setOtpError('');
+    setOtpSuccess('');
+
+    try {
+      const response = await apiService.resendOtp(registeredEmail);
+      if (response.success) {
+        setOtpSuccess(response.msg || 'A new 6-digit OTP code has been sent to your email address.');
+      } else {
+        setOtpError(response.msg || 'Unable to resend verification code.');
+      }
+    } catch (err) {
+      console.error('Resend OTP error:', err);
+      setOtpError('Failed to resend verification code. Please try again.');
+    } finally {
+      setIsResendingOtp(false);
     }
   };
 
@@ -154,30 +212,124 @@ function Register() {
           )}
 
           {isSubmitted ? (
-            <div className="success-registration">
-              <div className="success-animation">
-                <CheckCircle size={80} className="success-check" />
-              </div>
-              <h2>Check Your Email to Complete Registration ✉️</h2>
-              <p style={{ fontSize: '1.1rem', color: '#1e3a8a', fontWeight: 600 }}>
-                We have sent a verification link to <strong>{registeredEmail || 'your email inbox'}</strong>.
-              </p>
-              <div className="success-details">
-                <div className="success-info">
-                  <h3>Next Steps:</h3>
-                  <ul>
-                    <li>1. Open your Gmail / Email Inbox for <strong>{registeredEmail}</strong></li>
-                    <li>2. Click the <strong>"Verify Email Address"</strong> link in the message.</li>
-                    <li>3. After email verification, your registration will be sent to the main admin for approval.</li>
-                    <li>4. Once approved, you will receive an approval email and can log in with your password!</li>
-                  </ul>
+            <div className="otp-verification-container">
+              {!isVerifiedSuccess ? (
+                <div className="otp-card shadow-card">
+                  <div className="otp-header">
+                    <div className="otp-icon-badge">
+                      <ShieldCheck size={48} />
+                    </div>
+                    <h2>Enter 6-Digit Verification Code 🔑</h2>
+                    <p className="otp-subtitle">
+                      We sent a 6-digit verification code to <strong className="email-highlight">{registeredEmail}</strong>. Please check your inbox and enter the code below.
+                    </p>
+                  </div>
+
+                  {otpError && (
+                    <div className="otp-alert error mb-4">
+                      <AlertCircle size={18} />
+                      <span>{otpError}</span>
+                    </div>
+                  )}
+
+                  {otpSuccess && (
+                    <div className="otp-alert success mb-4">
+                      <CheckCircle size={18} />
+                      <span>{otpSuccess}</span>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleVerifyOtp} className="otp-form">
+                    <div className="form-group">
+                      <label htmlFor="otpInput">6-Digit Verification Code (OTP)</label>
+                      <input
+                        id="otpInput"
+                        type="text"
+                        maxLength="6"
+                        placeholder="••••••"
+                        value={otpInput}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9]/g, '');
+                          setOtpInput(val);
+                          setOtpError('');
+                        }}
+                        className="otp-code-input"
+                        autoFocus
+                        required
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="btn btn-primary btn-block btn-otp-submit"
+                      disabled={isVerifyingOtp || otpInput.length < 6}
+                    >
+                      {isVerifyingOtp ? (
+                        <>
+                          <RefreshCw size={18} className="spin" /> Verifying Code...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle size={18} /> Verify Code & Complete Registration
+                        </>
+                      )}
+                    </button>
+                  </form>
+
+                  <div className="otp-footer">
+                    <p>Didn't receive the verification code in your email?</p>
+                    <button
+                      type="button"
+                      className="btn-link-resend"
+                      onClick={handleResendOtp}
+                      disabled={isResendingOtp}
+                    >
+                      {isResendingOtp ? 'Resending Code...' : '📧 Resend Verification Code'}
+                    </button>
+                  </div>
+
+                  <div className="support-banner mt-4">
+                    <span>Need Help? Contact Support: 📞 +251 942 431 160 | ✉️ teyuteyba@gmail.com</span>
+                  </div>
                 </div>
-                <div className="contact-support">
-                  <h4>Need Assistance?</h4>
-                  <p>📞 +251942431160</p>
-                  <p>✉️ teyuteyba@gmail.com</p>
+              ) : (
+                <div className="success-registration shadow-card">
+                  <div className="success-icon-badge">
+                    <CheckCircle size={56} className="text-green" />
+                  </div>
+                  <h2>Email Verified Successfully! 🎉</h2>
+                  <p className="success-subheadline">
+                    Your email address <strong className="email-highlight">{registeredEmail}</strong> has been verified.
+                  </p>
+
+                  <div className="next-steps-card text-left mt-4 mb-4">
+                    <div className="card-header-mini">
+                      <CheckCircle size={20} className="icon-gold" />
+                      <h3>Next Steps:</h3>
+                    </div>
+                    <ol className="steps-list">
+                      <li>
+                        <span className="step-num">1</span>
+                        <span>Your registration application is submitted to the Main Admin for approval.</span>
+                      </li>
+                      <li>
+                        <span className="step-num">2</span>
+                        <span>Once approved by admin, you will receive an email confirmation.</span>
+                      </li>
+                      <li>
+                        <span className="step-num">3</span>
+                        <span>You can then log in with your email and password!</span>
+                      </li>
+                    </ol>
+                  </div>
+
+                  <div className="actions mt-4">
+                    <button className="btn btn-primary" onClick={() => navigate('/student/login')}>
+                      Go to Student Login <ArrowRight size={18} />
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
             <div className="registration-layout">

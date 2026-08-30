@@ -56,6 +56,57 @@ const sendAssignmentNotification = async (student, subAdmin) => {
   }
 };
 
+const sendVerificationOtpEmail = async (student, otp) => {
+  if (!student?.email) return null;
+  try {
+    const subject = `${otp} is your Nida Al-Quran Email Verification Code`;
+    const text = [
+      `As-salamu alaykum ${student.fullName || 'Student'},`,
+      '',
+      `Your email verification code for Nida Al-Quran registration is: ${otp}`,
+      '',
+      `This code is valid for 15 minutes. Enter this code on the registration page to verify your email address.`,
+      '',
+      `If you did not request this code, please ignore this email.`,
+      '',
+      `Warm regards,`,
+      `Nida Al-Quran Team`,
+    ].join('\n');
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; padding: 28px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h2 style="color: #17473c; margin: 0 0 6px 0; font-family: Georgia, serif; font-size: 24px;">Nida Al-Quran Center</h2>
+          <p style="color: #c69a4b; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin: 0;">Email Verification Code</p>
+        </div>
+        <p style="font-size: 16px; color: #1e293b;">As-salamu alaykum <strong>${student.fullName || 'Student'}</strong>,</p>
+        <p style="font-size: 15px; color: #475569; line-height: 1.6;">Use the following 6-digit One-Time Password (OTP) code to verify your email address and complete your registration:</p>
+        
+        <div style="text-align: center; margin: 28px 0;">
+          <div style="display: inline-block; background: #f8faf9; border: 2px dashed #17473c; border-radius: 12px; padding: 16px 36px;">
+            <span style="font-size: 36px; font-weight: 800; color: #17473c; letter-spacing: 8px; font-family: monospace;">${otp}</span>
+          </div>
+          <p style="font-size: 13px; color: #e11d48; margin-top: 10px; font-weight: 600;">⏱️ Code expires in 15 minutes</p>
+        </div>
+
+        <p style="font-size: 14px; color: #64748b; line-height: 1.5;">Once verified, your registration application will be submitted to the main administrator for final approval.</p>
+        <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 24px 0;" />
+        <p style="font-size: 12px; color: #94a3b8; text-align: center;">If you did not request this verification code, no action is required.</p>
+      </div>
+    `;
+
+    return await sendEmail({
+      to: student.email,
+      subject,
+      text,
+      html,
+    });
+  } catch (error) {
+    console.error('Verification OTP email error:', error.message);
+    return null;
+  }
+};
+
 const sendVerificationEmail = async (student, verifyUrl) => {
   if (!student?.email) return null;
   try {
@@ -154,5 +205,6 @@ module.exports = {
   sendRegistrationNotification,
   sendAssignmentNotification,
   sendVerificationEmail,
+  sendVerificationOtpEmail,
   sendApprovalNotification,
 };

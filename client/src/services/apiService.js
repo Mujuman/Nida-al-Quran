@@ -18,6 +18,24 @@ export const apiService = {
     return response.json();
   },
 
+  verifyOtp: async (email, otp) => {
+    const response = await fetch(`${API_URL}/api/users/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp }),
+    });
+    return response.json();
+  },
+
+  resendOtp: async (email) => {
+    const response = await fetch(`${API_URL}/api/users/resend-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    return response.json();
+  },
+
   loginUser: async (credentials) => {
     const response = await fetch(`${API_URL}/api/users/login`, {
       method: 'POST',

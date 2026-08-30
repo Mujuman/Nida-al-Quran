@@ -3,6 +3,8 @@ const router = express.Router();
 const { 
   registerUser, 
   verifyEmail,
+  verifyOtp,
+  resendOtp,
   loginUser, 
   getAllUsers, 
   getUserById, 
@@ -18,6 +20,8 @@ const auth = require('../middleware/auth');
 
 router.post('/register', registerUser);
 router.get('/verify-email', verifyEmail);
+router.post('/verify-otp', verifyOtp);
+router.post('/resend-otp', resendOtp);
 router.post('/login', loginUser);
 router.get('/stats', getStatistics);
 

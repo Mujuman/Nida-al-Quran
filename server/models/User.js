@@ -56,6 +56,12 @@ const UserSchema = new mongoose.Schema(
     verificationTokenExpires: {
       type: Date,
     },
+    verificationOtp: {
+      type: String,
+    },
+    verificationOtpExpires: {
+      type: Date,
+    },
     registrationStatus: {
       type: String,
       enum: ['pending', 'approved', 'rejected'],

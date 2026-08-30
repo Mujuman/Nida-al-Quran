@@ -5,9 +5,11 @@ const Course = require('../models/Course');
 const Attendance = require('../models/Attendance');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { sendRegistrationNotification, sendVerificationEmail } = require('../utils/adminNotifications');
+const { sendRegistrationNotification, sendVerificationEmail, sendVerificationOtpEmail } = require('../utils/adminNotifications');
 
-// Register user with full details
+const generate6DigitOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+// Register user with full details (Generates 6-Digit Verification OTP)
 exports.registerUser = async (req, res) => {
   const {
     fullName, email, password, phone, age, gender, course, level, schedule,
@@ -15,10 +17,43 @@ exports.registerUser = async (req, res) => {
   } = req.body;
   
   try {
+    const normalizedEmail = email ? email.toLowerCase().trim() : '';
+
     // Check if user already exists
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email: normalizedEmail });
     if (user) {
-      return res.status(400).json({ msg: 'User already exists with this email address' });
+      if (user.isVerified) {
+        return res.status(400).json({ msg: 'A student account already exists with this email address' });
+      } else {
+        // Overwrite unverified registration attempt with updated details & new OTP
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+        user.fullName = fullName;
+        user.phone = phone;
+        user.age = age;
+        user.gender = gender;
+        user.course = course;
+        user.level = level;
+        user.schedule = schedule;
+        user.guardian = guardian || guardianName;
+        user.guardianPhone = guardianPhone || req.body.guardian_phone;
+        user.learningMedia = learningMedia;
+        user.message = message;
+        
+        const otp = generate6DigitOtp();
+        user.verificationOtp = otp;
+        user.verificationOtpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+        await user.save();
+
+        await sendVerificationOtpEmail(user, otp);
+
+        return res.json({
+          success: true,
+          requiresOtp: true,
+          msg: 'Registration details updated! A 6-digit verification code (OTP) has been sent to your email address.',
+          email: user.email,
+        });
+      }
     }
 
     if (!password || password.length < 6) {
@@ -29,14 +64,14 @@ exports.registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Generate email verification token (24 hours expiry)
-    const verificationToken = crypto.randomBytes(32).toString('hex');
-    const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    // Generate 6-digit OTP (15 minutes expiry)
+    const otp = generate6DigitOtp();
+    const verificationOtpExpires = new Date(Date.now() + 15 * 60 * 1000);
 
-    // Create new user
+    // Create new user in DB
     user = new User({
       fullName,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       phone,
       age,
@@ -49,59 +84,64 @@ exports.registerUser = async (req, res) => {
       learningMedia,
       message,
       isVerified: false,
-      verificationToken,
-      verificationTokenExpires,
+      verificationOtp: otp,
+      verificationOtpExpires,
       registrationStatus: 'pending',
     });
 
     await user.save();
 
-    // Send verification email to student
-    const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, '');
-    const verifyUrl = `${clientUrl}/verify-email?token=${verificationToken}`;
-    await sendVerificationEmail(user, verifyUrl);
+    // Send 6-digit OTP email to student
+    await sendVerificationOtpEmail(user, otp);
 
     res.json({ 
       success: true,
-      requiresVerification: true,
-      msg: 'Registration submitted successfully! A verification link has been sent to your email address. Please check your Gmail/inbox and click the link to verify your email.',
-      user: {
-        id: user.id,
-        email: user.email,
-        fullName: user.fullName,
-        registrationStatus: user.registrationStatus,
-        isVerified: false,
-      }
+      requiresOtp: true,
+      msg: 'Registration submitted successfully! A 6-digit verification code (OTP) has been sent to your email address. Please enter the code below to verify your email.',
+      email: user.email,
     });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: 'Server error', error: err.message });
+    console.error('Registration error:', err.message);
+    res.status(500).json({ msg: 'Server error during registration', error: err.message });
   }
 };
 
-// Verify user email via token
-exports.verifyEmail = async (req, res) => {
-  const { token } = req.query;
-  if (!token) {
-    return res.status(400).json({ msg: 'Verification token is required.' });
+// Verify user email via 6-digit OTP
+exports.verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) {
+    return res.status(400).json({ msg: 'Email address and 6-digit verification code (OTP) are required.' });
   }
 
   try {
-    const user = await User.findOne({
-      verificationToken: token,
-      verificationTokenExpires: { $gt: Date.now() },
-    });
-
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user) {
-      return res.status(400).json({ msg: 'Invalid or expired verification link. Please check your link or register again.' });
+      return res.status(404).json({ msg: 'No registration record found for this email address. Please register.' });
+    }
+
+    if (user.isVerified) {
+      return res.json({
+        success: true,
+        alreadyVerified: true,
+        msg: 'Email is already verified! Your registration is submitted for main admin approval.',
+        email: user.email,
+      });
+    }
+
+    if (!user.verificationOtp || user.verificationOtp !== otp.trim()) {
+      return res.status(400).json({ msg: 'Invalid 6-digit verification code. Please check your email and try again.' });
+    }
+
+    if (user.verificationOtpExpires && user.verificationOtpExpires < new Date()) {
+      return res.status(400).json({ msg: 'Verification code has expired. Please click "Resend Code" to get a new OTP.' });
     }
 
     user.isVerified = true;
-    user.verificationToken = undefined;
-    user.verificationTokenExpires = undefined;
+    user.verificationOtp = undefined;
+    user.verificationOtpExpires = undefined;
     await user.save();
 
-    // Send notification to main admins now that student's email is verified
+    // Send notification to main admins
     sendRegistrationNotification(user).catch((err) => console.error('Admin notification error:', err));
 
     res.json({
@@ -111,8 +151,82 @@ exports.verifyEmail = async (req, res) => {
       fullName: user.fullName,
     });
   } catch (err) {
+    console.error('Verify OTP error:', err);
+    res.status(500).json({ msg: 'Server error during OTP verification.', error: err.message });
+  }
+};
+
+// Resend 6-digit OTP code to student email
+exports.resendOtp = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ msg: 'Email address is required.' });
+  }
+
+  try {
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) {
+      return res.status(404).json({ msg: 'No registration record found for this email address.' });
+    }
+
+    if (user.isVerified) {
+      return res.json({ success: true, msg: 'Email is already verified.' });
+    }
+
+    const otp = generate6DigitOtp();
+    user.verificationOtp = otp;
+    user.verificationOtpExpires = new Date(Date.now() + 15 * 60 * 1000);
+    await user.save();
+
+    await sendVerificationOtpEmail(user, otp);
+
+    res.json({
+      success: true,
+      msg: 'A new 6-digit verification code (OTP) has been sent to your email address.',
+    });
+  } catch (err) {
+    console.error('Resend OTP error:', err);
+    res.status(500).json({ msg: 'Server error resending OTP.', error: err.message });
+  }
+};
+
+// Legacy verify email route (optional backward compatibility)
+exports.verifyEmail = async (req, res) => {
+  const { token } = req.query;
+  if (!token) {
+    return res.status(400).json({ msg: 'Verification token is required.' });
+  }
+
+  try {
+    const user = await User.findOne({
+      $or: [
+        { verificationToken: token },
+        { verificationOtp: token }
+      ]
+    });
+
+    if (!user) {
+      return res.status(400).json({ msg: 'Invalid or expired verification link/code.' });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpires = undefined;
+    user.verificationOtp = undefined;
+    user.verificationOtpExpires = undefined;
+    await user.save();
+
+    sendRegistrationNotification(user).catch((err) => console.error('Admin notification error:', err));
+
+    res.json({
+      success: true,
+      msg: 'Your email address has been verified successfully!',
+      email: user.email,
+      fullName: user.fullName,
+    });
+  } catch (err) {
     console.error('Verify email error:', err);
-    res.status(500).json({ msg: 'Server error during email verification.', error: err.message });
+    res.status(500).json({ msg: 'Server error during verification.', error: err.message });
   }
 };
 
