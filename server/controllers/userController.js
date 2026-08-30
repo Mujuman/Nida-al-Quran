@@ -251,9 +251,10 @@ exports.loginUser = async (req, res) => {
 
     // MANDATORY CHECK 1: Must verify email via 6-digit OTP first!
     if (!user.isVerified) {
-      return res.status(403).json({
-        msg: 'Please verify your email address first using the 6-digit OTP code sent to your email before logging in.',
+      return res.status(400).json({
+        success: false,
         requiresOtp: true,
+        msg: 'Please verify your email address first using the 6-digit OTP code sent to your email before logging in.',
         email: user.email,
       });
     }
@@ -261,9 +262,13 @@ exports.loginUser = async (req, res) => {
     // MANDATORY CHECK 2: Must be approved by main admin!
     if (user.registrationStatus !== 'approved') {
       if (user.registrationStatus === 'rejected') {
-        return res.status(403).json({ msg: 'Your registration request has been rejected by the administrator.' });
+        return res.status(400).json({ success: false, msg: 'Your registration request has been rejected by the administrator.' });
       }
-      return res.status(403).json({ msg: 'Your email address is verified, but your account is pending approval by the main administrator. You cannot log in until approved.' });
+      return res.status(400).json({
+        success: false,
+        requiresApproval: true,
+        msg: 'Your email address is verified, but your account is pending approval by the main administrator. You cannot log in until approved.',
+      });
     }
 
     const payload = { user: { id: user.id } };
