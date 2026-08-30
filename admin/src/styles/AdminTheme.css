@@ -261,7 +261,7 @@
   .btn-logout { font-size: 0; }
   .btn-logout svg { margin: 0; }
   .language-toggle { min-width: 36px; padding: 0.45rem; }
-  .admin-layout { min-height: auto; }
+  
   .admin-content { padding: 0 0.55rem 0.6rem !important; padding-top: 0 !important; }
   .content-panel { margin-top: 0 !important; padding: 0.8rem; }
   .panel-header { margin-top: 0; padding-bottom: 0.75rem; }
