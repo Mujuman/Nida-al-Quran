@@ -19,10 +19,19 @@ function Services() {
       .finally(() => setLoadingServices(false));
   }, []);
 
+  const getLocalized = (val, lang, fallback = '') => {
+    if (!val) return fallback;
+    if (typeof val === 'string') return val;
+    if (typeof val === 'object') return val[lang] || val.en || val.am || Object.values(val)[0] || fallback;
+    return String(val);
+  };
+
   const localizedCourse = (course) => ({
-    title: course.title?.[i18n.language] || course.title?.en || '',
-    description: course.description?.[i18n.language] || course.description?.en || '',
-    features: course.features?.[i18n.language] || course.features?.en || [],
+    title: getLocalized(course.title, i18n.language, 'Course Title'),
+    description: getLocalized(course.description, i18n.language, ''),
+    features: Array.isArray(course.features)
+      ? course.features
+      : (course.features?.[i18n.language] || course.features?.en || []),
   });
 
   const icons = [

@@ -11,7 +11,17 @@ import '../styles/StudentDashboard.css';
 
 function StudentDashboard({ navigateTo }) {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const getLocalizedText = (textObj, fallback = '') => {
+    if (!textObj) return fallback;
+    if (typeof textObj === 'string') return textObj;
+    if (typeof textObj === 'object') {
+      const currentLang = i18n?.language || 'en';
+      return textObj[currentLang] || textObj.en || textObj.am || Object.values(textObj).find(v => typeof v === 'string') || fallback;
+    }
+    return String(textObj);
+  };
 
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'courses' | 'attendance' | 'teacher' | 'profile'
   const [profile, setProfile] = useState(null);
@@ -170,7 +180,7 @@ function StudentDashboard({ navigateTo }) {
               <h1 className="student-name">{profile?.fullName || 'Student'}</h1>
               <div className="student-meta-badges">
                 <span className="badge badge-course">
-                  <BookOpen size={13} /> {profile?.course || 'Quran Recitation'}
+                  <BookOpen size={13} /> {getLocalizedText(profile?.course, 'Quran Recitation')}
                 </span>
                 <span className={`badge badge-status ${profile?.registrationStatus}`}>
                   <CheckCircle2 size={13} /> Status: {profile?.registrationStatus || 'Approved'}
@@ -280,7 +290,7 @@ function StudentDashboard({ navigateTo }) {
                 </div>
                 <div className="metric-data">
                   <span className="metric-label">{t('student.overview.enrolledCourses', 'Enrolled Course')}</span>
-                  <div className="metric-value text-truncate">{profile?.course || 'Quran Studies'}</div>
+                  <div className="metric-value text-truncate">{getLocalizedText(profile?.course, 'Quran Studies')}</div>
                   <span className="metric-subtext">Level: {profile?.level || 'Beginner'}</span>
                 </div>
               </div>
@@ -400,8 +410,8 @@ function StudentDashboard({ navigateTo }) {
                       </span>
                     </div>
 
-                    <h3 className="course-title">{course.title}</h3>
-                    <p className="course-desc">{course.description}</p>
+                    <h3 className="course-title">{getLocalizedText(course.title, 'Course Title')}</h3>
+                    <p className="course-desc">{getLocalizedText(course.description, '')}</p>
 
                     <div className="course-details-list">
                       <div className="detail-item">
@@ -435,7 +445,7 @@ function StudentDashboard({ navigateTo }) {
                   <div className="empty-state">
                     <BookOpen size={48} />
                     <h3>No course currently listed</h3>
-                    <p>Your registered course ({profile?.course}) is being configured.</p>
+                    <p>Your registered course ({getLocalizedText(profile?.course, 'Selected Course')}) is being configured.</p>
                   </div>
                 </div>
               )}
@@ -589,10 +599,10 @@ function StudentDashboard({ navigateTo }) {
                       <div className="courses-tags">
                         {teacher.assignedCourses && teacher.assignedCourses.length > 0 ? (
                           teacher.assignedCourses.map((c, i) => (
-                            <span key={i} className="tag-pill">{c}</span>
+                            <span key={i} className="tag-pill">{getLocalizedText(c)}</span>
                           ))
                         ) : (
-                          <span className="tag-pill">{profile?.course || 'Quran Studies'}</span>
+                          <span className="tag-pill">{getLocalizedText(profile?.course, 'Quran Studies')}</span>
                         )}
                       </div>
                     </div>

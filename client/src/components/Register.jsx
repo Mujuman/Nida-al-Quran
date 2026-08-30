@@ -384,8 +384,8 @@ function Register() {
                             <div className="course-item">
                               <span className="course-arrow">➪</span>
                               <div className="course-content">
-                                <span className="course-name">{course.title?.[i18n.language] || course.title?.en}</span>
-                                <span className="course-label">{course.description?.[i18n.language] || course.description?.en}</span>
+                                <span className="course-name">{typeof course.title === 'string' ? course.title : (course.title?.[i18n.language] || course.title?.en || course.title?.am || course.slug)}</span>
+                                <span className="course-label">{typeof course.description === 'string' ? course.description : (course.description?.[i18n.language] || course.description?.en || course.description?.am || '')}</span>
                               </div>
                             </div>
                           </label>

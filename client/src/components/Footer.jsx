@@ -56,7 +56,13 @@ function Footer({ navigateTo }) {
               <h4>{t('footer.coursesTitle')}</h4>
               <ul className="footer-links">
                 {courses.map((course, index) => (
-                  <li key={course.id || course.slug}><a href="#">{course.title?.[i18n.language] || course.title?.en}</a></li>
+                  <li key={course.id || course.slug || index}>
+                    <a href="#">
+                      {typeof course.title === 'string'
+                        ? course.title
+                        : (course.title?.[i18n.language] || course.title?.en || course.title?.am || course.slug || 'Course')}
+                    </a>
+                  </li>
                 ))}
               </ul>
             </div>
