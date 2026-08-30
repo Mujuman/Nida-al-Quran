@@ -228,6 +228,9 @@
     background: rgba(255, 255, 255, 0.07);
     border-color: rgba(232, 213, 168, 0.55);
     gap: 0.55rem;
+    width: 100%;
+    max-width: none;
+    align-items: flex-start;
   }
   .hero-proof,
   .hero-proof > span,
@@ -238,11 +241,13 @@
     color: #f0d79d !important;
   }
   .hero-proof > span {
-    font-size: 0.74rem;
+    font-size: 0.75rem;
+    min-width: 0;
   }
   .proof-mark {
     width: 28px;
     height: 28px;
+    flex-shrink: 0;
   }
   .hero-image { min-height: 400px; padding: 1rem 1rem 3.5rem; }
   .image-frame { width: min(100%, 330px); }
