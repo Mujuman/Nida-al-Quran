@@ -1083,36 +1083,37 @@ function AdminDashboard() {
               </div>
 
               {/* Registration & Account Status */}
-              <div className="detail-section">
-                <h4 className="section-title">Account Status</h4>
-                <div className="detail-grid">
-                  <div className="detail-item">
-                    <span>Registration Status</span>
-                    <strong>
-                      <span className={`status-badge status-${selectedUser.registrationStatus || 'pending'}`}>
-                        {selectedUser.registrationStatus ? selectedUser.registrationStatus.charAt(0).toUpperCase() + selectedUser.registrationStatus.slice(1) : 'Pending'}
-                      </span>
-                    </strong>
-                  </div>
-                  <div className="detail-item">
-                    <span>Email Verified</span>
-                    <strong>{selectedUser.isVerified ? '✓ Yes' : '✗ No'}</strong>
-                  </div>
-                  {selectedUser.assignedTeacher && (
+              {isMainAdmin && (
+                <div className="detail-section">
+                  <h4 className="section-title">Account Status</h4>
+                  <div className="detail-grid">
                     <div className="detail-item">
-                      <span>Assigned Teacher</span>
+                      <span>Registration Status</span>
                       <strong>
-                        {selectedUser.assignedTeacher.fullName
-                          || selectedUser.assignedTeacher.username
-                          || selectedUser.assignedTeacher.email
-                          || '-'}
+                        <span className={`status-badge status-${selectedUser.registrationStatus || 'pending'}`}>
+                          {selectedUser.registrationStatus ? selectedUser.registrationStatus.charAt(0).toUpperCase() + selectedUser.registrationStatus.slice(1) : 'Pending'}
+                        </span>
                       </strong>
                     </div>
-                  )}
-                  <div className="detail-item">
-                    <span>Teaching Active</span>
-                    <strong>{selectedUser.isTeachingActive ? '✓ Active' : '✗ Inactive'}</strong>
-                  </div>
+                    <div className="detail-item">
+                      <span>Email Verified</span>
+                      <strong>{selectedUser.isVerified ? '✓ Yes' : '✗ No'}</strong>
+                    </div>
+                    {selectedUser.assignedTeacher && (
+                      <div className="detail-item">
+                        <span>Assigned Teacher</span>
+                        <strong>
+                          {selectedUser.assignedTeacher.fullName
+                            || selectedUser.assignedTeacher.username
+                            || selectedUser.assignedTeacher.email
+                            || '-'}
+                        </strong>
+                      </div>
+                    )}
+                    <div className="detail-item">
+                      <span>Teaching Active</span>
+                      <strong>{selectedUser.isTeachingActive ? '✓ Active' : '✗ Inactive'}</strong>
+                    </div>
                 </div>
               </div>
 
