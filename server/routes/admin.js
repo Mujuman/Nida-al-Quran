@@ -23,6 +23,12 @@ const {
   getAllAttendanceRecords,
   getProfile,
   updateProfile,
+  getAllTeachers,
+  getTeacherDetails,
+  updateTeacher,
+  activateTeacher,
+  deactivateTeacher,
+  deleteTeacher,
 } = require('../controllers/adminController');
 
 // ── Public ───────────────────────────────────────────────────
@@ -53,5 +59,13 @@ router.put('/sub-admins/:adminId', adminAuth, requireMainAdmin, updateSubAdmin);
 router.delete('/sub-admins/:adminId', adminAuth, requireMainAdmin, deleteSubAdmin);
 router.patch('/sub-admins/:adminId/toggle-status', adminAuth, requireMainAdmin, toggleSubAdminStatus);
 router.put('/sub-admins/:adminId/reset-password', adminAuth, requireMainAdmin, resetSubAdminPassword);
+
+// Teacher Account Management (Main Admin only)
+router.get('/teachers', adminAuth, requireMainAdmin, getAllTeachers);
+router.get('/teachers/:teacherId', adminAuth, requireMainAdmin, getTeacherDetails);
+router.put('/teachers/:teacherId', adminAuth, requireMainAdmin, updateTeacher);
+router.patch('/teachers/:teacherId/activate', adminAuth, requireMainAdmin, activateTeacher);
+router.patch('/teachers/:teacherId/deactivate', adminAuth, requireMainAdmin, deactivateTeacher);
+router.delete('/teachers/:teacherId', adminAuth, requireMainAdmin, deleteTeacher);
 
 module.exports = router;

@@ -388,4 +388,61 @@ export const apiService = {
     }
     return result;
   },
+
+  // Teacher Account Management
+  getAllTeachers: async () => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/teachers`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  getTeacherDetails: async (teacherId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/teachers/${teacherId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  updateTeacher: async (teacherId, data) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/teachers/${teacherId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  activateTeacher: async (teacherId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/teachers/${teacherId}/activate`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  deactivateTeacher: async (teacherId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/teachers/${teacherId}/deactivate`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  deleteTeacher: async (teacherId) => {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch(`${API_URL}/api/admin/teachers/${teacherId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
 };

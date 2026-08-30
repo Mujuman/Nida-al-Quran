@@ -671,6 +671,205 @@ exports.updateProfile = async (req, res) => {
 };
 
 // ============================================================
+// Get All Teachers (Main Admin only)
+// ============================================================
+exports.getAllTeachers = async (req, res) => {
+  try {
+    const teachers = await Admin.find({ role: 'sub_admin' })
+      .select('-password')
+      .populate('assignedStudents', 'fullName email course')
+      .populate('createdBy', 'fullName email')
+      .sort({ createdAt: -1 });
+    res.json(teachers);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
+// Get Teacher Details (Main Admin only)
+// ============================================================
+exports.getTeacherDetails = async (req, res) => {
+  try {
+    const teacher = await Admin.findById(req.params.teacherId)
+      .select('-password')
+      .populate('assignedStudents', 'fullName email course registrationStatus')
+      .populate('createdBy', 'fullName email');
+
+    if (!teacher) {
+      return res.status(404).json({ msg: 'Teacher not found' });
+    }
+
+    if (teacher.role !== 'sub_admin') {
+      return res.status(400).json({ msg: 'This admin is not a teacher' });
+    }
+
+    res.json(teacher);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
+// Update Teacher Account (Main Admin only)
+// ============================================================
+exports.updateTeacher = async (req, res) => {
+  try {
+    const { fullName, email, phone, password, assignedCourses } = req.body;
+    const teacher = await Admin.findById(req.params.teacherId);
+
+    if (!teacher) {
+      return res.status(404).json({ msg: 'Teacher not found' });
+    }
+
+    if (teacher.role !== 'sub_admin') {
+      return res.status(400).json({ msg: 'This admin is not a teacher' });
+    }
+
+    // Update basic fields
+    if (fullName) teacher.fullName = fullName;
+    if (phone !== undefined) teacher.phone = phone;
+
+    // Email must be unique
+    if (email && email !== teacher.email) {
+      const existing = await Admin.findOne({ email });
+      if (existing) {
+        return res.status(400).json({ msg: 'Email already in use' });
+      }
+      teacher.email = email;
+    }
+
+    // Update password if provided
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      teacher.password = await bcrypt.hash(password, salt);
+    }
+
+    // Update assigned courses if provided
+    if (Array.isArray(assignedCourses) && assignedCourses.length > 0) {
+      teacher.assignedCourses = assignedCourses;
+    }
+
+    await teacher.save();
+
+    const updated = await Admin.findById(req.params.teacherId)
+      .select('-password')
+      .populate('assignedStudents', 'fullName email course');
+
+    res.json({
+      msg: 'Teacher updated successfully',
+      teacher: updated,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
+// Activate Teacher Account (Main Admin only)
+// ============================================================
+exports.activateTeacher = async (req, res) => {
+  try {
+    const teacher = await Admin.findById(req.params.teacherId);
+
+    if (!teacher) {
+      return res.status(404).json({ msg: 'Teacher not found' });
+    }
+
+    if (teacher.role !== 'sub_admin') {
+      return res.status(400).json({ msg: 'This admin is not a teacher' });
+    }
+
+    teacher.isActive = true;
+    await teacher.save();
+
+    const updated = await Admin.findById(req.params.teacherId)
+      .select('-password')
+      .populate('assignedStudents', 'fullName email course');
+
+    res.json({
+      msg: 'Teacher account activated successfully',
+      teacher: updated,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
+// Deactivate Teacher Account (Main Admin only)
+// ============================================================
+exports.deactivateTeacher = async (req, res) => {
+  try {
+    const teacher = await Admin.findById(req.params.teacherId);
+
+    if (!teacher) {
+      return res.status(404).json({ msg: 'Teacher not found' });
+    }
+
+    if (teacher.role !== 'sub_admin') {
+      return res.status(400).json({ msg: 'This admin is not a teacher' });
+    }
+
+    teacher.isActive = false;
+    await teacher.save();
+
+    const updated = await Admin.findById(req.params.teacherId)
+      .select('-password')
+      .populate('assignedStudents', 'fullName email course');
+
+    res.json({
+      msg: 'Teacher account deactivated successfully',
+      teacher: updated,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
+// Delete Teacher Account (Main Admin only)
+// ============================================================
+exports.deleteTeacher = async (req, res) => {
+  try {
+    const teacher = await Admin.findById(req.params.teacherId);
+
+    if (!teacher) {
+      return res.status(404).json({ msg: 'Teacher not found' });
+    }
+
+    if (teacher.role !== 'sub_admin') {
+      return res.status(400).json({ msg: 'This admin is not a teacher' });
+    }
+
+    // Unassign all students from this teacher
+    await User.updateMany(
+      { assignedTeacher: req.params.teacherId },
+      { $set: { assignedTeacher: null } }
+    );
+
+    // Remove students from teacher's assignedStudents array
+    await Admin.findByIdAndUpdate(
+      req.params.teacherId,
+      { $set: { assignedStudents: [] } }
+    );
+
+    // Delete the teacher account
+    await teacher.deleteOne();
+
+    res.json({ msg: 'Teacher account deleted successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// ============================================================
 // Seed Courses (Main Admin only - development/setup helper)
 // ============================================================
 exports.seedCourses = async (req, res) => {
