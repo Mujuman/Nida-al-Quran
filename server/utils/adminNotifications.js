@@ -1,12 +1,14 @@
-const Admin = require('../models/Admin');
 const sendEmail = require('./sendEmail');
 
 const sendRegistrationNotification = async (student) => {
   try {
+    const Admin = require('../models/Admin');
     const mainAdmins = await Admin.find({
       role: 'main_admin',
       isActive: true,
     }).select('email fullName');
+
+    console.log(`📧 Sending registration notification to ${mainAdmins.length} main admin(s)...`);
 
     const subject = `New student registration: ${student.fullName}`;
     const text = [
@@ -20,13 +22,16 @@ const sendRegistrationNotification = async (student) => {
       `Registration status: ${student.registrationStatus}`,
     ].join('\n');
 
-    return await Promise.allSettled(mainAdmins.map((admin) => sendEmail({
-      to: admin.email,
-      subject,
-      text: `Hello ${admin.fullName || 'Admin'},\n\n${text}`,
-    })));
+    return await Promise.allSettled(mainAdmins.map((admin) => {
+      console.log(`  📬 Notifying admin: ${admin.email}`);
+      return sendEmail({
+        to: admin.email,
+        subject,
+        text: `Hello ${admin.fullName || 'Admin'},\n\n${text}`,
+      });
+    }));
   } catch (error) {
-    console.error('Registration notification error:', error.message);
+    console.error('❌ Registration notification error:', error.message);
     return [];
   }
 };

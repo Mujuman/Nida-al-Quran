@@ -18,14 +18,17 @@ exports.registerUser = async (req, res) => {
   
   try {
     const normalizedEmail = email ? email.toLowerCase().trim() : '';
+    console.log(`📝 New registration attempt for email: ${normalizedEmail}`);
 
     // Check if user already exists
     let user = await User.findOne({ email: normalizedEmail });
     if (user) {
       if (user.isVerified) {
+        console.log(`⚠️ Email already verified: ${normalizedEmail}`);
         return res.status(400).json({ msg: 'A student account already exists with this email address' });
       } else {
         // Overwrite unverified registration attempt with updated details & new OTP
+        console.log(`🔄 Re-registering unverified user: ${normalizedEmail}`);
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
         user.fullName = fullName;
@@ -45,7 +48,9 @@ exports.registerUser = async (req, res) => {
         user.verificationOtpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
         await user.save();
 
+        console.log(`📧 Sending OTP verification email to ${normalizedEmail}...`);
         await sendVerificationOtpEmail(user, otp);
+        console.log(`✅ OTP email sent to ${normalizedEmail}`);
 
         return res.json({
           success: true,
@@ -67,6 +72,7 @@ exports.registerUser = async (req, res) => {
     // Generate 6-digit OTP (15 minutes expiry)
     const otp = generate6DigitOtp();
     const verificationOtpExpires = new Date(Date.now() + 15 * 60 * 1000);
+    console.log(`🔐 Generated OTP: ${otp} (expires in 15 mins)`);
 
     // Create new user in DB
     user = new User({
@@ -90,9 +96,17 @@ exports.registerUser = async (req, res) => {
     });
 
     await user.save();
+    console.log(`✅ User created in database: ${normalizedEmail}`);
 
     // Send 6-digit OTP email to student
-    await sendVerificationOtpEmail(user, otp);
+    console.log(`📧 Sending OTP verification email to ${normalizedEmail}...`);
+    try {
+      await sendVerificationOtpEmail(user, otp);
+      console.log(`✅ OTP email sent successfully to ${normalizedEmail}`);
+    } catch (emailErr) {
+      console.error(`❌ Error sending OTP email: ${emailErr.message}`);
+      // Don't fail registration if email fails
+    }
 
     res.json({ 
       success: true,
@@ -114,12 +128,17 @@ exports.verifyOtp = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    const normalizedEmail = email.toLowerCase().trim();
+    console.log(`🔍 Verifying OTP for email: ${normalizedEmail}`);
+
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
+      console.log(`⚠️ No registration record found for ${normalizedEmail}`);
       return res.status(404).json({ msg: 'No registration record found for this email address. Please register.' });
     }
 
     if (user.isVerified) {
+      console.log(`✅ Email already verified: ${normalizedEmail}`);
       return res.json({
         success: true,
         alreadyVerified: true,
@@ -129,10 +148,12 @@ exports.verifyOtp = async (req, res) => {
     }
 
     if (!user.verificationOtp || user.verificationOtp !== otp.trim()) {
+      console.log(`❌ Invalid OTP for ${normalizedEmail}. Expected: ${user.verificationOtp}, Got: ${otp}`);
       return res.status(400).json({ msg: 'Invalid 6-digit verification code. Please check your email and try again.' });
     }
 
     if (user.verificationOtpExpires && user.verificationOtpExpires < new Date()) {
+      console.log(`⏰ OTP expired for ${normalizedEmail}`);
       return res.status(400).json({ msg: 'Verification code has expired. Please click "Resend Code" to get a new OTP.' });
     }
 
@@ -140,8 +161,10 @@ exports.verifyOtp = async (req, res) => {
     user.verificationOtp = undefined;
     user.verificationOtpExpires = undefined;
     await user.save();
+    console.log(`✅ Email verified successfully for ${normalizedEmail}`);
 
     // Send notification to main admins
+    console.log(`📧 Sending registration notification to main admins...`);
     sendRegistrationNotification(user).catch((err) => console.error('Admin notification error:', err));
 
     res.json({
@@ -164,12 +187,17 @@ exports.resendOtp = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    const normalizedEmail = email.toLowerCase().trim();
+    console.log(`🔄 Resend OTP request for email: ${normalizedEmail}`);
+
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
+      console.log(`⚠️ No registration record found for ${normalizedEmail}`);
       return res.status(404).json({ msg: 'No registration record found for this email address.' });
     }
 
     if (user.isVerified) {
+      console.log(`✅ Email already verified: ${normalizedEmail}`);
       return res.json({ success: true, msg: 'Email is already verified.' });
     }
 
@@ -177,8 +205,16 @@ exports.resendOtp = async (req, res) => {
     user.verificationOtp = otp;
     user.verificationOtpExpires = new Date(Date.now() + 15 * 60 * 1000);
     await user.save();
+    console.log(`🔐 New OTP generated: ${otp} (expires in 15 mins)`);
 
-    await sendVerificationOtpEmail(user, otp);
+    console.log(`📧 Resending OTP to ${normalizedEmail}...`);
+    try {
+      await sendVerificationOtpEmail(user, otp);
+      console.log(`✅ OTP resent successfully to ${normalizedEmail}`);
+    } catch (emailErr) {
+      console.error(`❌ Error resending OTP: ${emailErr.message}`);
+      // Don't fail if email fails
+    }
 
     res.json({
       success: true,

@@ -1,4 +1,5 @@
 const Admin = require('../models/Admin');
+const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
@@ -143,7 +144,14 @@ exports.updateUserStatus = async (req, res) => {
 
     // If main admin approved student, send approval email to student
     if (registrationStatus === 'approved' && previousStatus !== 'approved') {
-      sendApprovalNotification(user).catch((err) => console.error('Error sending approval email:', err));
+      console.log(`📧 Sending approval email to ${user.email}...`);
+      try {
+        await sendApprovalNotification(user);
+        console.log(`✅ Approval email sent successfully to ${user.email}`);
+      } catch (err) {
+        console.error(`❌ Error sending approval email to ${user.email}:`, err.message);
+        // Don't fail the approval if email fails - still approve the user
+      }
     }
 
     res.json(user);

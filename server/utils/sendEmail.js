@@ -1,9 +1,13 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async ({ to, subject, text, html }) => {
+  console.log(`📤 Attempting to send email to ${to} with subject: "${subject}"`);
+
   // 1. Try primary SMTP if configured
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     try {
+      console.log(`📧 Using SMTP server: ${process.env.EMAIL_HOST}:${process.env.EMAIL_PORT}`);
+      
       const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST || 'smtp.gmail.com',
         port: parseInt(process.env.EMAIL_PORT || '587'),
@@ -31,16 +35,19 @@ const sendEmail = async ({ to, subject, text, html }) => {
       };
 
       const info = await transporter.sendMail(mailOptions);
-      console.log('✓ Email sent successfully via SMTP! Message ID:', info.messageId);
+      console.log(`✅ Email sent successfully via SMTP! Message ID: ${info.messageId}`);
       return { success: true, messageId: info.messageId };
     } catch (smtpError) {
-      console.error('⚠️ Primary SMTP failed:', smtpError.message);
+      console.error(`⚠️ Primary SMTP failed: ${smtpError.message}`);
       console.log('Falling back to Ethereal test account for email delivery...');
     }
+  } else {
+    console.log('⚠️ Email credentials not configured (EMAIL_USER/EMAIL_PASS missing). Using Ethereal fallback.');
   }
 
   // 2. Fallback to Ethereal test account if SMTP fails or is unconfigured
   try {
+    console.log('📧 Creating Ethereal test account for email delivery...');
     const testAccount = await nodemailer.createTestAccount();
     const fallbackTransporter = nodemailer.createTransport({
       host: 'smtp.ethereal.email',
@@ -62,11 +69,11 @@ const sendEmail = async ({ to, subject, text, html }) => {
 
     const info = await fallbackTransporter.sendMail(mailOptions);
     const previewUrl = nodemailer.getTestMessageUrl(info);
-    console.log('✓ Email sent via Ethereal fallback! Message ID:', info.messageId);
-    console.log('📧 Inspection Preview URL:', previewUrl);
+    console.log(`✅ Email sent via Ethereal fallback! Message ID: ${info.messageId}`);
+    console.log(`📧 Preview URL: ${previewUrl}`);
     return { success: true, messageId: info.messageId, previewUrl };
   } catch (fallbackError) {
-    console.error('❌ Error sending email via fallback:', fallbackError.message);
+    console.error(`❌ Error sending email via fallback: ${fallbackError.message}`);
     return { success: false, error: fallbackError.message };
   }
 };
