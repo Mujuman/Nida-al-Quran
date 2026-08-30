@@ -295,8 +295,14 @@
   .stat-value { font-size: 1.5rem; }
   .admin-search { width: 100%; margin-bottom: 0.75rem; }
   .table-card { overflow-x: auto; margin-right: -0.1rem; margin-left: -0.1rem; -webkit-overflow-scrolling: touch; }
-  .table-card table { min-width: 520px; }
-  .table-card th, .table-card td { padding: 0.7rem; font-size: 0.78rem; }
+  .table-card table { min-width: 100%; }
+  .table-card th, .table-card td { padding: 0.7rem 0.5rem; font-size: 0.78rem; }
+  .table-card th:nth-child(5),
+  .table-card td:nth-child(5) { display: none; }
+  .table-card th:nth-child(4),
+  .table-card td:nth-child(4) { min-width: 80px; }
+  .table-actions { display: flex; gap: 0.35rem; }
+  .mini-btn { padding: 0.4rem; }
   .modal-backdrop { align-items: flex-start; padding: 0.5rem; }
   .modal-card, .attendance-modal, .student-details-modal, .message-details-modal { width: 100%; max-height: calc(100dvh - 1rem); border-radius: 3px; }
   .modal-header h3 { max-width: calc(100vw - 7rem); overflow-wrap: anywhere; font-size: 1.45rem; }

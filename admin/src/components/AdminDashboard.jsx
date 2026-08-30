@@ -915,6 +915,7 @@ function AdminDashboard() {
                       <th>Username</th>
                       <th>Role</th>
                       <th>Assigned Courses</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
