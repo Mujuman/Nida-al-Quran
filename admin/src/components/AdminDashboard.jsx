@@ -1114,11 +1114,12 @@ function AdminDashboard() {
                       <span>Teaching Active</span>
                       <strong>{selectedUser.isTeachingActive ? '✓ Active' : '✗ Inactive'}</strong>
                     </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Message & Notes */}
-              {selectedUser.message && (
+              {isMainAdmin && selectedUser.message && (
                 <div className="detail-section">
                   <h4 className="section-title">Student Message</h4>
                   <div className="message-box">
@@ -1440,7 +1441,7 @@ function AdminDashboard() {
 
       {showMarkAttendanceModal && (
         <div className="modal-backdrop" onClick={() => setShowMarkAttendanceModal(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-card attendance-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
                 <p className="eyebrow">Attendance</p>

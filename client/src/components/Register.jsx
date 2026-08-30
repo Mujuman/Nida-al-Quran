@@ -69,8 +69,10 @@ function Register() {
 
       const response = await apiService.registerUser(registrationData);
 
-      if (response.token) {
-        apiService.saveToken(response.token);
+      if (response.success || response.user || response.token) {
+        if (response.token) {
+          apiService.saveToken(response.token);
+        }
         setIsSubmitted(true);
 
         setTimeout(() => {

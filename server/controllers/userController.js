@@ -49,13 +49,9 @@ exports.registerUser = async (req, res) => {
     await user.save();
     await sendRegistrationNotification(user);
 
-    // Generate token
-    const payload = { user: { id: user.id } };
-    const jwtSecret = process.env.JWT_SECRET || 'change-this-secret-in-production';
-    const token = jwt.sign(payload, jwtSecret, { expiresIn: '7d' });
-
     res.json({ 
-      token,
+      success: true,
+      msg: 'Registration submitted successfully. Your account is pending approval by the main administrator before you can log in.',
       user: {
         id: user.id,
         email: user.email,
@@ -87,6 +83,14 @@ exports.loginUser = async (req, res) => {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
+    // Check if user is approved by main admin
+    if (user.registrationStatus !== 'approved') {
+      if (user.registrationStatus === 'rejected') {
+        return res.status(403).json({ msg: 'Your registration request has been rejected by the administrator.' });
+      }
+      return res.status(403).json({ msg: 'Your account is pending approval by the main administrator. You cannot log in until approved.' });
+    }
+
     const payload = { user: { id: user.id } };
     const jwtSecret = process.env.JWT_SECRET || 'change-this-secret-in-production';
     const token = jwt.sign(payload, jwtSecret, { expiresIn: '7d' });
@@ -114,6 +118,9 @@ exports.getMyProfile = async (req, res) => {
       .populate('assignedTeacher', 'fullName email phone username assignedCourses role');
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
+    }
+    if (user.registrationStatus !== 'approved') {
+      return res.status(403).json({ msg: 'Your account is not approved by main admin yet.' });
     }
     res.json(user);
   } catch (err) {
