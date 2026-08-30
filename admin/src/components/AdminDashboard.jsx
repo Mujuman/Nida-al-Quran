@@ -1273,9 +1273,15 @@ function AdminDashboard() {
                   New password
                   <input type="password" value={editSubAdminForm.password} onChange={(e) => setEditSubAdminForm({ ...editSubAdminForm, password: e.target.value })} placeholder="Leave blank to keep current password" />
                 </label>
-                <label className="span-2" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
-                  <input type="checkbox" checked={editSubAdminForm.isActive} onChange={(e) => setEditSubAdminForm({ ...editSubAdminForm, isActive: e.target.checked })} />
-                  <span>Active account</span>
+                <label className="span-2 toggle-label">
+                  <input 
+                    type="checkbox" 
+                    checked={editSubAdminForm.isActive} 
+                    onChange={(e) => setEditSubAdminForm({ ...editSubAdminForm, isActive: e.target.checked })}
+                    className="toggle-input"
+                  />
+                  <span className="toggle-switch"></span>
+                  <span className="toggle-text">Active account</span>
                 </label>
               </div>
 
