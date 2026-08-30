@@ -61,18 +61,19 @@ exports.getAllUsers = async (req, res) => {
   try {
     let users;
     if (req.admin.role === 'main_admin') {
-      users = await User.find()
+      // ONLY return email-verified students (isVerified: true)
+      users = await User.find({ isVerified: true })
         .select('-password')
         .populate('assignedTeacher', 'fullName email username');
     } else {
-      // Sub-admin: only assigned students who have active teaching status
+      // Sub-admin: only assigned students who are email-verified and active
       const adminDoc = await Admin.findById(req.admin.id).populate({
         path: 'assignedStudents',
         select: '-password',
         populate: { path: 'assignedTeacher', select: 'fullName email username' },
       });
       users = adminDoc 
-        ? adminDoc.assignedStudents.filter(s => s.isTeachingActive !== false)
+        ? adminDoc.assignedStudents.filter(s => s.isVerified && s.isTeachingActive !== false)
         : [];
     }
     res.json(users);
@@ -163,9 +164,9 @@ exports.getDashboardStats = async (req, res) => {
     const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
 
     if (req.admin.role === 'main_admin') {
-      const totalUsers = await User.countDocuments();
-      const pendingRegistrations = await User.countDocuments({ registrationStatus: 'pending' });
-      const approvedRegistrations = await User.countDocuments({ registrationStatus: 'approved' });
+      const totalUsers = await User.countDocuments({ isVerified: true });
+      const pendingRegistrations = await User.countDocuments({ isVerified: true, registrationStatus: 'pending' });
+      const approvedRegistrations = await User.countDocuments({ isVerified: true, registrationStatus: 'approved' });
       const totalContacts = await Contact.countDocuments();
       const newContacts = await Contact.countDocuments({ status: 'new' });
       const monthlyAttendance = await Attendance.countDocuments({
@@ -183,21 +184,23 @@ exports.getDashboardStats = async (req, res) => {
         totalSubAdmins,
       });
     } else {
-      // Sub-admin stats: only their assigned students
-      const adminDoc = await Admin.findById(req.admin.id);
-      const assignedIds = adminDoc ? adminDoc.assignedStudents : [];
+      // Sub-admin stats: only their assigned students who are email verified
+      const adminDoc = await Admin.findById(req.admin.id).populate('assignedStudents');
+      const verifiedAssignedIds = adminDoc
+        ? adminDoc.assignedStudents.filter(s => s && s.isVerified).map(s => s._id)
+        : [];
 
-      const totalUsers = assignedIds.length;
+      const totalUsers = verifiedAssignedIds.length;
       const pendingRegistrations = await User.countDocuments({
-        _id: { $in: assignedIds },
+        _id: { $in: verifiedAssignedIds },
         registrationStatus: 'pending',
       });
       const approvedRegistrations = await User.countDocuments({
-        _id: { $in: assignedIds },
+        _id: { $in: verifiedAssignedIds },
         registrationStatus: 'approved',
       });
       const monthlyAttendance = await Attendance.countDocuments({
-        student: { $in: assignedIds },
+        student: { $in: verifiedAssignedIds },
         date: { $gte: startOfMonth, $lte: endOfMonth },
       });
 

@@ -234,9 +234,10 @@ exports.verifyEmail = async (req, res) => {
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const normalizedEmail = email ? email.toLowerCase().trim() : '';
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
+      return res.status(400).json({ msg: 'Invalid email address or password' });
     }
 
     if (!user.password) {
@@ -245,15 +246,24 @@ exports.loginUser = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
+      return res.status(400).json({ msg: 'Invalid email address or password' });
     }
 
-    // Check if user is approved by main admin
+    // MANDATORY CHECK 1: Must verify email via 6-digit OTP first!
+    if (!user.isVerified) {
+      return res.status(403).json({
+        msg: 'Please verify your email address first using the 6-digit OTP code sent to your email before logging in.',
+        requiresOtp: true,
+        email: user.email,
+      });
+    }
+
+    // MANDATORY CHECK 2: Must be approved by main admin!
     if (user.registrationStatus !== 'approved') {
       if (user.registrationStatus === 'rejected') {
         return res.status(403).json({ msg: 'Your registration request has been rejected by the administrator.' });
       }
-      return res.status(403).json({ msg: 'Your account is pending approval by the main administrator. You cannot log in until approved.' });
+      return res.status(403).json({ msg: 'Your email address is verified, but your account is pending approval by the main administrator. You cannot log in until approved.' });
     }
 
     const payload = { user: { id: user.id } };
@@ -267,6 +277,7 @@ exports.loginUser = async (req, res) => {
         email: user.email,
         fullName: user.fullName,
         registrationStatus: user.registrationStatus,
+        isVerified: user.isVerified,
       }
     });
   } catch (err) {
