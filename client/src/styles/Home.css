@@ -135,11 +135,14 @@
   letter-spacing: 0.04em;
   line-height: 1.35;
 }
-.hero-proof > span {
+.proof-text {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
   min-width: 0;
+}
+.proof-text span {
+  display: block;
 }
 .hero-proof strong {
   display: block;
@@ -229,23 +232,28 @@
     border-color: rgba(232, 213, 168, 0.55);
     gap: 0.55rem;
     display: flex;
-    flex-wrap: wrap;
     align-items: flex-start;
-    max-width: calc(100vw - 2rem);
+    width: fit-content;
+    max-width: calc(100% - 2rem);
     box-sizing: border-box;
   }
   .hero-proof,
-  .hero-proof > span,
+  .proof-text,
+  .proof-text span,
   .hero-proof strong {
     color: #ffffff !important;
   }
   .hero-proof strong {
     color: #f0d79d !important;
   }
-  .hero-proof > span {
-    font-size: 0.75rem;
-    flex: 1 1 auto;
+  .proof-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
     min-width: 0;
+  }
+  .proof-text span {
+    font-size: 0.72rem;
     word-break: break-word;
   }
   .proof-mark {

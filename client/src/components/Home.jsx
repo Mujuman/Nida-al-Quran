@@ -65,7 +65,10 @@ function Home() {
             </div>
             <div className="hero-proof">
               <div className="proof-mark"><CheckCircle2 size={18} /></div>
-              <span>{t('home.qualityEducation')}<strong>{t('home.expertsTeach')}</strong></span>
+              <div className="proof-text">
+                <span>{t('home.qualityEducation')}</span>
+                <strong>{t('home.expertsTeach')}</strong>
+              </div>
             </div>
           </div>
 
