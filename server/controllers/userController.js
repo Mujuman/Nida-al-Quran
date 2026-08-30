@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { sendRegistrationNotification, sendVerificationEmail } = require('../utils/adminNotifications');
 
-// Register user with full details (Do NOT save to DB until email is verified)
+// Register user with full details (Saves user with isVerified: false until verified)
 exports.registerUser = async (req, res) => {
   const {
     fullName, email, password, phone, age, gender, course, level, schedule,
@@ -15,10 +15,10 @@ exports.registerUser = async (req, res) => {
   } = req.body;
   
   try {
-    // Check if user already exists in database
-    let existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ msg: 'A student account already exists with this email address' });
+    // Check if user already exists
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ msg: 'User already exists with this email address' });
     }
 
     if (!password || password.length < 6) {
@@ -29,8 +29,12 @@ exports.registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create 24-hour verification token payload
-    const payload = {
+    // Generate email verification token (24 hours expiry)
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    // Create new user in DB
+    user = new User({
       fullName,
       email,
       password: hashedPassword,
@@ -44,27 +48,28 @@ exports.registerUser = async (req, res) => {
       guardianPhone: guardianPhone || req.body.guardian_phone,
       learningMedia,
       message,
-      type: 'email_verification',
-    };
+      isVerified: false,
+      verificationToken,
+      verificationTokenExpires,
+      registrationStatus: 'pending',
+    });
 
-    const verificationToken = jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'nida_email_verify_secret',
-      { expiresIn: '24h' }
-    );
+    await user.save();
 
-    // Send verification link (DO NOT save user to DB until verified!)
+    // Send verification email to student
     const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, '');
     const verifyUrl = `${clientUrl}/verify-email?token=${verificationToken}`;
-    await sendVerificationEmail({ fullName, email }, verifyUrl);
+    await sendVerificationEmail(user, verifyUrl);
 
     res.json({ 
       success: true,
       requiresVerification: true,
-      msg: 'Registration submitted! A verification link has been sent to your email address. Please check your Gmail/inbox and click the link to verify your email and complete your registration.',
+      msg: 'Registration submitted successfully! A verification link has been sent to your email address. Please check your Gmail/inbox and click the link to verify your email.',
       user: {
-        email,
-        fullName,
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        registrationStatus: user.registrationStatus,
         isVerified: false,
       }
     });
@@ -74,7 +79,7 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-// Verify user email via token and ONLY THEN add student to database
+// Verify user email via token
 exports.verifyEmail = async (req, res) => {
   const { token } = req.query;
   if (!token) {
@@ -82,68 +87,38 @@ exports.verifyEmail = async (req, res) => {
   }
 
   try {
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET || 'nida_email_verify_secret');
-    } catch (jwtErr) {
-      // Fallback: check if token matches legacy User in DB
-      const legacyUser = await User.findOne({
-        verificationToken: token,
-        verificationTokenExpires: { $gt: Date.now() },
-      });
-      if (legacyUser) {
-        legacyUser.isVerified = true;
-        legacyUser.verificationToken = undefined;
-        legacyUser.verificationTokenExpires = undefined;
-        await legacyUser.save();
-        sendRegistrationNotification(legacyUser).catch((e) => console.error('Admin notify error:', e));
-        return res.json({
-          success: true,
-          msg: 'Your email address has been verified successfully! Your application has been submitted to the main administration for approval.',
-          email: legacyUser.email,
-          fullName: legacyUser.fullName,
-        });
-      }
-      return res.status(400).json({ msg: 'Invalid or expired verification link. Please register again.' });
-    }
+    let user = await User.findOne({
+      verificationToken: token,
+      verificationTokenExpires: { $gt: Date.now() },
+    });
 
-    if (!decoded || decoded.type !== 'email_verification') {
-      return res.status(400).json({ msg: 'Invalid verification token payload.' });
-    }
-
-    // Check if user already exists in DB
-    let user = await User.findOne({ email: decoded.email });
     if (!user) {
-      // ONLY NOW insert student user into MongoDB database!
-      user = new User({
-        fullName: decoded.fullName,
-        email: decoded.email,
-        password: decoded.password, // already hashed
-        phone: decoded.phone,
-        age: decoded.age,
-        gender: decoded.gender,
-        course: decoded.course,
-        level: decoded.level,
-        schedule: decoded.schedule,
-        guardian: decoded.guardian,
-        guardianPhone: decoded.guardianPhone,
-        learningMedia: decoded.learningMedia,
-        message: decoded.message,
-        isVerified: true,
-        registrationStatus: 'pending', // Pending Main Admin Approval!
-      });
-      await user.save();
-    } else {
-      user.isVerified = true;
-      await user.save();
+      // Try verifying JWT format token if any
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'nida_email_verify_secret');
+        if (decoded?.email) {
+          user = await User.findOne({ email: decoded.email });
+        }
+      } catch (e) {
+        // Ignored
+      }
     }
 
-    // Send notification to main admin now that student is verified & added to DB
+    if (!user) {
+      return res.status(400).json({ msg: 'Invalid or expired verification link. Please check your link or register again.' });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpires = undefined;
+    await user.save();
+
+    // Send notification to main admins now that student's email is verified
     sendRegistrationNotification(user).catch((err) => console.error('Admin notification error:', err));
 
     res.json({
       success: true,
-      msg: 'Your email address has been verified successfully! Your profile is now saved and submitted to the main administration for approval.',
+      msg: 'Your email address has been verified successfully! Your application has now been submitted to the main administration for approval.',
       email: user.email,
       fullName: user.fullName,
     });
