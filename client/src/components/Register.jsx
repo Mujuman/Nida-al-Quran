@@ -295,7 +295,7 @@ function Register() {
                     </p>
                     <div className="support-buttons-grid">
                       <a href="tel:+251942431160" className="support-action-btn phone-link">
-                        <Phone size={18} /> +251 942 431 160
+                        <Phone size={18} /> +251942431160
                       </a>
                       <a href="mailto:teyuteyba@gmail.com" className="support-action-btn email-link">
                         <Mail size={18} /> teyuteyba@gmail.com
