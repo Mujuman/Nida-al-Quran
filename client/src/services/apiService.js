@@ -1,55 +1,104 @@
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
 
+console.log(`🌐 API URL configured as: ${API_URL}`);
+
 export const apiService = {
   registerUser: async (userData) => {
-    const response = await fetch(`${API_URL}/api/users/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
-    return response.json();
+    try {
+      const response = await fetch(`${API_URL}/api/users/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Register error:', error.message);
+      throw error;
+    }
   },
 
   verifyEmail: async (token) => {
-    const response = await fetch(`${API_URL}/api/users/verify-email?token=${encodeURIComponent(token)}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    return response.json();
+    try {
+      const response = await fetch(`${API_URL}/api/users/verify-email?token=${encodeURIComponent(token)}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Verify email error:', error.message);
+      throw error;
+    }
   },
 
   verifyOtp: async (email, otp) => {
-    const response = await fetch(`${API_URL}/api/users/verify-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, otp }),
-    });
-    return response.json();
+    try {
+      const response = await fetch(`${API_URL}/api/users/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Verify OTP error:', error.message);
+      throw error;
+    }
   },
 
   resendOtp: async (email) => {
-    const response = await fetch(`${API_URL}/api/users/resend-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
-    return response.json();
+    try {
+      console.log(`📧 Sending resend OTP request for: ${email}`);
+      const response = await fetch(`${API_URL}/api/users/resend-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (!response.ok) {
+        console.error(`❌ Resend OTP failed with status ${response.status}: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.msg || `HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Resend OTP successful');
+      return data;
+    } catch (error) {
+      console.error('❌ Resend OTP error:', error.message);
+      throw error;
+    }
   },
 
   loginUser: async (credentials) => {
-    const response = await fetch(`${API_URL}/api/users/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials),
-    });
-    const data = await response.json();
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-      if (data.user) {
-        localStorage.setItem('studentUser', JSON.stringify(data.user));
+    try {
+      const response = await fetch(`${API_URL}/api/users/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      const data = await response.json();
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        if (data.user) {
+          localStorage.setItem('studentUser', JSON.stringify(data.user));
+        }
+      }
+      return data;
+    } catch (error) {
+      console.error('❌ Login error:', error.message);
+      throw error;
     }
-    return data;
   },
 
   studentLogin: async (credentials) => {
@@ -57,100 +106,173 @@ export const apiService = {
   },
 
   getMyProfile: async () => {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/api/users/me`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.json();
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/users/me`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Get profile error:', error.message);
+      throw error;
+    }
   },
 
   updateMyProfile: async (profileData) => {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/api/users/me`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(profileData),
-    });
-    return response.json();
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/users/me`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(profileData),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Update profile error:', error.message);
+      throw error;
+    }
   },
 
   getMyAttendance: async () => {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/api/users/me/attendance`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.json();
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/users/me/attendance`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Get attendance error:', error.message);
+      throw error;
+    }
   },
 
   getMyCourses: async () => {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/api/users/me/courses`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.json();
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/users/me/courses`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Get courses error:', error.message);
+      throw error;
+    }
   },
 
   getMyTeacher: async () => {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/api/users/me/teacher`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.json();
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/users/me/teacher`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Get teacher error:', error.message);
+      throw error;
+    }
   },
 
   getUsers: async () => {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/api/users`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.json();
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/users`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Get users error:', error.message);
+      throw error;
+    }
   },
 
   getStatistics: async () => {
-    const response = await fetch(`${API_URL}/api/users/stats`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    return response.json();
+    try {
+      const response = await fetch(`${API_URL}/api/users/stats`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Get statistics error:', error.message);
+      throw error;
+    }
   },
 
   getCourses: async () => {
-    const response = await fetch(`${API_URL}/api/courses`, {
-      headers: { 'Content-Type': 'application/json' },
-    });
-    return response.json();
+    try {
+      const response = await fetch(`${API_URL}/api/courses`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Get courses error:', error.message);
+      throw error;
+    }
   },
 
   submitContact: async (contactData) => {
-    const response = await fetch(`${API_URL}/api/contacts`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(contactData),
-    });
-    return response.json();
+    try {
+      const response = await fetch(`${API_URL}/api/contacts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactData),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error('❌ Submit contact error:', error.message);
+      throw error;
+    }
   },
 
   saveToken: (token) => {
