@@ -49,8 +49,12 @@ exports.registerUser = async (req, res) => {
         await user.save();
 
         console.log(`📧 Sending OTP verification email to ${normalizedEmail}...`);
-        await sendVerificationOtpEmail(user, otp);
-        console.log(`✅ OTP email sent to ${normalizedEmail}`);
+        const emailResult = await sendVerificationOtpEmail(user, otp);
+        if (emailResult?.success) {
+          console.log(`✅ OTP email sent successfully to ${normalizedEmail}`);
+        } else {
+          console.error(`❌ Error sending OTP email: ${emailResult?.error || 'Unknown error'}`);
+        }
 
         return res.json({
           success: true,
@@ -100,12 +104,12 @@ exports.registerUser = async (req, res) => {
 
     // Send 6-digit OTP email to student
     console.log(`📧 Sending OTP verification email to ${normalizedEmail}...`);
-    try {
-      await sendVerificationOtpEmail(user, otp);
+    const emailResult = await sendVerificationOtpEmail(user, otp);
+    if (emailResult?.success) {
       console.log(`✅ OTP email sent successfully to ${normalizedEmail}`);
-    } catch (emailErr) {
-      console.error(`❌ Error sending OTP email: ${emailErr.message}`);
-      // Don't fail registration if email fails
+    } else {
+      console.error(`❌ Error sending OTP email: ${emailResult?.error || 'Unknown error'}`);
+      // Don't fail registration if email fails - user can resend
     }
 
     res.json({ 
@@ -165,7 +169,13 @@ exports.verifyOtp = async (req, res) => {
 
     // Send notification to main admins
     console.log(`📧 Sending registration notification to main admins...`);
-    sendRegistrationNotification(user).catch((err) => console.error('Admin notification error:', err));
+    try {
+      await sendRegistrationNotification(user);
+      console.log(`✅ Admin notification sent successfully`);
+    } catch (err) {
+      console.error(`❌ Error sending admin notification: ${err.message}`);
+      // Don't fail if admin notification fails
+    }
 
     res.json({
       success: true,
@@ -208,12 +218,12 @@ exports.resendOtp = async (req, res) => {
     console.log(`🔐 New OTP generated: ${otp} (expires in 15 mins)`);
 
     console.log(`📧 Resending OTP to ${normalizedEmail}...`);
-    try {
-      await sendVerificationOtpEmail(user, otp);
+    const emailResult = await sendVerificationOtpEmail(user, otp);
+    if (emailResult?.success) {
       console.log(`✅ OTP resent successfully to ${normalizedEmail}`);
-    } catch (emailErr) {
-      console.error(`❌ Error resending OTP: ${emailErr.message}`);
-      // Don't fail if email fails
+    } else {
+      console.error(`❌ Error resending OTP: ${emailResult?.error || 'Unknown error'}`);
+      // Don't fail if email fails - user can try again
     }
 
     res.json({
