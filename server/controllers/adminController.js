@@ -118,7 +118,7 @@ exports.getUserDetails = async (req, res) => {
 // ============================================================
 exports.updateUserStatus = async (req, res) => {
   try {
-    const { registrationStatus, isVerified, isTeachingActive } = req.body;
+    const { registrationStatus, isVerified, isTeachingActive, email, newPassword, fullName, phone, course, level } = req.body;
 
     let user = await User.findById(req.params.userId);
     if (!user) {
@@ -138,6 +138,21 @@ exports.updateUserStatus = async (req, res) => {
     if (registrationStatus) user.registrationStatus = registrationStatus;
     if (isVerified !== undefined) user.isVerified = isVerified;
     if (isTeachingActive !== undefined) user.isTeachingActive = isTeachingActive;
+    if (fullName) user.fullName = fullName;
+    if (phone) user.phone = phone;
+    if (course) user.course = course;
+    if (level) user.level = level;
+
+    // Main Admin can update registered student email and password
+    if (req.admin.role === 'main_admin') {
+      if (email && email.toLowerCase().trim() !== user.email) {
+        user.email = email.toLowerCase().trim();
+      }
+      if (newPassword && newPassword.trim().length >= 6) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword.trim(), salt);
+      }
+    }
 
     await user.save();
 

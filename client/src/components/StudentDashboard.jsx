@@ -84,7 +84,6 @@ function StudentDashboard({ navigateTo }) {
           guardianPhone: profData.guardianPhone || '',
           learningMedia: profData.learningMedia || 'google-meet',
           schedule: profData.schedule || 'morning',
-          newPassword: '',
         });
       }
 
@@ -134,7 +133,6 @@ function StudentDashboard({ navigateTo }) {
           type: 'success',
           text: t('student.profile.updateSuccess', 'Profile updated successfully!'),
         });
-        setProfileForm(prev => ({ ...prev, newPassword: '' }));
       } else {
         setProfileMessage({ type: 'error', text: res.msg || 'Failed to update profile' });
       }
@@ -733,14 +731,19 @@ function StudentDashboard({ navigateTo }) {
                     />
                   </div>
 
-                  <div className="form-group full-width">
-                    <label>{t('student.profile.newPassword', 'New Password (leave blank to keep current)')}</label>
-                    <input
-                      type="password"
-                      placeholder="••••••••"
-                      value={profileForm.newPassword}
-                      onChange={(e) => setProfileForm({ ...profileForm, newPassword: e.target.value })}
-                    />
+                  <div className="form-group full-width" style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', marginTop: '0.5rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#17473c', fontWeight: 700, marginBottom: '0.5rem' }}>
+                      <Shield size={18} /> Account Credentials & Security
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }}>
+                      <div>
+                        <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Registered Email Address:</span>
+                        <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '1rem', marginTop: '2px' }}>{profile?.email || 'N/A'}</div>
+                      </div>
+                      <p style={{ fontSize: '0.85rem', color: '#475569', margin: 0, lineHeight: 1.5, background: '#ffffff', padding: '0.85rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                        🔒 <strong>Security Note:</strong> Email addresses and login passwords for registered students are managed exclusively by the <strong>Main Administration</strong>. If you need to reset your password or change your email address, please contact the main administrator.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
