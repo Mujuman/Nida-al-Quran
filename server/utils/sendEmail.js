@@ -18,7 +18,10 @@ const sendEmail = async ({ to, subject, text, html }) => {
         },
         tls: {
           rejectUnauthorized: false
-        }
+        },
+        connectionTimeout: 10000,
+        greetingTimeout: 5000,
+        socketTimeout: 10000,
       });
 
       // Ensure sender address uses authenticated Gmail user to prevent Gmail 535/SPF block
