@@ -746,28 +746,46 @@
   padding: 1rem 1.5rem;
   font-size: 1.05rem;
   font-weight: 700;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-top: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  background: #17473c;
-  color: #ffffff;
-  border: none;
+  background: linear-gradient(135deg, #17473c 0%, #0d2822 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid #c69a4b !important;
   cursor: pointer;
   width: 100%;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(23, 71, 60, 0.25);
+}
+
+.btn-otp-submit *,
+.btn-otp-submit span,
+.btn-otp-submit svg {
+  color: #ffffff !important;
 }
 
 .btn-otp-submit:hover:not(:disabled) {
-  background: #0d2822;
-  box-shadow: 0 8px 20px rgba(23, 71, 60, 0.3);
+  background: linear-gradient(135deg, #1e5a4d 0%, #12372f 100%) !important;
+  box-shadow: 0 8px 22px rgba(23, 71, 60, 0.4);
+  transform: translateY(-2px);
 }
 
 .btn-otp-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.btn-otp-submit:disabled *,
+.btn-otp-submit:disabled span,
+.btn-otp-submit:disabled svg {
+  color: #475569 !important;
 }
 
 .otp-alert {

@@ -261,7 +261,7 @@ function Register() {
 
                     <button
                       type="submit"
-                      className="btn btn-primary btn-block btn-otp-submit"
+                      className="btn btn-block btn-otp-submit"
                       disabled={isVerifyingOtp || otpInput.length < 6}
                     >
                       {isVerifyingOtp ? (
