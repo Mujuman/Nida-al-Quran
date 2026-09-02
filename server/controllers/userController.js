@@ -356,7 +356,7 @@ exports.getMyProfile = async (req, res) => {
   }
 };
 
-// Update current logged-in user profile
+// Update current logged-in user profile (Email and Password updated by Main Admin only)
 exports.updateMyProfile = async (req, res) => {
   try {
     let user = await User.findById(req.user.id);
@@ -365,7 +365,7 @@ exports.updateMyProfile = async (req, res) => {
     }
 
     const {
-      fullName, phone, age, gender, guardian, guardianPhone, learningMedia, schedule, message, newPassword
+      fullName, phone, age, gender, guardian, guardianPhone, learningMedia, schedule, message
     } = req.body;
 
     if (fullName) user.fullName = fullName;
@@ -378,10 +378,7 @@ exports.updateMyProfile = async (req, res) => {
     if (schedule) user.schedule = schedule;
     if (message) user.message = message;
 
-    if (newPassword && newPassword.trim().length >= 6) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(newPassword, salt);
-    }
+    // Email and Password are intentionally locked for students and can only be updated by Main Admin.
 
     await user.save();
     
