@@ -35,21 +35,34 @@ function StudentLogin({ navigateTo }) {
       setLoading(true);
       const res = await apiService.studentLogin({ email, password });
       
-      if (res.token) {
+      if (res?.token) {
         if (navigateTo) {
           navigateTo('student-dashboard');
         } else {
           navigate('/student/dashboard');
         }
       } else {
-        if (res.requiresOtp || (res.msg && res.msg.toLowerCase().includes('otp'))) {
+        if (res?.requiresOtp || (res?.msg && res.msg.toLowerCase().includes('otp'))) {
           setShowOtpModal(true);
         }
-        setError(res.msg || 'Login failed. Please check your credentials.');
+        setError(res?.msg || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('Connection error. Please try again later.');
+      const serverMsg = err?.data?.msg || err?.message;
+      const isOtpRequired = err?.data?.requiresOtp || (serverMsg && serverMsg.toLowerCase().includes('otp'));
+
+      if (isOtpRequired) {
+        setShowOtpModal(true);
+      }
+
+      if (serverMsg && !serverMsg.startsWith('HTTP ') && !serverMsg.includes('Failed to fetch')) {
+        setError(serverMsg);
+      } else if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
+        setError('Connection error. Unable to connect to backend server. Please try again later.');
+      } else {
+        setError(serverMsg || 'Login failed. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }

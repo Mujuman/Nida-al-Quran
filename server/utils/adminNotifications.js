@@ -160,8 +160,8 @@ const sendVerificationEmail = async (student, verifyUrl) => {
 const sendApprovalNotification = async (student) => {
   if (!student?.email) return null;
   try {
-    const clientUrl = process.env.CLIENT_URL || 'https://nida-al-quran.vercel.app/student/login';
-    const loginUrl = `${clientUrl}/student/login`;
+    const baseUrl = process.env.CLIENT_URL || 'https://nida-al-quran.vercel.app';
+    const loginUrl = baseUrl.endsWith('/student/login') ? baseUrl : `${baseUrl.replace(/\/+$/, '')}/student/login`;
     const subject = `Your Nida Al-Quran Account has been Approved! 🎉`;
     const text = [
       `As-salamu alaykum ${student.fullName},`,

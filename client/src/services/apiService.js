@@ -10,10 +10,13 @@ export const apiService = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
       });
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const err = new Error(data.msg || `HTTP ${response.status}: ${response.statusText}`);
+        err.data = data;
+        throw err;
       }
-      return response.json();
+      return data;
     } catch (error) {
       console.error('❌ Register error:', error.message);
       throw error;
@@ -26,10 +29,13 @@ export const apiService = {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const err = new Error(data.msg || `HTTP ${response.status}: ${response.statusText}`);
+        err.data = data;
+        throw err;
       }
-      return response.json();
+      return data;
     } catch (error) {
       console.error('❌ Verify email error:', error.message);
       throw error;
@@ -43,10 +49,13 @@ export const apiService = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
       });
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const err = new Error(data.msg || `HTTP ${response.status}: ${response.statusText}`);
+        err.data = data;
+        throw err;
       }
-      return response.json();
+      return data;
     } catch (error) {
       console.error('❌ Verify OTP error:', error.message);
       throw error;
@@ -62,13 +71,14 @@ export const apiService = {
         body: JSON.stringify({ email }),
       });
       
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
         console.error(`❌ Resend OTP failed with status ${response.status}: ${response.statusText}`);
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.msg || `HTTP ${response.status}: ${response.statusText}`);
+        const err = new Error(data.msg || `HTTP ${response.status}: ${response.statusText}`);
+        err.data = data;
+        throw err;
       }
       
-      const data = await response.json();
       console.log('✅ Resend OTP successful');
       return data;
     } catch (error) {
@@ -84,10 +94,12 @@ export const apiService = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       });
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const err = new Error(data.msg || `HTTP ${response.status}: ${response.statusText}`);
+        err.data = data;
+        throw err;
       }
-      const data = await response.json();
       if (data.token) {
         localStorage.setItem('token', data.token);
         if (data.user) {
