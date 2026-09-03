@@ -396,15 +396,23 @@ exports.updateMyProfile = async (req, res) => {
 // Get student's own attendance records
 exports.getMyAttendance = async (req, res) => {
   try {
-    const attendanceRecords = await Attendance.find({ student: req.user.id })
+    const mongoose = require('mongoose');
+    const studentId = req.user.id || req.user._id;
+
+    const attendanceRecords = await Attendance.find({
+      $or: [
+        { student: studentId },
+        { student: mongoose.Types.ObjectId.isValid(studentId) ? new mongoose.Types.ObjectId(studentId) : studentId }
+      ]
+    })
       .populate('recordedBy', 'fullName email')
       .sort({ date: -1 });
 
     const total = attendanceRecords.length;
-    const present = attendanceRecords.filter((a) => a.status === 'present').length;
-    const absent = attendanceRecords.filter((a) => a.status === 'absent').length;
-    const late = attendanceRecords.filter((a) => a.status === 'late').length;
-    const excused = attendanceRecords.filter((a) => a.status === 'excused').length;
+    const present = attendanceRecords.filter((a) => (a.status || '').toLowerCase() === 'present').length;
+    const absent = attendanceRecords.filter((a) => (a.status || '').toLowerCase() === 'absent').length;
+    const late = attendanceRecords.filter((a) => (a.status || '').toLowerCase() === 'late').length;
+    const excused = attendanceRecords.filter((a) => (a.status || '').toLowerCase() === 'excused').length;
     const percentage = total > 0 ? (((present + late + excused) / total) * 100).toFixed(1) : 0;
 
     res.json({
@@ -412,7 +420,7 @@ exports.getMyAttendance = async (req, res) => {
       stats: { total, present, absent, late, excused, percentage: parseFloat(percentage) }
     });
   } catch (err) {
-    console.error(err.message);
+    console.error('Error fetching student attendance:', err.message);
     res.status(500).json({ msg: 'Server error', error: err.message });
   }
 };

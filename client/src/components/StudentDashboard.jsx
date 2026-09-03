@@ -159,7 +159,7 @@ function StudentDashboard({ navigateTo }) {
 
   const filteredAttendance = (attendanceData?.attendance || []).filter(item => {
     if (attendanceFilter === 'all') return true;
-    return item.status === attendanceFilter;
+    return (item.status || '').toLowerCase() === attendanceFilter.toLowerCase();
   });
 
   return (
