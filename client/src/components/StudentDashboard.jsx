@@ -312,35 +312,97 @@ function StudentDashboard({ navigateTo }) {
                   <h3><Sparkles size={20} className="text-gold" /> Performance & Learning Progress</h3>
                 </div>
                 <div className="card-body">
-                  <div className="progress-item">
-                    <div className="progress-info">
-                      <span>Tajweed & Pronunciation</span>
-                      <strong className="text-gold">Excellent</strong>
-                    </div>
-                    <div className="progress-track"><div className="progress-fill" style={{ width: '88%' }}></div></div>
-                  </div>
+                  {(() => {
+                    const totalClasses = attendanceStats.total || 0;
+                    const pct = attendanceStats.percentage || 0;
+                    const isHifz = (profile?.course || '').toLowerCase().includes('hifz') || (profile?.course || '').toLowerCase().includes('memorization');
 
-                  <div className="progress-item">
-                    <div className="progress-info">
-                      <span>Memorization (Hifz) & Revision</span>
-                      <strong className="text-blue">Good Progress</strong>
-                    </div>
-                    <div className="progress-track"><div className="progress-fill blue" style={{ width: '75%' }}></div></div>
-                  </div>
+                    let tajweedText = 'Awaiting Evaluation';
+                    let tajweedPct = 0;
+                    let tajweedClass = 'text-muted';
 
-                  <div className="progress-item">
-                    <div className="progress-info">
-                      <span>Class Participation & Punctuality</span>
-                      <strong>{attendanceStats.percentage}%</strong>
-                    </div>
-                    <div className="progress-track"><div className="progress-fill green" style={{ width: `${Math.min(attendanceStats.percentage, 100)}%` }}></div></div>
-                  </div>
+                    let courseProgressTitle = isHifz ? 'Memorization (Hifz) & Revision' : 'Course Mastery & Revision';
+                    let courseProgressText = 'Awaiting Evaluation';
+                    let courseProgressPct = 0;
+
+                    if (totalClasses > 0) {
+                      if (pct >= 85) {
+                        tajweedText = 'Excellent';
+                        tajweedPct = Math.min(pct + 5, 100);
+                        tajweedClass = 'text-gold';
+                        courseProgressText = 'Strong Progress';
+                        courseProgressPct = pct;
+                      } else if (pct >= 60) {
+                        tajweedText = 'Good Progress';
+                        tajweedPct = pct;
+                        tajweedClass = 'text-blue';
+                        courseProgressText = 'Steady Progress';
+                        courseProgressPct = pct;
+                      } else {
+                        tajweedText = 'Needs Attention';
+                        tajweedPct = Math.max(pct, 25);
+                        tajweedClass = 'text-red';
+                        courseProgressText = 'Requires Practice';
+                        courseProgressPct = Math.max(pct, 20);
+                      }
+                    } else {
+                      const level = (profile?.level || 'intermediate').toLowerCase();
+                      if (level === 'advanced') {
+                        tajweedText = 'Advanced Level';
+                        tajweedPct = 85;
+                        tajweedClass = 'text-gold';
+                        courseProgressText = 'Advanced Track';
+                        courseProgressPct = 80;
+                      } else if (level === 'intermediate') {
+                        tajweedText = 'Intermediate Level';
+                        tajweedPct = 65;
+                        tajweedClass = 'text-blue';
+                        courseProgressText = 'Standard Track';
+                        courseProgressPct = 60;
+                      } else {
+                        tajweedText = 'Beginner Foundation';
+                        tajweedPct = 45;
+                        tajweedClass = 'text-green';
+                        courseProgressText = 'Introductory Track';
+                        courseProgressPct = 40;
+                      }
+                    }
+
+                    return (
+                      <>
+                        <div className="progress-item">
+                          <div className="progress-info">
+                            <span>Tajweed & Pronunciation</span>
+                            <strong className={tajweedClass}>{tajweedText}</strong>
+                          </div>
+                          <div className="progress-track"><div className="progress-fill" style={{ width: `${tajweedPct}%` }}></div></div>
+                        </div>
+
+                        <div className="progress-item">
+                          <div className="progress-info">
+                            <span>{courseProgressTitle}</span>
+                            <strong className="text-blue">{courseProgressText}</strong>
+                          </div>
+                          <div className="progress-track"><div className="progress-fill blue" style={{ width: `${courseProgressPct}%` }}></div></div>
+                        </div>
+
+                        <div className="progress-item">
+                          <div className="progress-info">
+                            <span>Class Participation & Punctuality</span>
+                            <strong>{totalClasses > 0 ? `${pct}%` : '0%'}</strong>
+                          </div>
+                          <div className="progress-track"><div className="progress-fill green" style={{ width: `${totalClasses > 0 ? Math.min(pct, 100) : 0}%` }}></div></div>
+                        </div>
+                      </>
+                    );
+                  })()}
 
                   <div className="performance-summary-box">
                     <h4>Current Academic Standing</h4>
                     <p>
                       Student is registered in <strong>{profile?.course || 'Quran Recitation'}</strong> ({profile?.level || 'Intermediate'}). 
                       Teaching session medium is set to <strong>{profile?.learningMedia || 'Google Meet'}</strong> with a <strong>{profile?.schedule || 'Morning'}</strong> schedule.
+                      {attendanceStats.total > 0 ? ` Total sessions recorded: ${attendanceStats.total} (${attendanceStats.present} Present, ${attendanceStats.absent} Absent, ${attendanceStats.late} Late).` : ' No attendance sessions logged yet.'}
                     </p>
                   </div>
                 </div>
