@@ -305,10 +305,8 @@ function AdminDashboard() {
       if (activeTab === 'attendance') {
         const attendanceResponse = await apiService.getAllAttendance();
         setAttendance(Array.isArray(attendanceResponse) ? attendanceResponse : []);
-        if (users.length === 0) {
-          const usersResponse = await apiService.getAllUsers();
-          setUsers(Array.isArray(usersResponse) ? usersResponse : []);
-        }
+        const usersResponse = isMainAdmin ? await apiService.getAllUsers() : await apiService.getMyStudents();
+        setUsers(Array.isArray(usersResponse) ? usersResponse : []);
         if (isMainAdmin) {
           const saResponse = await apiService.getSubAdmins();
           setSubAdmins(Array.isArray(saResponse) ? saResponse : []);
@@ -1515,7 +1513,15 @@ function AdminDashboard() {
                   Student
                   <select 
                     value={attendanceMarking.studentId}
-                    onChange={(e) => setAttendanceMarking({ ...attendanceMarking, studentId: e.target.value })}
+                    onChange={(e) => {
+                      const selId = e.target.value;
+                      const selectedStudentObj = users.find(u => String(u._id || u.id) === selId);
+                      setAttendanceMarking({ 
+                        ...attendanceMarking, 
+                        studentId: selId,
+                        course: selectedStudentObj?.course || attendanceMarking.course || ''
+                      });
+                    }}
                     required
                   >
                     <option value="">-- Select Student --</option>
@@ -1523,7 +1529,7 @@ function AdminDashboard() {
                       const userId = String(user._id || user.id);
                       return (
                         <option key={userId} value={userId}>
-                          {user.fullName}
+                          {user.fullName} {user.course ? `(${user.course})` : ''}
                         </option>
                       );
                     })}

@@ -19,11 +19,23 @@ export const apiService = {
   },
 
   getAllUsers: async () => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     const response = await fetch(`${API_URL}/api/admin/users`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
+  },
+
+  getMyStudents: async () => {
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/api/admin/my-students`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.msg || data.message || 'Failed to fetch assigned students');
+    }
+    return data;
   },
 
   getUserDetails: async (userId) => {

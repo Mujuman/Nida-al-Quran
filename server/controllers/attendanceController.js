@@ -26,23 +26,40 @@ exports.markAttendance = async (req, res) => {
       return res.status(400).json({ msg: 'Cannot mark attendance. Teaching status is disabled for this student.' });
     }
 
+    const targetCourse = (course && course.trim()) || student.course || 'General';
+
     // Sub-admin restriction: only mark attendance for their own students
     if (req.admin.role === 'sub_admin') {
       const adminDoc = await Admin.findById(req.admin.id);
-      const isAssigned = adminDoc.assignedStudents
+      if (!adminDoc) {
+        return res.status(403).json({ msg: 'Access denied. Admin account not found.' });
+      }
+
+      const isAssigned = (adminDoc.assignedStudents || [])
         .map((id) => id.toString())
         .includes(studentId);
       if (!isAssigned) {
         return res.status(403).json({ msg: 'Access denied. Not your assigned student.' });
       }
-      if (!adminDoc.assignedCourses.includes(course)) {
-        return res.status(403).json({ msg: 'Access denied. This course is not assigned to you.' });
+
+      if (adminDoc.assignedCourses && adminDoc.assignedCourses.length > 0) {
+        const normalize = (str) => (str || '').toLowerCase().replace(/[-_]/g, ' ').trim();
+        const normTarget = normalize(targetCourse);
+        const normStudentCourse = normalize(student.course);
+        const hasCourseMatch = adminDoc.assignedCourses.some(
+          (c) => normalize(c) === normTarget || normalize(c) === normStudentCourse
+        );
+        const isStudentCourseMatch = normTarget === normStudentCourse;
+
+        if (!hasCourseMatch && !isStudentCourseMatch) {
+          return res.status(403).json({ msg: 'Access denied. This course is not assigned to you.' });
+        }
       }
     }
 
     let attendance = await Attendance.findOne({
       student: studentId,
-      course,
+      course: targetCourse,
       date: new Date(date),
     });
 
@@ -61,7 +78,7 @@ exports.markAttendance = async (req, res) => {
     } else {
       attendance = new Attendance({
         student: studentId,
-        course,
+        course: targetCourse,
         date: new Date(date),
         status,
         notes,
