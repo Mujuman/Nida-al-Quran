@@ -860,38 +860,71 @@ function AdminDashboard() {
                 )}
               </div>
               {searchBar(t('searchAttendance'))}
-              <div className="table-card attendance-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Student</th>
-                      <th>Course</th>
-                      <th>Date</th>
-                      <th>Time</th>
-                      <th>Place</th>
-                      <th>Recorded By</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredAttendance.map((item) => (
-                      <tr key={item._id || item.id}>
-                        <td>{item.student?.fullName || item.studentName || 'Unknown'}</td>
-                        <td>{item.course || '-'}</td>
-                        <td>{item.date ? new Date(item.date).toLocaleDateString() : '-'}</td>
-                        <td>{item.startTime || item.endTime ? `${item.startTime || '-'} - ${item.endTime || '-'}` : '-'}</td>
-                        <td>{item.learningPlace || '-'}</td>
-                        <td>{item.recordedBy?.fullName || item.recordedBy || 'System'}</td>
-                        <td>
-                          <span className={`status-badge ${item.status || 'present'}`}>
-                            {item.status || 'Present'}
-                          </span>
-                        </td>
+              
+              {isLoading ? (
+                <div className="table-loading-card" style={{ padding: '3.5rem 1.5rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '16px', border: '1px solid rgba(15, 31, 71, 0.12)' }}>
+                  <div className="spinner-ring" style={{ width: '36px', height: '36px', border: '3px solid rgba(23, 71, 60, 0.15)', borderTopColor: '#17473c', borderRadius: '50%', margin: '0 auto 1rem', animation: 'spin 0.8s linear infinite' }}></div>
+                  <p style={{ margin: 0, color: '#475569', fontWeight: 500, fontSize: '0.95rem' }}>Loading attendance records...</p>
+                </div>
+              ) : filteredAttendance.length === 0 ? (
+                <div className="empty-table-card" style={{ padding: '3.5rem 1.5rem', textAlign: 'center', background: '#ffffff', borderRadius: '16px', border: '1px dashed #cbd5e1', marginTop: '0.5rem' }}>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>📅</div>
+                  <h3 style={{ margin: '0 0 0.5rem 0', color: '#1e293b', fontSize: '1.15rem', fontWeight: 700 }}>No Attendance Records Found</h3>
+                  <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', maxWidth: '420px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
+                    {searchTerm ? 'No attendance records match your current search query.' : 'There are currently no attendance records in the database.'}
+                  </p>
+                  {!isMainAdmin && (
+                    <button 
+                      className="btn-primary" 
+                      style={{ marginTop: '1.25rem' }}
+                      onClick={() => setShowMarkAttendanceModal(true)}
+                    >
+                      + {t('markAttendance')}
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="table-card attendance-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Student</th>
+                        <th>Course</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Place</th>
+                        <th>Recorded By</th>
+                        <th>Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {filteredAttendance.map((item) => (
+                        <tr key={item._id || item.id}>
+                          <td data-label="Student" style={{ fontWeight: 600, color: '#1e293b' }}>
+                            {item.student?.fullName || item.studentName || 'Unknown Student'}
+                          </td>
+                          <td data-label="Course">{item.course || '-'}</td>
+                          <td data-label="Date" style={{ whiteSpace: 'nowrap' }}>
+                            {item.date ? new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '-'}
+                          </td>
+                          <td data-label="Time" style={{ whiteSpace: 'nowrap' }}>
+                            {item.startTime || item.endTime ? `${item.startTime || '-'} - ${item.endTime || '-'}` : '-'}
+                          </td>
+                          <td data-label="Place">{item.learningPlace || '-'}</td>
+                          <td data-label="Recorded By">
+                            {item.recordedBy?.fullName || item.recordedBy || 'System'}
+                          </td>
+                          <td data-label="Status">
+                            <span className={`status-badge ${(item.status || 'present').toLowerCase()}`}>
+                              {item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'Present'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
 

@@ -445,6 +445,21 @@
   color: #991b1b;
 }
 
+.status-badge.late {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.status-badge.excused {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .mini-btn {
   border: 1px solid var(--admin-border);
   background: white;

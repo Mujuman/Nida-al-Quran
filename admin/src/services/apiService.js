@@ -261,7 +261,7 @@ export const apiService = {
   },
 
   markAttendance: async (attendanceData) => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     const response = await fetch(`${API_URL}/api/attendance/mark`, {
       method: 'POST',
       headers: {
@@ -270,11 +270,15 @@ export const apiService = {
       },
       body: JSON.stringify(attendanceData),
     });
-    return response.json();
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.msg || data.message || 'Failed to mark attendance');
+    }
+    return data;
   },
 
   bulkMarkAttendance: async (attendanceData) => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     const response = await fetch(`${API_URL}/api/attendance/bulk`, {
       method: 'POST',
       headers: {
@@ -283,46 +287,66 @@ export const apiService = {
       },
       body: JSON.stringify(attendanceData),
     });
-    return response.json();
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.msg || data.message || 'Failed to bulk mark attendance');
+    }
+    return data;
   },
 
   getStudentAttendance: async (filters = {}) => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     const query = new URLSearchParams(filters).toString();
     const response = await fetch(
       `${API_URL}/api/attendance/student${query ? `?${query}` : ''}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    return response.json();
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.msg || data.message || 'Failed to fetch student attendance');
+    }
+    return data;
   },
 
   getAllAttendance: async (filters = {}) => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     const query = new URLSearchParams(filters).toString();
     const response = await fetch(
       `${API_URL}/api/attendance${query ? `?${query}` : ''}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    return response.json();
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.msg || data.message || 'Failed to fetch attendance records');
+    }
+    return data;
   },
 
   getAttendanceReport: async (filters = {}) => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     const query = new URLSearchParams(filters).toString();
     const response = await fetch(
       `${API_URL}/api/attendance/report${query ? `?${query}` : ''}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    return response.json();
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.msg || data.message || 'Failed to fetch attendance report');
+    }
+    return data;
   },
 
   deleteAttendance: async (attendanceId) => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     const response = await fetch(`${API_URL}/api/attendance/${attendanceId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
-    return response.json();
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.msg || data.message || 'Failed to delete attendance record');
+    }
+    return data;
   },
 
   saveToken: (token, isAdmin = false) => {
